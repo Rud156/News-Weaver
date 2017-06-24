@@ -59,7 +59,8 @@ router.post('/register', function (req, res) {
                     averageJoe.save(function (err) {
                         if (err)
                             throw err;
-                        return res.json({ success: true, message: 'User registration successfull' });
+                        return res.json({ success: true, 
+                            message: 'User registration successfull' });
                     });
                 });
             }
