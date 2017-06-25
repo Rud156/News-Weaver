@@ -13,27 +13,31 @@ router.post('/login', function (req, res) {
         return res.json({ success: false, message: 'Incorrect Credentials Format' });
     else {
         username = username.toLowerCase();
-        Model.User.findOne({ username: username }, function (err, user) {
-            if (err)
-                throw err;
-
-            if (!user)
-                return res.json({ success: false, message: 'User Authentication Failed' });
-            else {
-                Model.validatePassword(password, user.password, function (err, isMatch) {
-                    if (err)
-                        throw err;
-                    if (!isMatch)
-                        return res.json({ success: false, message: 'User Authentication Failed' });
-                    else {
-                        var token = jwt.sign(user, config.secret, {
-                            expiresIn: '2d'
+        Model.User.findOne({ username: username }).exec()
+            .then(function (user) {
+                if (!user)
+                    res.json({ success: false, message: 'User Authentication Failed' });
+                else {
+                    return Model.validatePassword(password, user.password)
+                        .then(function (isMatch) {
+                            if (!isMatch)
+                                res.json({ success: false, message: 'User Authentication Failed' });
+                            else {
+                                var token = jwt.sign(user, config.secret, {
+                                    expiresIn: '7d'
+                                });
+                                res.json({ success: true, token: token });
+                            }
                         });
-                        return res.json({ success: true, token: token });
-                    }
-                });
-            }
-        });
+                }
+            })
+            .catch(function (err) {
+                if (err)
+                    res.json({
+                        success: false,
+                        message: 'Something happened at our end. Please try after sometime.'
+                    });
+            });
     }
 });
 
@@ -45,26 +49,39 @@ router.post('/register', function (req, res) {
         return res.json({ success: false, message: 'Incorrect Credentials Format' });
     else {
         username = username.toLowerCase();
-        Model.User.findOne({ username: username }, function (err, user) {
-            if (err)
-                throw err;
-            if (user)
-                return res.json({ success: false, message: 'User is already registered' });
-            else {
-                Model.createHash(password, function (err, hash) {
-                    var averageJoe = Model.User({
-                        username: username,
-                        password: hash
+        Model.User.findOne({ username: username }).exec()
+            .then(function (user) {
+                if (user)
+                    res.json({
+                        success: false,
+                        message: 'User is already registered. Please select another username.'
                     });
-                    averageJoe.save(function (err) {
-                        if (err)
-                            throw err;
-                        return res.json({ success: true, 
-                            message: 'User registration successfull' });
-                    });
+                else {
+                    return Model.createHash(password);
+                }
+            })
+            .then(function (hash) {
+                return Model.User({
+                    username: username,
+                    password: hash
                 });
-            }
-        });
+            })
+            .then(function (averageJoe) {
+                return averageJoe.save()
+                    .then(function () {
+                        res.json({
+                            success: true,
+                            message: 'User registration successfull'
+                        });
+                    });
+            })
+            .catch(function (err) {
+                if (err)
+                    res.json({
+                        success: false,
+                        message: 'Something happened at our end. Please try after sometime.'
+                    });
+            });
     }
 });
 

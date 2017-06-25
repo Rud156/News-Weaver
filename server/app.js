@@ -8,6 +8,16 @@ var config = require('./models/config');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
+var db = mongoose.connection;
+db.on('error', function (err) {
+    console.log(err);
+});
+db.on('connected', function () {
+    console.log('Successfully Connected');
+});
+db.on('disconnected', function () {
+    console.log('Databse Disconnected');
+});
 
 var index = require('./routes/index');
 var users = require('./routes/users');

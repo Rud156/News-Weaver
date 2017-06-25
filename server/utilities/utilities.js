@@ -6,7 +6,10 @@ function checkAuthentication(req, res, next) {
     if (token) {
         jwt.verify(token, config.secret, function (err, decodedToken) {
             if (err)
-                return res.json({ success: false, message: 'Invalid token provided' });
+                return res.json({
+                    success: false,
+                    message: 'Invalid token provided. Please login to continue'
+                });
             else {
                 req.decoded = decodedToken;
                 next();
