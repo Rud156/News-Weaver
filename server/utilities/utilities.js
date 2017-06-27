@@ -6,7 +6,7 @@ function checkAuthentication(req, res, next) {
     if (token) {
         jwt.verify(token, config.secret, function (err, decodedToken) {
             if (err)
-                return res.json({
+                return res.json(403, {
                     success: false,
                     message: 'Invalid token provided. Please login to continue'
                 });
@@ -17,7 +17,10 @@ function checkAuthentication(req, res, next) {
         });
     }
     else {
-        return res.status(403).send({ success: false, message: 'No token provided' });
+        return res.status(403).json({
+            success: false,
+            message: 'No token provided'
+        });
     }
 }
 

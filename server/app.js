@@ -16,11 +16,13 @@ db.on('connected', function () {
     console.log('Successfully Connected');
 });
 db.on('disconnected', function () {
-    console.log('Databse Disconnected');
+    console.log('Database Disconnected');
 });
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+var feeds = require('./routes/feed');
+var userFeedDetails = require('./routes/user-feeds');
 
 var app = express();
 
@@ -41,7 +43,9 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/auth', users);
+app.use('/user', feeds);
+app.use('/user', userFeedDetails);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

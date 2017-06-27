@@ -9,19 +9,19 @@ router.post('/login', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
 
-    if (!username || !password || typeof (username) !== 'string' || typeof (password) !== 'string')
-        return res.json({ success: false, message: 'Incorrect Credentials Format' });
+    if (!username || !password || typeof username !== 'string' || typeof password !== 'string')
+        return res.json({ success: false, message: 'Incorrect credentials format' });
     else {
         username = username.toLowerCase();
         Model.User.findOne({ username: username }).exec()
             .then(function (user) {
                 if (!user)
-                    res.json({ success: false, message: 'User Authentication Failed' });
+                    res.json({ success: false, message: 'User authentication failed' });
                 else {
                     return Model.validatePassword(password, user.password)
                         .then(function (isMatch) {
                             if (!isMatch)
-                                res.json({ success: false, message: 'User Authentication Failed' });
+                                res.json({ success: false, message: 'User authentication failed' });
                             else {
                                 var token = jwt.sign(user, config.secret, {
                                     expiresIn: '7d'
@@ -32,11 +32,13 @@ router.post('/login', function (req, res) {
                 }
             })
             .catch(function (err) {
-                if (err)
-                    res.json({
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({
                         success: false,
-                        message: 'Something happened at our end. Please try after sometime.'
+                        message: 'Something happened at our end. Check back after sometime.'
                     });
+                }
             });
     }
 });
@@ -46,7 +48,7 @@ router.post('/register', function (req, res) {
     var password = req.body.password;
 
     if (!username || !password || typeof (username) !== 'string' || typeof (password) !== 'string')
-        return res.json({ success: false, message: 'Incorrect Credentials Format' });
+        return res.json({ success: false, message: 'Incorrect credentials format' });
     else {
         username = username.toLowerCase();
         Model.User.findOne({ username: username }).exec()
@@ -67,20 +69,22 @@ router.post('/register', function (req, res) {
                 });
             })
             .then(function (averageJoe) {
-                return averageJoe.save()
-                    .then(function () {
-                        res.json({
-                            success: true,
-                            message: 'User registration successfull'
-                        });
-                    });
+                return averageJoe.save();
+            })
+            .then(function () {
+                res.json({
+                    success: true,
+                    message: 'User registration successful'
+                });
             })
             .catch(function (err) {
-                if (err)
-                    res.json({
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({
                         success: false,
-                        message: 'Something happened at our end. Please try after sometime.'
+                        message: 'Something happened at our end. Check back after sometime.'
                     });
+                }
             });
     }
 });
