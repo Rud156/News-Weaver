@@ -51,11 +51,13 @@ var FeedSchema = mongoose.Schema({
 var FeedNews = mongoose.Schema({
     hash: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     feedHash: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     title: {
         type: String,
@@ -87,7 +89,8 @@ var FeedNews = mongoose.Schema({
 var Favourite = mongoose.Schema({
     hash: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     username: {
         type: String,
