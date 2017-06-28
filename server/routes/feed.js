@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var requestModule = require('request'); 
+var requestModule = require('request');
 var url = require('url');
 var crypto = require('crypto');
 var FeedParser = require('feedparser');
@@ -68,6 +68,35 @@ router.get('/get_feed', function (req, res) {
     });
 });
 
+router.get('/feed_news_category', function (req, res) {
+    var username = req.decoded._doc.username;
+    var category = req.query.category;
+
+    if (!username || !category || typeof username !== 'string' || typeof category !== 'string')
+        return res.json({ success: false, message: 'Invalid fields requested' });
+
+    username = username.toLowerCase();
+    Model.User.findOne({ username: username }).exec()
+        .then(function (user) {
+            if (!user)
+                res.json({ success: false, message: 'Invalid token user requested' });
+            else
+                return Model.FeedNews.find({ category: category }).exec();
+        })
+        .then(function (news) {
+            res.json({ success: true, message: 'Found matching news', news: news });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
 router.get('/feed_news', function (req, res) {
     var username = req.decoded._doc.username;
     var hash = req.query.hash;
@@ -77,7 +106,7 @@ router.get('/feed_news', function (req, res) {
 
     username = username.toLowerCase();
 
-    Model.FeedSchema.findOne({ hash: hash, user: { $in: [username] } }).exec()
+    Model.FeedSchema.find({ hash: hash, user: { $in: [username] } }).exec()
         .then(function (feed) {
             if (feed.count() < 1) {
                 res.json({
@@ -86,7 +115,41 @@ router.get('/feed_news', function (req, res) {
                 });
             }
             else
-                res.json({ success: false, message: 'Feed found', news: feed.news });
+                return Model.FeedNews.find({ feedHash: hash }).exec();
+        })
+        .then(function (feedNews) {
+            res.json({ success: true, message: 'Feed successfully retrieved', news: feedNews });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
+router.get('/feed_source', function (req, res) {
+    var username = req.decoded._doc.username;
+    var hash = req.query.hash;
+
+    if (!hash || typeof hash !== 'string' || !username || typeof username !== 'string')
+        return res.json({ success: false, message: 'Invalid feed provided' });
+
+    username = username.toLowerCase();
+
+    Model.FeedSchema.find({ hash: hash, user: { $in: [username] } }).exec()
+        .then(function (feed) {
+            if (feed.count() < 1) {
+                res.json({
+                    success: false,
+                    message: 'You don\'t seem to have the feed in your list. Try something else'
+                });
+            }
+            else
+                res.json({ success: true, message: 'Feed details', feed: feed[0] });
         })
         .catch(function (err) {
             if (err) {
@@ -128,7 +191,7 @@ router.post('/save_feed', function (req, res) {
             if (user)
                 return Model.FeedSchema.findOne({ hash: siteHash }).exec();
             else
-                res.json({ success: false, message: 'Invalid username provided' });
+                res.json({ success: false, message: 'Invalid token user requested' });
         })
         .then(function (feed) {
             if (!feed) {
@@ -186,7 +249,7 @@ router.delete('/delete_feed', function (req, res) {
             else
                 res.json({
                     success: false,
-                    message: 'Invalid username provided'
+                    message: 'Invalid token user requested'
                 });
         })
         .then(function (feed) {
@@ -209,8 +272,17 @@ router.delete('/delete_feed', function (req, res) {
                 }
             }
         })
+        .then(function () {
+            return Model.FeedSchema.findOne({ hash: hash }).exec();
+        })
         .then(function (feed) {
-            res.json({ success: true, message: 'Feed deleted successfully', feed: feed });
+            if (!feed)
+                return Model.FeedNews.remove({ feedHash: hash }).exec();
+            else
+                res.json({ success: true, message: 'Feed successfully removed' });
+        })
+        .then(function () {
+            res.json({ success: true, message: 'Feed successfully removed' });
         })
         .catch(function (err) {
             if (err) {

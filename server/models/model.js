@@ -45,14 +45,43 @@ var FeedSchema = mongoose.Schema({
         type: String,
         required: true,
         default: 'Unknown'
+    }
+});
+
+var FeedNews = mongoose.Schema({
+    hash: {
+        type: String,
+        required: true
     },
-    news: [{
-        title: String,
-        description: String,
-        image: String,
-        URL: String,
-        summary: String
-    }]
+    feedHash: {
+        type: String,
+        required: true
+    },
+    title: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    URL: {
+        type: String,
+        required: true
+    },
+    summary: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: Date,
+        required: true
+    },
+    category: [String]
 });
 
 var Favourite = mongoose.Schema({
@@ -65,8 +94,15 @@ var Favourite = mongoose.Schema({
         required: true
     },
     news: {
-        type: Object,
-        required: true
+        title: String,
+        description: String,
+        image: String,
+        URL: String,
+        summary: String,
+        date: Date,
+        category: [
+            String
+        ]
     }
 });
 
@@ -84,6 +120,7 @@ var validatePassword = function (password, hash) {
 module.exports = {
     User: mongoose.model('User', UserSchema),
     FeedSchema: mongoose.model('Feed', FeedSchema),
+    FeedNews: mongoose.model('News', FeedNews),
     Favourite: mongoose.model('Favourite', Favourite),
     createHash: createHash,
     validatePassword: validatePassword

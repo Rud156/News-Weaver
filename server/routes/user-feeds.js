@@ -7,7 +7,7 @@ var crypto = require('crypto');
 var utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
 
-router.get('/all_feeds', function (req, res) {
+router.get('/all_feed_sources', function (req, res) {
     var username = req.decoded._doc.username;
     if (!username || typeof username !== 'string')
         return res.json({ success: false, message: 'Invalid credentials format' });
@@ -37,8 +37,7 @@ router.get('/all_feeds', function (req, res) {
                     category: feed.category,
                     feedURL: feed.feedURL,
                     siteURL: feed.URl,
-                    favicon: feed.favicon,
-                    news: feed.news
+                    favicon: feed.favicon
                 };
             });
             res.json({
@@ -46,6 +45,39 @@ router.get('/all_feeds', function (req, res) {
                 message: 'Found user\'s all feeds',
                 feeds: modifiedFeed
             });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
+router.get('/all_feed_news', function (req, res) {
+    var username = req.decoded._doc.username;
+    if (!username || typeof username !== 'string')
+        return res.json({ success: false, message: 'Invalid credentials format' });
+
+    username = username.toLowerCase();
+
+    Model.User.findOne({ username: username }).exec()
+        .then(function (user) {
+            if (!user)
+                res.json({ success: false, message: 'Invalid token user requested' });
+            else {
+                return Model.FeedNews.find({
+                    feedHash: {
+                        $in: user.feeds
+                    }
+                });
+            }
+        })
+        .then(function (news) {
+            res.json({ success: true, message: 'Found all matching feed news', news: news });
         })
         .catch(function (err) {
             if (err) {
@@ -97,6 +129,56 @@ router.post('/save_favourite', function (req, res) {
                 success: true,
                 message: 'Successfully added news to favourites',
                 news: news
+            });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
+router.patch('/edit_favourite', function (req, res) {
+    var username = req.decoded._doc.username;
+
+    var image = req.body.imageUrl;
+    var title = req.body.title;
+    var summary = req.body.summary;
+    var hash = req.body.hash;
+
+    if (!username || !image || !title || !summary || !hash || typeof username !== 'string' ||
+        typeof image !== 'string' || typeof title !== 'string' || typeof summary !== 'string' ||
+        typeof hash !== 'string')
+        return res.json({ success: false, message: 'Invalid fields entered' });
+
+    username = username.toLowerCase();
+
+    Model.User.findOne({ username: username }).exec()
+        .then(function (user) {
+            if (!user)
+                res.json({ success: false, message: 'Invalid token user requested' });
+            else
+                return Model.Favourite.findOne({ hash: hash }).exec();
+        })
+        .then(function (favourite) {
+            if (!favourite)
+                res.json({ success: false, message: 'Invalid document requested' });
+            else {
+                favourite.news.title = title;
+                favourite.news.summary = summary;
+                favourite.news.image = image;
+                return favourite.save();
+            }
+        })
+        .then(function (favourite) {
+            res.json({
+                success: true,
+                message: 'Favourite successfully updated',
+                news: favourite
             });
         })
         .catch(function (err) {
