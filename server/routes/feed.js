@@ -162,6 +162,32 @@ router.get('/feed_source', function (req, res) {
         });
 });
 
+router.get('/news', function (req, res) {
+    var username = req.decoded._doc.username;
+    var hash = req.query.hash;
+
+    if (!username || !hash || typeof username !== 'string' || typeof hash !== 'string')
+        return res.json({ success: false, message: 'Invalid fields requested' });
+
+    username = username.toLowerCase();
+    Model.FeedNews.findOne({ hash: hash }).exec()
+        .then(function (news) {
+            if (news)
+                res.json({ success: true, message: 'News successfully found' });
+            else
+                res.json({ success: false, message: 'No matching news was found' });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
 router.post('/save_feed', function (req, res) {
     var username = req.decoded._doc.username;
     var category = req.body.category;
