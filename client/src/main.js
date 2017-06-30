@@ -10,6 +10,11 @@ import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
 Vue.component('icon', Icon);
 
+import Vodal from 'vodal';
+Vue.component(Vodal.name, Vodal);
+import 'vodal/common.css';
+import 'vodal/flip.css';
+
 import store from './store';
 
 Vue.config.productionTip = false;
