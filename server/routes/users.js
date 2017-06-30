@@ -46,9 +46,13 @@ router.post('/login', function (req, res) {
 router.post('/register', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
+    var rePassword = req.body.rePassword;
 
-    if (!username || !password || typeof (username) !== 'string' || typeof (password) !== 'string')
+    if (!username || !password || typeof (username) !== 'string' ||
+        typeof (password) !== 'string' || !rePassword || typeof rePassword !== 'string')
         return res.json({ success: false, message: 'Incorrect credentials format' });
+    if (password !== rePassword)
+        return res.json({ success: false, message: 'Passwords do not match' });
     else {
         username = username.toLowerCase();
         Model.User.findOne({ username: username }).exec()

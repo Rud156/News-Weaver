@@ -3,7 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import  ElementUI from 'element-ui';
+import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
 
 import 'vue-awesome/icons';
@@ -19,6 +19,20 @@ import store from './store';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
+
+router.beforeEach((to, from, next) => {
+    if (window.localStorage.getItem('user') != null && store.state.username === '')
+        store.commit('setUser', JSON.parse(window.localStorage.getItem('user')));
+
+    if (to.path === '/') {
+        if (window.localStorage.getItem('user') !== null)
+            router.push({ path: 'dashboard' });
+        else
+            next();
+    }
+    else
+        next();
+});
 
 /* eslint-disable no-new */
 new Vue({

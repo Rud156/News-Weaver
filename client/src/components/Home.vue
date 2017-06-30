@@ -1,92 +1,86 @@
 <template>
-    <el-row :gutter="20" id="block">
-        <vodal :show="showModal" animation="flip" @hide="showModal = false" :width="width" :height="height">
-            <el-tabs>
-                <el-tab-pane label="Login">
-                    <el-row>
-                        <el-col :span="12">
-                            <form>
-                                <input type="text" class="input" v-model="user.username" placeholder="Username" />
-                                <input type="password" class="input" v-model="user.password" placeholder="Password" />
-                                <el-button size="large" style="margin-top: 14px">
+    <div style="width: 100%; min-height: 100%" id="mainDiv">
+        <el-row :gutter="20" style="margin: 0">
+            <el-col :span="24" style="margin-bottom: 21px">
+                <h1>
+                    <span id="logo-text" style="font-family: 'Playball', cursive; font-size: 45px">
+                        News Weaver
+                    </span>
+                </h1>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                <el-row :gutter="20" style="font-family: 'Playball', cursive; font-size: 40px">
+                    <el-col :span="24" style="padding: 14px 0">
+                        An RSS Reader for the Web
+                    </el-col>
+                    <el-col :span="24" style="padding: 14px 0">
+                        Made using
+                        <a href="https://expressjs.com" target="_blank" class="slide-line">
+                            Express
+                        </a> and
+                        <a href="https://vuejs.org" target="_blank" class="slide-line">
+                            VueJS
+                        </a>
+                    </el-col>
+                    <el-col :span="24" style="padding: 14px 0">
+                        <a href="https://www.github.com/rud156/news-weaver" target="_blank">
+                            <el-button icon="search">
+                                See On Github
+                            </el-button>
+                        </a>
+                    </el-col>
+                </el-row>
+            </el-col>
+            <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                <el-tabs>
+                    <el-tab-pane label="Login">
+                        <el-form label-width="120px" style="padding: 20px 50px">
+                            <el-form-item label="Username:">
+                                <el-input v-model="user.username" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Password:">
+                                <el-input v-model="user.password" required></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="loginUser">
                                     Login
                                 </el-button>
-                            </form>
-                        </el-col>
-                        <el-col :span="12">
-                            <h2 style="text-align: center; margin-top: 55px">
-                                Login Here
-                            </h2>
-                        </el-col>
-                    </el-row>
-                </el-tab-pane>
-                <el-tab-pane label="Register">
-                    <el-row>
-                        <el-col :span="12">
-                            <form>
-                                <input type="text" class="input" v-model="user.username" placeholder="Username" />
-                                <input type="password" class="input" v-model="user.password" placeholder="Password" />
-                                <input type="password" class="input" v-model="user.rePassword" placeholder="Re Password" />
-                                <el-button size="large">
+                            </el-form-item>
+                        </el-form>
+                    </el-tab-pane>
+                    <el-tab-pane label="Register">
+                        <el-form label-width="120px" style="padding: 20px 50px">
+                            <el-form-item label="Username:">
+                                <el-input v-model="user.username" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Password:">
+                                <el-input v-model="user.password" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Re Password:">
+                                <el-input v-model="user.rePassword" required></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="registerUser">
                                     Register
                                 </el-button>
-                            </form>
-                        </el-col>
-                        <el-col :span="12">
-                            <h2 style="text-align: center; margin-top: 85px">
-                                Register Here
-                            </h2>
-                        </el-col>
-                    </el-row>
-                </el-tab-pane>
-            </el-tabs>
-        </vodal>
-        <el-col :span="24" style="font-family: 'Playball', cursive;">
-            <h1 style="text-align: center; font-size: 40px; font-weight: bolder">
-                <span style="display: inline-block; padding: 20px;" id="logo-text">
-                    New Weaver
-                </span>
-            </h1>
-        </el-col>
-        <el-col :span="24" style="font-family: 'Playball', cursive;">
-            <div style="font-size: 45px; font-weight: bolder; text-align: right; padding: 20px">
-                An RSS Reader for the web.
-            </div>
-        </el-col>
-        <el-col :span="24" style="font-family: 'Playball', cursive;">
-            <div style="font-size: 45px; font-weight: bolder; text-align: left; padding: 20px">
-                Made using
-                <a href="https://expressjs.com/" target="_blank" class="slide-line">
-                    Express
-                </a> and
-                <a href="https://vuejs.org/" target="_blank" class="slide-line">
-                    VueJS
-                </a>
-            </div>
-        </el-col>
-        <el-col :xs="24" :sm="24" :md="12" :lg="12">
-            <div style="margin-top: 10%">
-                <el-button size="large" style="background: #fe4a49; color: white; border: 0" @click="showModal = true">
-                    <icon name="paper-plane" style="padding-right: 7px"></icon>
-                    <span>Try News Weaver</span>
-                </el-button>
-            </div>
-        </el-col>
-        <el-col :xs="24" :sm="24" :md="12" :lg="12">
-            <div style="margin-top: 10%">
-                <a href="https://www.github.com/rud156/news-weaver" target="_blank">
-                    <el-button size="large" style="background: #fe4a49; color: white; border: 0">
-                        <icon name="github" style="padding-right: 7px"></icon>
-                        <span>View On Github</span>
-                    </el-button>
-                </a>
-            </div>
-        </el-col>
-    </el-row>
+                            </el-form-item>
+                        </el-form>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-col>
+            <el-col>
+                <h1 style="padding-top: 21px; font-family: 'Playball', cursive; font-size: 40px">
+                    Keep all your news in a single place. Simple and easy to read.
+                </h1>
+            </el-col>
+        </el-row>
+    </div>
 </template>
 
 
 <script>
+    import axios from 'axios';
+
     export default {
         data() {
             return {
@@ -94,11 +88,76 @@
                     username: '',
                     password: '',
                     rePassword: ''
-                },
-                showModal: false,
-                width: 400,
-                height: 270
+                }
             };
+        },
+        methods: {
+            loginUser() {
+                var username = this.user.username;
+                var password = this.user.password;
+                if (username.trim() === '' || password.trim === '') {
+                    this.$store.commit('openModal', 'Fields cannot be blank');
+                    return;
+                }
+
+                axios.post('http://localhost:3000/auth/login', {
+                    username: username,
+                    password: password
+                })
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((data) => {
+                        if (data.success) {
+                            this.$store.commit('setUser', {
+                                username: username,
+                                token: data.token
+                            });
+                            this.$router.push({ path: 'dashboard' });
+                        }
+                        else
+                            this.displayMessage(data.message);
+                    })
+                    .catch((error) => {
+                        this.handleError(error);
+                    });
+            },
+            registerUser() {
+                var username = this.user.username;
+                var password = this.user.password;
+                var rePassword = this.user.rePassword;
+                if (username.trim() === '' || password.trim() === '' || rePassword.trim() === '') {
+                    this.$store.commit('openModal', 'Fields cannot be blank');
+                    return;
+                }
+
+                axios.post('http://localhost:3000/auth/register', {
+                    username: username,
+                    password: password,
+                    rePassword: rePassword
+                })
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((data) => {
+                        if (data.success)
+                            this.displayMessage("User registration successful. Please login to continue...");
+                        else
+                            this.displayMessage(data.message);
+
+
+                    })
+                    .catch((error) => {
+                        this.handleError(error);
+                    });
+            },
+            handleError(error) {
+                console.log(error);
+                this.$store.commit('openModal', 'Something went wrong. Please try again');
+            },
+            displayMessage(message) {
+                this.$store.commit('openModal', message);
+            }
         }
     };
 
@@ -106,17 +165,20 @@
 
 
 <style scoped>
-    #block {
-        background: linear-gradient(to right, #fed766, #fe4a49);
-        padding: 50px 0;
-        min-height: 100%;
-        margin: 0 !important;
+    #mainDiv {
+        background: url('./../assets/background_1.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-position: fixed;
+        color: white;
     }
 
     #logo-text {
         border-bottom: 1px solid white;
         border-right: 1px solid white;
         position: relative;
+        padding: 14px;
+        display: inline-block;
     }
 
     #logo-text:after {

@@ -6,7 +6,9 @@ const store = new Vuex.Store({
     strict: true,
     state: {
         username: '',
-        token: ''
+        token: '',
+        infoMessage: '',
+        showModal: false
     },
     getters: {
         formatUsername(state) {
@@ -27,6 +29,14 @@ const store = new Vuex.Store({
         removeUser(state) {
             state.username = '';
             state.token = '';
+        },
+        openModal(state, message) {
+            state.showModal = true;
+            state.infoMessage = message;
+        },  
+        closeModal(state) {
+            state.infoMessage = '';
+            state.showModal = false;
         }
     }
 });
