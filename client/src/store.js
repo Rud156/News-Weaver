@@ -12,6 +12,9 @@ const store = new Vuex.Store({
     },
     getters: {
         formatUsername(state) {
+            if (state.username === '')
+                return '';
+                    
             return state.username.toLowerCase().split(' ').map((word) => {
                 return word.replace(word[0], word[0].toUpperCase());
             }).join(' ');
@@ -29,11 +32,12 @@ const store = new Vuex.Store({
         removeUser(state) {
             state.username = '';
             state.token = '';
+            window.localStorage.removeItem('user');
         },
         openModal(state, message) {
             state.showModal = true;
             state.infoMessage = message;
-        },  
+        },
         closeModal(state) {
             state.infoMessage = '';
             state.showModal = false;

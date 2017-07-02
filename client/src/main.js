@@ -5,6 +5,11 @@ import App from './App';
 import router from './router';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-default/index.css';
+import 'element-ui/lib/theme-default/base.css';
+import 'vue2-animate/dist/vue2-animate.min.css';
+
+import Vue2Filters from 'vue2-filters';
+Vue.use(Vue2Filters);
 
 import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
@@ -16,6 +21,7 @@ import 'vodal/common.css';
 import 'vodal/flip.css';
 
 import store from './store';
+import './assets/index.css';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);

@@ -5,7 +5,9 @@
                 {{getMessage}}
             </div>
         </vodal>
-        <router-view></router-view>
+        <transition name="zoom" enter-active-class="zoomLeft" leave-active-class="zoomOutRight">
+            <router-view></router-view>
+        </transition>
     </div>
 </template>
 

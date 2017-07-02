@@ -79,6 +79,7 @@
 
 
 <script>
+    import { mapMutations } from 'vuex';
     import axios from 'axios';
 
     export default {
@@ -92,11 +93,15 @@
             };
         },
         methods: {
+            ...mapMutations([
+                'openModal',
+                'setUser'
+            ]),
             loginUser() {
                 var username = this.user.username;
                 var password = this.user.password;
                 if (username.trim() === '' || password.trim === '') {
-                    this.$store.commit('openModal', 'Fields cannot be blank');
+                    this.displayMessage('Fields cannot be blank');
                     return;
                 }
 
@@ -109,11 +114,8 @@
                     })
                     .then((data) => {
                         if (data.success) {
-                            this.$store.commit('setUser', {
-                                username: username,
-                                token: data.token
-                            });
-                            this.$router.push({ path: 'dashboard' });
+                            this.setUser({ username: username, token: data.token });
+                            this.$router.push({ path: 'dashboard/all' });
                         }
                         else
                             this.displayMessage(data.message);
@@ -127,7 +129,7 @@
                 var password = this.user.password;
                 var rePassword = this.user.rePassword;
                 if (username.trim() === '' || password.trim() === '' || rePassword.trim() === '') {
-                    this.$store.commit('openModal', 'Fields cannot be blank');
+                    this.displayMessage('Fields cannot be blank');
                     return;
                 }
 
@@ -153,10 +155,10 @@
             },
             handleError(error) {
                 console.log(error);
-                this.$store.commit('openModal', 'Something went wrong. Please try again');
+                this.openModal('Something went wrong. Please try again');
             },
             displayMessage(message) {
-                this.$store.commit('openModal', message);
+                this.openModal(message);
             }
         }
     };
