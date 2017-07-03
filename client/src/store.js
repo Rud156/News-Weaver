@@ -8,13 +8,14 @@ const store = new Vuex.Store({
         username: '',
         token: '',
         infoMessage: '',
-        showModal: false
+        showModal: false,
+        displayLoader: true
     },
     getters: {
         formatUsername(state) {
             if (state.username === '')
                 return '';
-                    
+
             return state.username.toLowerCase().split(' ').map((word) => {
                 return word.replace(word[0], word[0].toUpperCase());
             }).join(' ');
@@ -41,6 +42,9 @@ const store = new Vuex.Store({
         closeModal(state) {
             state.infoMessage = '';
             state.showModal = false;
+        },
+        toggleLoader(state) {
+            state.displayLoader = !state.displayLoader;   
         }
     }
 });

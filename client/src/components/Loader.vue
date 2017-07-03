@@ -8,7 +8,7 @@
 
 <script>
     export default {
-       name: 'loader'
+        name: 'loader'
     };
 
 </script>

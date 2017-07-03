@@ -23,14 +23,14 @@ function getDataBases() {
         });
 }
 
-function getFeedResults(feedUrl, hash, callback) {
+function getFeedResults(feedURL, hash, callback) {
     var feedResult = [];
-    console.log('Feed URL: ', feedUrl);
+    console.log('Feed URL: ', feedURL);
 
     var feedParser = new FeedParser();
     var requestError = false;
 
-    request(feedUrl)
+    request(feedURL)
         .on('response', function (res) {
             if (res.statusCode !== 200) {
                 console.log('Invalid status code');

@@ -12,13 +12,13 @@ router.use(utility.checkAuthentication);
 
 
 router.get('/get_feed', function (req, res) {
-    var feedUrl = req.query.url;
+    var feedURL = req.query.url;
     var feedParser = new FeedParser();
-    if (feedUrl.trim() === '') {
+    if (feedURL.trim() === '') {
         return res.json({ success: false, message: 'Invalid URL provided' });
     }
 
-    var request = requestModule(feedUrl);
+    var request = requestModule(feedURL);
     request.on('error', function (error) {
         console.log(error);
         res.status(500).json({
@@ -58,7 +58,7 @@ router.get('/get_feed', function (req, res) {
         res.json({
             success: true,
             feedDetails: {
-                URL: feedUrl,
+                URL: feedURL,
                 site: siteURL,
                 title: siteTitle,
                 description: siteDescription,
@@ -194,18 +194,18 @@ router.post('/save_feed', function (req, res) {
     var title = req.body.title;
     var description = req.body.description;
     var favicon = req.body.favicon;
-    var feedUrl = req.body.feedUrl;
-    var siteUrl = req.body.siteUrl;
+    var feedURL = req.body.feedURL;
+    var siteURL = req.body.siteURL;
 
-    if (!username || !category || !title || !description || !favicon || !feedUrl || !siteUrl ||
+    if (!username || !category || !title || !description || !favicon || !feedURL || !siteURL ||
         typeof username !== 'string' || typeof category !== 'string' || typeof title !== 'string' ||
         typeof description !== 'string' || typeof favicon !== 'string' ||
-        typeof feedUrl !== 'string' || typeof siteUrl !== 'string')
+        typeof feedURL !== 'string' || typeof siteURL !== 'string')
         return res.json({ success: false, message: 'Invalid fields entered' });
 
     username = username.toLowerCase();
     var siteHash = crypto.createHash('sha256').
-        update(feedUrl + title + description + favicon).digest('hex');
+        update(feedURL + title + description + favicon).digest('hex');
 
     Model.User.findOneAndUpdate({ username: username },
         {
@@ -226,8 +226,8 @@ router.post('/save_feed', function (req, res) {
                     title: title,
                     description: description,
                     favicon: favicon,
-                    URL: siteUrl,
-                    feedURL: feedUrl,
+                    URL: siteURL,
+                    feedURL: feedURL,
                     category: category,
                     users: [username]
                 }).save();
