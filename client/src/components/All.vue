@@ -1,5 +1,5 @@
 <template>
-    <div style="width: 100%; min-height: 100%; font-size: 25px">
+    <div style="width: 100%; min-height: 100%;">
         <el-card v-if="allNews.length <= 0" style="max-width: 480px; margin: 0 auto">
             <div slot="header" class="clearfix" style="text-align: center">
                 <icon name="bell-o" scale="5"></icon>

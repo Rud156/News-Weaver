@@ -77,8 +77,10 @@ function runAll() {
                         dataReceivedCount++;
                         var hash = data.hash;
                         console.log(hash);
-                        if (dataReceivedCount === maxDataToReceive)
+                        if (dataReceivedCount === maxDataToReceive) {
+                            dataReceivedCount = 0;
                             setTimeout(runAll, interval);
+                        }
                     });
 
             }

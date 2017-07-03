@@ -9,7 +9,7 @@ const store = new Vuex.Store({
         token: '',
         infoMessage: '',
         showModal: false,
-        displayLoader: true
+        displayLoader: false
     },
     getters: {
         formatUsername(state) {

@@ -22,6 +22,7 @@ import 'vodal/flip.css';
 
 import store from './store';
 import './assets/index.css';
+import './assets/loader.css';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);

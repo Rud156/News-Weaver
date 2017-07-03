@@ -58,8 +58,8 @@ router.get('/get_feed', function (req, res) {
         res.json({
             success: true,
             feedDetails: {
-                URL: feedURL,
-                site: siteURL,
+                feedURL: feedURL,
+                siteURL: siteURL,
                 title: siteTitle,
                 description: siteDescription,
                 favicon: favicon

@@ -4,14 +4,14 @@
             <el-menu-item index="logo" style="font-size: 30px">News Weaver</el-menu-item>
             <el-menu-item index="logout" style="float: right">Logout</el-menu-item>
             <el-menu-item index="dashboard" style="float: right">
-                {{$store.getters.formatUsername}}'s Dashboard
+                {{formatUsername()}}'s Dashboard
             </el-menu-item>
         </el-menu>
-        <vodal :show="$store.state.displayLoader" @hide="toggleLoader">
-            <loader/>
+        <vodal :show="$store.state.displayLoader" :closeButton="false" :width="50" :height="60" @hide="toggleLoader">
+            <loader></loader>
         </vodal>
         <div style="margin-top: 14px; font-family: 'Playball', cursive">
-            <span v-for="nav in naviagtion" :key="nav" style="cursor: pointer; padding: 0 21px" :style="[nav === currentNav ? { color: '#20a0ff' } : { color: 'black' }]"
+            <span v-for="nav in navigation" :key="nav" style="cursor: pointer; padding: 0 21px" :style="[nav === currentNav ? { color: '#20a0ff' } : { color: 'black' }]"
                 @click="changeView(nav)">{{ nav | capitalize }}</span>
         </div>
         <br />
@@ -23,14 +23,14 @@
 
 
 <script>
-    import { mapMutations } from 'vuex';
+    import { mapMutations, mapGetters } from 'vuex';
     import axios from 'axios';
-    import Loader from './Loader';
+    import Loader from './sub-components/Loader';
 
     export default {
         data() {
             return {
-                naviagtion: ['all', 'sources', 'favourites', 'settings'],
+                navigation: ['all', 'sources', 'favourites', 'settings'],
                 currentNav: this.$route.path.split('/')[2]
             };
         },
@@ -44,6 +44,9 @@
                 'removeUser',
                 'toggleLoader'
             ]),
+            ...mapGetters([
+                'formatUsername'
+            ]),
             handleSelect(key, keyPath) {
                 switch (key) {
                     case "logout":
@@ -55,10 +58,12 @@
                 }
             },
             changeView(viewName) {
-                console.log(this.$route);
                 this.currentNav = viewName;
-                this.$router.push({ path: '/dashboard/' + viewName });
+                this.$router.push({ path: `/dashboard/${viewName}` });
             }
+        },
+        components: {
+            Loader
         }
     };
 
