@@ -21,9 +21,10 @@ export default new Router({
             component: Dashboard,
             children: [
                 {
-                    path: 'all',
+                    path: 'all/:id',
                     name: 'all',
-                    component: All
+                    component: All,
+                    props: true
                 },
                 {
                     path: 'sources',

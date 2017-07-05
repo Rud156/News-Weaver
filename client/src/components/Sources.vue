@@ -12,21 +12,21 @@
                         <img height="25" :src="feedObject.favicon" :alt="feedObject.title" />
                     </el-col>
                     <el-col :span="12">
-                        <h6 style="font-weight: bolder; margin: 3px">{{feedObject.title}}</h6>
+                        <h6 style="font-weight: bolder; margin: 3px">{{feedObject.title | truncate(15)}}</h6>
                     </el-col>
                     <el-col :span="24" style="padding: 7px">
-                        {{feedObject.description}}
+                        {{feedObject.description | truncate(25)}}
                     </el-col>
                     <el-col :span="24">
                         <el-input placeholder="Enter the category..." v-model="category"></el-input>
-                        <el-button @click="saveFeed" type="primary" icon="star-on" style="margin-top: 21px;">Save Feed</el-button>
+                        <el-button @click="saveFeed" type="primary" icon="star-on" style="margin-top: 14px;">Save Feed</el-button>
                     </el-col>
                 </el-row>
             </div>
         </vodal>
-        <el-row :gutter="20" style="padding: 21px">
+        <el-row :gutter="20" style="padding: 21px; margin: 0">
             <el-col :xs="24" :sm="12" :md="6" :lg="6" v-for="source in sources" :key="source.hash">
-                <feed :feed="source"></feed>
+                <feed :feed="source" :delete-feed="deleteFeed" :view-feed="viewFeed"></feed>
             </el-col>
             <el-col :xs="24" :sm="12" :md="6" :lg="4">
                 <el-card>
@@ -83,7 +83,6 @@
                     })
                     .then((data) => {
                         if (data.success) {
-                            console.log(data.feeds);
                             this.sources = data.feeds;
                         }
                         else
@@ -148,7 +147,6 @@
                     })
                     .then((data) => {
                         if (data.success) {
-                            console.log(data.feed);
                             this.sources.push(data.feed);
                         }
                         else {
@@ -159,6 +157,31 @@
                         this.handleError(error);
                     });
 
+            },
+            viewFeed(feed) {
+                var hash = feed.hash;
+                this.$router.push({ path: `/dashboard/all/${hash}` });
+            },
+            deleteFeed(feed) {
+                var hash = feed.hash;
+                axios.delete(`http://localhost:3000/user/delete_feed?token=${this.getToken()}&hash=${hash}`)
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((data) => {
+                        if (data.success) {
+                            var changedScource = this.sources.filter((source) => {
+                                if (source.hash !== hash)
+                                    return source;
+                            });
+                            this.sources = changedScource;
+                        }
+                        else
+                            this.displayMessage(data.message);
+                    })
+                    .catch((error) => {
+                        this.handleError(error);
+                    });
             },
             handleError(error) {
                 console.log(error);

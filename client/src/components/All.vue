@@ -18,10 +18,20 @@
     import { mapGetters, mapMutations } from 'vuex';
 
     export default {
+        props: {
+            id: {
+                type: String
+            }
+        },
         data() {
             return {
                 allNews: []
             };
+        },
+        watch: {
+            '$route'(to, from) {
+                this.loadAllFeeds();
+            }
         },
         mounted() {
             this.loadAllFeeds();
@@ -35,7 +45,17 @@
             ]),
             loadAllFeeds() {
                 var token = this.getToken();
-                axios.get('http://localhost:3000/user/all_feed_news?token=' + token)
+                var feedURL = '';
+                switch (this.id) {
+                    case 'news_items':
+                        feedURL = `http://localhost:3000/user/all_feed_news?token=${token}`;
+                        break;
+                    default:
+                        feedURL = `http://localhost:3000/user/news?token=${token}&hash=${this.id}`;
+                        break;
+                }
+
+                axios.get(feedURL)
                     .then((response) => {
                         return response.data;
                     })

@@ -11,11 +11,11 @@
             <loader></loader>
         </vodal>
         <div style="margin-top: 14px; font-family: 'Playball', cursive">
-            <span v-for="nav in navigation" :key="nav" style="cursor: pointer; padding: 0 21px" :style="[nav === currentNav ? { color: '#20a0ff' } : { color: 'black' }]"
-                @click="changeView(nav)">{{ nav | capitalize }}</span>
+            <span v-for=" nav in navigation " :key="nav " style="cursor: pointer; padding: 0 21px " :style="[nav === currentNav? { color: '#20a0ff' } : { color: 'black' }] "
+                @click="changeView(nav) ">{{ nav | capitalize }}</span>
         </div>
         <br />
-        <transition name="fade">
+        <transition name="fade ">
             <router-view></router-view>
         </transition>
     </div>
@@ -54,12 +54,22 @@
                         this.$router.push({ path: '/' });
                         break;
                     default:
+                        this.$router.push({ path: '/dashboard/all/News_items' });
                         break;
                 }
             },
             changeView(viewName) {
-                this.currentNav = viewName;
-                this.$router.push({ path: `/dashboard/${viewName}` });
+                switch (viewName) {
+                    case 'all':
+                        this.currentNav = viewName;
+                        this.$router.push({ path: '/dashboard/all/news_items' });
+                        break;
+
+                    default:
+                        this.currentNav = viewName;
+                        this.$router.push({ path: `/dashboard/${viewName}` });
+                        break;
+                }
             }
         },
         components: {

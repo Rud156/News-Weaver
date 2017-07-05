@@ -3,10 +3,14 @@
         <div slot="header" class="clearfix">
             <el-row style="margin-bottom: 14px">
                 <el-col :span="12">
-                    <icon name="eye" class="custom-button" scale="1.2"></icon>
+                    <span @click="viewFeed(feed)">
+                        <icon name="eye" class="custom-button" scale="1.2"></icon>
+                    </span>
                 </el-col>
                 <el-col :span="12">
-                    <icon name="trash" class="custom-button" scale="1.2"></icon>
+                    <span @click="deleteFeed(feed)">
+                        <icon name="trash" class="custom-button" scale="1.2"></icon>
+                    </span>
                 </el-col>
             </el-row>
             <el-row :gutter="20">
@@ -29,6 +33,14 @@
         props: {
             feed: {
                 type: Object,
+                required: true
+            },
+            deleteFeed: {
+                type: Function,
+                required: true
+            },
+            viewFeed: {
+                type: Function,
                 required: true
             }
         },

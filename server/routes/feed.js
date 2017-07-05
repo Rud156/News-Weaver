@@ -173,7 +173,7 @@ router.get('/news', function (req, res) {
     Model.FeedNews.findOne({ hash: hash }).exec()
         .then(function (news) {
             if (news)
-                res.json({ success: true, message: 'News successfully found' });
+                res.json({ success: true, message: 'News successfully found', news: news });
             else
                 res.json({ success: false, message: 'No matching news was found' });
         })
@@ -255,7 +255,7 @@ router.post('/save_feed', function (req, res) {
 });
 
 router.delete('/delete_feed', function (req, res) {
-    var hash = req.body.hash;
+    var hash = req.query.hash;
     var username = req.decoded._doc.username;
 
     if (!username || !hash || typeof username !== 'string' || typeof hash !== 'string')

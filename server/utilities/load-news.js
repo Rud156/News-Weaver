@@ -4,9 +4,21 @@ var cheerio = require('cheerio');
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost:27017/NewsWeaver');
+var db = mongoose.connection;
+db.on('error', function (err) {
+    console.log(err);
+});
+db.on('connected', function () {
+    console.log('Successfully Connected');
+});
+db.on('disconnected', function () {
+    console.log('Database Disconnected');
+});
+
 var Model = require('./../models/model');
 
-var minutes = 0.5;
+var minutes = 0.1;
 var interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;
@@ -23,7 +35,7 @@ function getDataBases() {
         });
 }
 
-function getFeedResults(feedURL, hash, callback) {
+function getFeedResults(feedURL, hash, category, callback) {
     var feedResult = [];
     console.log('Feed URL: ', feedURL);
 
@@ -48,7 +60,7 @@ function getFeedResults(feedURL, hash, callback) {
     feedParser
         .on('readable', function () {
             if (requestError) {
-                callback({ feed: [], hash: hash });
+                callback({ feed: [], hash: hash, category: category, feedURL: feedURL });
                 return;
             }
             else {
@@ -59,11 +71,11 @@ function getFeedResults(feedURL, hash, callback) {
             }
         })
         .on('end', function () {
-            callback({ feed: feedResult, hash: hash });
+            callback({ feed: feedResult, hash: hash, category: category, feedURL: feedURL });
         })
         .on('error', function (error) {
             console.log(error);
-            callback({ feed: [], hash: hash });
+            callback({ feed: [], hash: hash, category: category, feedURL: feedURL });
         });
 }
 
@@ -75,8 +87,26 @@ function runAll() {
                 for (let i = 0; i < feeds.length; i++)
                     getFeedResults(feeds[i].feedURL, feeds[i].hash, function (data) {
                         dataReceivedCount++;
-                        var hash = data.hash;
-                        console.log(hash);
+
+                        // var hash = data.hash;
+                        // console.log(hash);
+                        // var title = data.feed[0].title;
+                        // var description = data.feed[0].description;
+                        // var URL = data.feed[0].link;
+                        // var summary = data.feed[0].summary;
+                        // var date = moment(data.feed[0].pubDate).utc().toDate();
+                        // var category = data.category;
+                        // var image = '';
+                        // let $ = cheerio.load(data.feed[0].description);
+                        // image = $('img').attr('src');
+                        // if (!image)
+                        //     image = 'http://localhost:3000/place-holder.png';
+
+                        // var feeds = data.feed;
+                        // Model.FeedNews.find({})
+                        // TODO: Complete this function
+
+
                         if (dataReceivedCount === maxDataToReceive) {
                             dataReceivedCount = 0;
                             setTimeout(runAll, interval);
