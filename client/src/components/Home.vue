@@ -115,7 +115,7 @@
                     .then((data) => {
                         if (data.success) {
                             this.setUser({ username: username, token: data.token });
-                            this.$router.push({ path: 'dashboard/all' });
+                            this.$router.push({ path: 'dashboard/all/news_items' });
                         }
                         else
                             this.displayMessage(data.message);

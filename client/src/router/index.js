@@ -32,6 +32,10 @@ export default new Router({
                     component: Sources
                 }
             ]
+        },
+        {
+            path: '*',
+            redirect: '/'
         }
     ]
 });
