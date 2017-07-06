@@ -78,8 +78,10 @@ router.get('/feed_news_category', function (req, res) {
     username = username.toLowerCase();
     Model.User.findOne({ username: username }).exec()
         .then(function (user) {
-            if (!user)
+            if (!user) {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
             else
                 return Model.FeedNews.find({ category: category }).exec();
         })
@@ -87,7 +89,7 @@ router.get('/feed_news_category', function (req, res) {
             res.json({ success: true, message: 'Found matching news', news: news });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -113,6 +115,7 @@ router.get('/feed_news', function (req, res) {
                     success: false,
                     message: 'You don\'t seem to have the feed in your list. Try something else'
                 });
+                return Promise.reject('Error');
             }
             else
                 return Model.FeedNews.find({ feedHash: hash }).exec();
@@ -121,7 +124,7 @@ router.get('/feed_news', function (req, res) {
             res.json({ success: true, message: 'Feed successfully retrieved', news: feedNews });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -207,17 +210,27 @@ router.post('/save_feed', function (req, res) {
     var siteHash = crypto.createHash('sha256').
         update(feedURL + title + description + favicon).digest('hex');
 
-    Model.User.findOneAndUpdate({ username: username },
-        {
-            $addToSet: {
-                feeds: siteHash
+    Model.User.find({ username: username, feeds: { $in: [siteHash] } }).exec()
+        .then(function (users) {
+            if (users.length > 0) {
+                res.json({ success: false, message: 'Feed already exists in your source' });
+                return Promise.reject('Error');
             }
-        }).exec()
+            else
+                return Model.User.findOneAndUpdate({ username: username },
+                    {
+                        $addToSet: {
+                            feeds: siteHash
+                        }
+                    }).exec();
+        })
         .then(function (user) {
             if (user)
                 return Model.FeedSchema.findOne({ hash: siteHash }).exec();
-            else
+            else {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
         })
         .then(function (feed) {
             if (!feed) {
@@ -244,7 +257,7 @@ router.post('/save_feed', function (req, res) {
             res.json({ success: true, message: 'Feed updated successfully', feed: feed });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -272,15 +285,18 @@ router.delete('/delete_feed', function (req, res) {
         .then(function (user) {
             if (user)
                 return Model.FeedSchema.findOne({ hash }).exec();
-            else
+            else {
                 res.json({
                     success: false,
                     message: 'Invalid token user requested'
                 });
+                return Promise.reject('Error');
+            }
         })
         .then(function (feed) {
             if (!feed) {
                 res.json({ success: false, message: 'Feed does not exist' });
+                Promise.reject('Error');
             }
             else {
                 var users = feed.users.length;
@@ -304,14 +320,16 @@ router.delete('/delete_feed', function (req, res) {
         .then(function (feed) {
             if (!feed)
                 return Model.FeedNews.remove({ feedHash: hash }).exec();
-            else
+            else {
                 res.json({ success: true, message: 'Feed successfully removed' });
+                return Promise.reject('Error');
+            }
         })
         .then(function () {
             res.json({ success: true, message: 'Feed successfully removed' });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,

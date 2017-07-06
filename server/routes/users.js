@@ -32,7 +32,7 @@ router.post('/login', function (req, res) {
                 }
             })
             .catch(function (err) {
-                if (err) {
+                if (err !== 'Error' && err) {
                     console.log(err);
                     res.status(500).json({
                         success: false,
@@ -57,11 +57,13 @@ router.post('/register', function (req, res) {
         username = username.toLowerCase();
         Model.User.findOne({ username: username }).exec()
             .then(function (user) {
-                if (user)
+                if (user) {
                     res.json({
                         success: false,
                         message: 'User is already registered. Please select another username.'
                     });
+                    return Promise.reject('Error');
+                }
                 else {
                     return Model.createHash(password);
                 }
@@ -82,7 +84,7 @@ router.post('/register', function (req, res) {
                 });
             })
             .catch(function (err) {
-                if (err) {
+                if (err !== 'Error' && err) {
                     console.log(err);
                     res.status(500).json({
                         success: false,

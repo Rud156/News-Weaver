@@ -18,8 +18,10 @@ router.get('/all_feed_sources', function (req, res) {
         .then(function (user) {
             if (user)
                 return user.feeds;
-            else
+            else {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
         })
         .then(function (feeds) {
             return Model.FeedSchema.find({
@@ -47,7 +49,7 @@ router.get('/all_feed_sources', function (req, res) {
             });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -66,8 +68,10 @@ router.get('/all_feed_news', function (req, res) {
 
     Model.User.findOne({ username: username }).exec()
         .then(function (user) {
-            if (!user)
+            if (!user) {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
             else {
                 return Model.FeedNews.find({
                     feedHash: {
@@ -80,7 +84,7 @@ router.get('/all_feed_news', function (req, res) {
             res.json({ success: true, message: 'Found all matching feed news', news: news });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -110,9 +114,12 @@ router.post('/save_favourite', function (req, res) {
 
     Model.User.findOne({ username: username }).exec()
         .then(function (user) {
-            if (!user)
+            if (!user) {
                 res.json({ success: false, message: 'Invalid token user requested' });
-            return username;
+                return Promise.reject('Error');
+            }
+            else
+                return username;
         })
         .then(function (username) {
             return Model.Favourite({
@@ -132,7 +139,7 @@ router.post('/save_favourite', function (req, res) {
             });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -159,14 +166,18 @@ router.patch('/edit_favourite', function (req, res) {
 
     Model.User.findOne({ username: username }).exec()
         .then(function (user) {
-            if (!user)
+            if (!user) {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
             else
                 return Model.Favourite.findOne({ hash: hash }).exec();
         })
         .then(function (favourite) {
-            if (!favourite)
+            if (!favourite) {
                 res.json({ success: false, message: 'Invalid document requested' });
+                return Promise.reject('Error');
+            }
             else {
                 favourite.news.title = title;
                 favourite.news.summary = summary;
@@ -182,7 +193,7 @@ router.patch('/edit_favourite', function (req, res) {
             });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
@@ -203,8 +214,10 @@ router.delete('/delete_favourite', function (req, res) {
 
     Model.User.findOne({ username: username }).exec()
         .then(function (user) {
-            if (!user)
+            if (!user) {
                 res.json({ success: false, message: 'Invalid token user requested' });
+                return Promise.reject('Error');
+            }
             else
                 return Model.Favourite.findOneAndRemove({ hash: hash }).exec();
         })
@@ -219,7 +232,7 @@ router.delete('/delete_favourite', function (req, res) {
                 });
         })
         .catch(function (err) {
-            if (err) {
+            if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
                     success: false,
