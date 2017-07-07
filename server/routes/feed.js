@@ -118,7 +118,7 @@ router.get('/feed_news', function (req, res) {
                 return Promise.reject('Error');
             }
             else
-                return Model.FeedNews.find({ feedHash: hash }).exec();
+                return Model.FeedNews.find({ feedHash: hash }).sort({ date: -1 }).exec();
         })
         .then(function (feedNews) {
             res.json({ success: true, message: 'Feed successfully retrieved', news: feedNews });

@@ -77,7 +77,7 @@ router.get('/all_feed_news', function (req, res) {
                     feedHash: {
                         $in: user.feeds
                     }
-                });
+                }).sort({ date: -1 }).exec();
             }
         })
         .then(function (news) {

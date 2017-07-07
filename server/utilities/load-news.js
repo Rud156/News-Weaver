@@ -1,6 +1,8 @@
 var FeedParser = require('feedparser');
 var request = require('request');
 var cheerio = require('cheerio');
+var crypto = require('crypto');
+var moment = require('moment');
 
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -18,10 +20,11 @@ db.on('disconnected', function () {
 
 var Model = require('./../models/model');
 
-var minutes = 0.1;
-var interval = minutes * 60 * 1000;
+var minutes = 1;
+const interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;
+const maxNewsPerFeed = 470;
 
 function getDataBases() {
     return Model.FeedSchema.find({}).exec()
@@ -83,35 +86,93 @@ function runAll() {
     getDataBases()
         .then(function (feeds) {
             if (feeds) {
-                /*jshint loopfunc: true */
-                for (let i = 0; i < feeds.length; i++)
-                    getFeedResults(feeds[i].feedURL, feeds[i].hash, function (data) {
-                        dataReceivedCount++;
+                /* jshint loopfunc: true */
+                for (let j = 0; j < feeds.length; j++)
+                    getFeedResults(feeds[j].feedURL, feeds[j].hash, feeds[j].category,
+                        function (data) {
+                            dataReceivedCount++;
 
-                        // var hash = data.hash;
-                        // console.log(hash);
-                        // var title = data.feed[0].title;
-                        // var description = data.feed[0].description;
-                        // var URL = data.feed[0].link;
-                        // var summary = data.feed[0].summary;
-                        // var date = moment(data.feed[0].pubDate).utc().toDate();
-                        // var category = data.category;
-                        // var image = '';
-                        // let $ = cheerio.load(data.feed[0].description);
-                        // image = $('img').attr('src');
-                        // if (!image)
-                        //     image = 'http://localhost:3000/place-holder.png';
+                            console.log('Feed length: ', data.feed.length);
+                            var feedHash = data.hash;
+                            var slicedNews;
+                            Model.FeedNews.find({ feedHash: feedHash }).sort({ date: -1 }).exec()
+                                .then(function (news) {
+                                    slicedNews = news.slice(0, maxNewsPerFeed);
+                                    return Model.FeedNews.remove({ feedHash: feedHash }).exec();
+                                })
+                                .then(function () {
+                                    var mappedArray = slicedNews.map(function (element) {
+                                        return {
+                                            hash: element.hash,
+                                            feedHash: element.feedHash,
+                                            title: element.title,
+                                            description: element.description,
+                                            image: element.image,
+                                            URL: element.URL,
+                                            summary: element.summary,
+                                            date: element.date,
+                                            category: element.category
+                                        };
+                                    });
+                                    var resultDictionary = {};
+                                    console.log('Length of mapped array: ', mappedArray.length);
+                                    for (let i = 0; i < mappedArray.length; i++)
+                                        resultDictionary[mappedArray[i].hash] = mappedArray[i];
+                                    for (let i = 0; i < data.feed.length; i++) {
+                                        let title = data.feed[i].title;
+                                        let description = data.feed[i].description;
+                                        let URL = data.feed[i].link;
+                                        let summary = data.feed[i].summary;
+                                        let category = data.category;
+                                        var date = moment(data.feed[i].pubDate).utc().toDate();
+                                        var image = '';
+                                        let $ = cheerio.load(data.feed[i].description);
+                                        image = $('img').attr('src');
+                                        if (!image)
+                                            image = 'http://localhost:3000/place-holder.png';
 
-                        // var feeds = data.feed;
-                        // Model.FeedNews.find({})
-                        // TODO: Complete this function
+
+                                        let hash = crypto.
+                                            createHash('sha256').update(title + description + URL).digest('hex');
+
+                                        if (!(hash in resultDictionary))
+                                            resultDictionary[hash] = {
+                                                hash: hash,
+                                                feedHash: feedHash,
+                                                title: title,
+                                                description: description,
+                                                URL: URL,
+                                                summary: summary,
+                                                category: category,
+                                                image: image,
+                                                date: date
+                                            };
+                                    }
+
+                                    let finalValues = Object.values(resultDictionary);
+                                    console.log(finalValues.length);
+                                    let promiseArray = [];
+                                    for (let i = 0; i < finalValues.length; i++) {
+                                        promiseArray.
+                                            push(new Model.FeedNews(finalValues[i]).save());
+                                    }
+                                    return Promise.all(promiseArray);
+                                })
+                                .then(function () {
+                                    console.log('Current Set Of News Saved');
+                                })
+                                .catch(function (err) {
+                                    if (err) {
+                                        console.log(err);
+                                    }
+                                });
 
 
-                        if (dataReceivedCount === maxDataToReceive) {
-                            dataReceivedCount = 0;
-                            setTimeout(runAll, interval);
-                        }
-                    });
+                            if (dataReceivedCount === maxDataToReceive) {
+                                dataReceivedCount = 0;
+                                setTimeout(runAll, interval);
+                            }
+                        });
 
             }
         })
