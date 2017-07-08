@@ -3,6 +3,7 @@ var router = express.Router();
 
 var Model = require('./../models/model');
 var crypto = require('crypto');
+var moment = require('moment');
 
 var utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
@@ -94,6 +95,32 @@ router.get('/all_feed_news', function (req, res) {
         });
 });
 
+router.get('/favourites', function (req, res) {
+    var username = req.decoded._doc.username;
+
+    if (!username || typeof username !== 'string')
+        return res.json({ success: false, message: 'Invalid token user requested' });
+
+    username = username.toLowerCase();
+    Model.Favourite.find({ username: username }).sort({ date: -1 }).exec()
+        .then(function (favourites) {
+            res.json({
+                success: true,
+                message: 'Successfully found all favourites',
+                favourites: favourites
+            });
+        })
+        .catch(function (err) {
+            if (err) {
+                console.log(err);
+                res.status(500).json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+            }
+        });
+});
+
 router.post('/save_favourite', function (req, res) {
     var feedNews = req.body.feedNews;
     var username = req.decoded._doc.username;
@@ -105,8 +132,7 @@ router.post('/save_favourite', function (req, res) {
     username = username.toLowerCase();
 
     try {
-        hash = crypto.createHash('sha256').
-            update(feedNews.title + feedNews.news + feedNews.siteURL + username).digest('hex');
+        hash = crypto.createHash('sha256').update(feedNews.title + username).digest('hex');
     } catch (error) {
         console.log(error);
         return res.json({ success: false, message: 'Invalid news format' });
@@ -118,6 +144,15 @@ router.post('/save_favourite', function (req, res) {
                 res.json({ success: false, message: 'Invalid token user requested' });
                 return Promise.reject('Error');
             }
+        })
+        .then(function () {
+            return Model.Favourite.findOne({ hash: hash }).exec();
+        })
+        .then(function (favourite) {
+            if (favourite) {
+                res.json({ success: false, message: 'News already added to favourites' });
+                return Promise.reject('Error');
+            }
             else
                 return username;
         })
@@ -125,7 +160,13 @@ router.post('/save_favourite', function (req, res) {
             return Model.Favourite({
                 hash: hash,
                 username: username,
-                news: feedNews
+                title: feedNews.title,
+                description: feedNews.description,
+                image: feedNews.image,
+                URL: feedNews.URL,
+                summary: feedNews.summary,
+                category: feedNews.category,
+                date: moment(feedNews.date).utc().toDate()
             });
         })
         .then(function (news) {
@@ -179,9 +220,9 @@ router.patch('/edit_favourite', function (req, res) {
                 return Promise.reject('Error');
             }
             else {
-                favourite.news.title = title;
-                favourite.news.summary = summary;
-                favourite.news.image = image;
+                favourite.title = title;
+                favourite.summary = summary;
+                favourite.image = image;
                 return favourite.save();
             }
         })

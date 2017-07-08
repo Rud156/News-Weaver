@@ -3,13 +3,13 @@
         <el-row :gutter="20" style="margin: 0">
             <el-col :span="24" style="margin-bottom: 21px">
                 <h1>
-                    <span id="logo-text" style="font-family: 'Playball', cursive; font-size: 45px">
+                    <span id="logo-text" style="font-family: 'Signika', sans-serif; font-size: 45px">
                         News Weaver
                     </span>
                 </h1>
             </el-col>
             <el-col :xs="24" :sm="24" :md="12" :lg="12">
-                <el-row :gutter="20" style="font-family: 'Playball', cursive; font-size: 40px">
+                <el-row :gutter="20" style="font-family: 'Signika', sans-serif; font-size: 40px">
                     <el-col :span="24" style="padding: 14px 0">
                         An RSS Reader for the Web
                     </el-col>
@@ -39,7 +39,7 @@
                                 <el-input v-model="user.username" required></el-input>
                             </el-form-item>
                             <el-form-item label="Password:">
-                                <el-input v-model="user.password" required></el-input>
+                                <el-input v-model="user.password" type="password" required></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="loginUser">
@@ -54,10 +54,10 @@
                                 <el-input v-model="user.username" required></el-input>
                             </el-form-item>
                             <el-form-item label="Password:">
-                                <el-input v-model="user.password" required></el-input>
+                                <el-input v-model="user.password" type="password" required></el-input>
                             </el-form-item>
                             <el-form-item label="Re Password:">
-                                <el-input v-model="user.rePassword" required></el-input>
+                                <el-input v-model="user.rePassword" type="password" required></el-input>
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="registerUser">
@@ -69,7 +69,7 @@
                 </el-tabs>
             </el-col>
             <el-col>
-                <h1 style="padding-top: 21px; font-family: 'Playball', cursive; font-size: 40px">
+                <h1 style="padding-top: 21px; font-family: 'Signika', sans-serif; font-size: 40px">
                     Keep all your news in a single place. Simple and easy to read.
                 </h1>
             </el-col>

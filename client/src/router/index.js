@@ -5,6 +5,7 @@ import Home from '@/components/Home';
 import Dashboard from '@/components/Dashboard';
 import All from '@/components/All';
 import Sources from '@/components/Sources';
+import Favourites from '@/components/Favourites';
 
 Vue.use(Router);
 
@@ -30,6 +31,11 @@ export default new Router({
                     path: 'sources',
                     name: 'sources',
                     component: Sources
+                },
+                {
+                    path: 'favourites',
+                    name: 'favourites',
+                    component: Favourites
                 }
             ]
         },

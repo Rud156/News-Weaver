@@ -94,19 +94,18 @@ var Favourite = mongoose.Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
-    news: {
-        title: String,
-        description: String,
-        image: String,
-        URL: String,
-        summary: String,
-        date: Date,
-        category: [
-            String
-        ]
-    }
+    title: String,
+    description: String,
+    image: String,
+    URL: String,
+    summary: String,
+    date: Date,
+    category: [
+        String
+    ]
 });
 
 var createHash = function (password) {

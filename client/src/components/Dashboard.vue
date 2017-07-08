@@ -10,7 +10,7 @@
         <vodal :show="$store.state.displayLoader" :closeButton="false" :width="50" :height="60" @hide="toggleLoader">
             <loader></loader>
         </vodal>
-        <div style="margin-top: 14px; font-family: 'Playball', cursive">
+        <div style="margin-top: 14px; font-family: 'Signika', sans-serif">
             <span v-for=" nav in navigation " :key="nav " style="cursor: pointer; padding: 0 21px " :style="[nav === currentNav? { color: '#20a0ff' } : { color: 'black' }] "
                 @click="changeView(nav) ">{{ nav | capitalize }}</span>
         </div>
@@ -54,7 +54,7 @@
                         this.$router.push({ path: '/' });
                         break;
                     default:
-                        this.$router.push({ path: '/dashboard/all/News_items' });
+                        this.$router.push({ path: '/dashboard/all/news_items' });
                         break;
                 }
             },

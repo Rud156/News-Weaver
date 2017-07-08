@@ -108,9 +108,9 @@ router.get('/feed_news', function (req, res) {
 
     username = username.toLowerCase();
 
-    Model.FeedSchema.find({ hash: hash, user: { $in: [username] } }).exec()
+    Model.FeedSchema.find({ hash: hash, users: { $in: [username] } }).exec()
         .then(function (feed) {
-            if (feed.count() < 1) {
+            if (feed.length < 1) {
                 res.json({
                     success: false,
                     message: 'You don\'t seem to have the feed in your list. Try something else'
@@ -153,32 +153,6 @@ router.get('/feed_source', function (req, res) {
             }
             else
                 res.json({ success: true, message: 'Feed details', feed: feed[0] });
-        })
-        .catch(function (err) {
-            if (err) {
-                console.log(err);
-                res.status(500).json({
-                    success: false,
-                    message: 'Something happened at our end. Check back after sometime'
-                });
-            }
-        });
-});
-
-router.get('/news', function (req, res) {
-    var username = req.decoded._doc.username;
-    var hash = req.query.hash;
-
-    if (!username || !hash || typeof username !== 'string' || typeof hash !== 'string')
-        return res.json({ success: false, message: 'Invalid fields requested' });
-
-    username = username.toLowerCase();
-    Model.FeedNews.findOne({ hash: hash }).exec()
-        .then(function (news) {
-            if (news)
-                res.json({ success: true, message: 'News successfully found', news: news });
-            else
-                res.json({ success: false, message: 'No matching news was found' });
         })
         .catch(function (err) {
             if (err) {

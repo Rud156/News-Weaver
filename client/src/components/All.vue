@@ -57,7 +57,7 @@
                         feedURL = `http://localhost:3000/user/all_feed_news?token=${token}`;
                         break;
                     default:
-                        feedURL = `http://localhost:3000/user/news?token=${token}&hash=${this.id}`;
+                        feedURL = `http://localhost:3000/user/feed_news?token=${token}&hash=${this.id}`;
                         break;
                 }
 
@@ -75,9 +75,38 @@
                         this.handleError(error);
                     });
             },
-            addNewsToFavourite(hash) {
-                console.log(hash);
-                // TODO: Implement this function
+            addNewsToFavourite(news) {
+                var URL = news.URL;
+                var category = news.category;
+                var date = news.date;
+                var description = news.description;
+                var image = news.image;
+                var summary = news.summary;
+                var title = news.title;
+
+                var feedNews = {
+                    URL: URL,
+                    title: title,
+                    description: description,
+                    image: image,
+                    category: category,
+                    summary: summary,
+                    date: date
+                };
+
+                axios.post(`http://localhost:3000/user/save_favourite?token=${this.getToken()}`,
+                    {
+                        feedNews: feedNews
+                    })
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((data) => {
+                        this.displayMessage(data.message);
+                    })
+                    .catch((err) => {
+                        this.handleError(err);
+                    });
             },
             handleError(error) {
                 console.log(error);
