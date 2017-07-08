@@ -23,6 +23,7 @@ import 'vodal/flip.css';
 import store from './store';
 import './assets/index.css';
 import './assets/loader.css';
+import './assets/masonry.css';
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
@@ -33,7 +34,7 @@ router.beforeEach((to, from, next) => {
 
     if (to.path === '/') {
         if (window.localStorage.getItem('user') !== null)
-            router.push({ path: 'dashboard/all/news_items' });
+            router.push({ path: 'dashboard/all/all_news' });
         else
             next();
     }

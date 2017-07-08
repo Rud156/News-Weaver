@@ -20,7 +20,7 @@ db.on('disconnected', function () {
 
 var Model = require('./../models/model');
 
-var minutes = 1;
+var minutes = 10;
 const interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;
@@ -129,11 +129,35 @@ function runAll() {
                                         let $ = cheerio.load(data.feed[i].description);
                                         image = $('img').attr('src');
                                         if (!image)
-                                            image = 'http://localhost:3000/place-holder.png';
+                                            image = 'http://localhost:3000/images/place-holder.png';
+                                        else {
+                                            let startIndex = description.indexOf('img') - 1;
+                                            let endIndex = startIndex + 1;
+                                            for (let k = startIndex; k < description.length; k++)
+                                                if (description[k] === '>') {
+                                                    endIndex = k;
+                                                    break;
+                                                }
+                                            let array = description.split('');
+                                            array.splice(startIndex, endIndex - startIndex + 1);
+                                            description = array.join('');
+
+                                            startIndex = summary.indexOf('img') - 1;
+                                            endIndex = startIndex + 1;
+                                            for (let k = startIndex; k < summary.length; k++)
+                                                if (summary[k] === '>') {
+                                                    endIndex = k;
+                                                    break;
+                                                }
+                                            array = summary.split('');
+                                            array.splice(startIndex, endIndex - startIndex + 1);
+                                            summary = array.join('');
+                                        }
 
 
                                         let hash = crypto.
-                                            createHash('sha256').update(title + description + URL).digest('hex');
+                                            createHash('sha256').
+                                            update(title + description + URL).digest('hex');
 
                                         if (!(hash in resultDictionary))
                                             resultDictionary[hash] = {

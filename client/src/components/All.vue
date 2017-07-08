@@ -8,7 +8,9 @@
             </div>
         </el-card>
         <div v-else>
-            <!-- TODO: Implement the else part to show the feeds -->
+            <el-row :gutter="20" style="padding: 21px; margin: 0">
+                <news-card v-for="news in allNews" :key="news.hash" :news="news" :favourite="addNewsToFavourite"></news-card>
+            </el-row>
         </div>
     </div>
 </template>
@@ -16,12 +18,16 @@
 <script>
     import axios from 'axios';
     import { mapGetters, mapMutations } from 'vuex';
+    import newsCard from './sub-components/NewsCard.vue';
 
     export default {
         props: {
             id: {
                 type: String
             }
+        },
+        components: {
+            newsCard
         },
         data() {
             return {
@@ -47,7 +53,7 @@
                 var token = this.getToken();
                 var feedURL = '';
                 switch (this.id) {
-                    case 'news_items':
+                    case 'all_news':
                         feedURL = `http://localhost:3000/user/all_feed_news?token=${token}`;
                         break;
                     default:
@@ -68,6 +74,10 @@
                     .catch((error) => {
                         this.handleError(error);
                     });
+            },
+            addNewsToFavourite(hash) {
+                console.log(hash);
+                // TODO: Implement this function
             },
             handleError(error) {
                 console.log(error);

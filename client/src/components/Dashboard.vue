@@ -62,7 +62,7 @@
                 switch (viewName) {
                     case 'all':
                         this.currentNav = viewName;
-                        this.$router.push({ path: '/dashboard/all/news_items' });
+                        this.$router.push({ path: '/dashboard/all/all_news' });
                         break;
 
                     default:

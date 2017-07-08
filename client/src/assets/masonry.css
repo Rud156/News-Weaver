@@ -1,0 +1,40 @@
+/* Start of custom masonry layout */
+
+.masonry {
+    column-gap: 1em;
+    -moz-column-gap: 1em;
+    -webkit-column-gap: 1em;
+}
+
+.masonry-item {
+    display: inline-block;
+    margin: 0 0 1em;
+    width: 100%;
+}
+
+@media only screen and (min-width: 400px) {
+    .masonry {
+        column-count: 1;
+        -moz-column-count: 1;
+        -webkit-column-count: 1;
+    }
+}
+
+@media only screen and (min-width: 700px) {
+    .masonry {
+        column-count: 4;
+        -moz-column-count: 4;
+        -webkit-column-count: 4;
+    }
+}
+
+@media only screen and (min-width: 2680px) {
+    .masonry {
+        column-count: 6;
+        -moz-column-count: 6;
+        -webkit-column-count: 6;
+    }
+}
+
+
+/*End of custom masonry layout */
