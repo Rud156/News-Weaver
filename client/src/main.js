@@ -18,7 +18,7 @@ Vue.component('icon', Icon);
 import Vodal from 'vodal';
 Vue.component(Vodal.name, Vodal);
 import 'vodal/common.css';
-import 'vodal/flip.css';
+import 'vodal/rotate.css';
 
 import store from './store';
 import './assets/index.css';

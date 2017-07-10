@@ -1,5 +1,8 @@
 <template>
     <div style="width: 100%; min-height: 100%">
+        <vodal :show="showModal" animation="rotate" @hide="hideModal">
+            <!-- TODO: Implement This Modal -->
+        </vodal>
         <el-card v-if="favourites.length <= 0" style="max-width: 480px; margin: 0 auto">
             <div slot="header" class="clearfix" style="text-align: center">
                 <icon name="bell-o" scale="5"></icon>
@@ -9,7 +12,7 @@
         </el-card>
         <div v-else>
             <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <news-card v-for="fav in favourites" :key="fav.hash" :news="fav" :delete-news="deleteFavourite"></news-card>
+                <news-card v-for="fav in favourites" :key="fav.hash" :news="fav" :delete-news="deleteFavourite" :edit-news="editFavourite"></news-card>
             </el-row>
         </div>
     </div>
@@ -23,7 +26,9 @@
     export default {
         data() {
             return {
-                favourites: []
+                favourites: [],
+                showModal: false,
+                editableNews: null
             };
         },
         components: {
@@ -73,6 +78,48 @@
                     .catch((error) => {
                         this.handleError(error);
                     });
+            },
+            saveEditedFavourite() {
+                var title = this.editableNews.title;
+                var image = this.editableNews.image;
+                var summary = this.editableNews.summary;
+                var hash = this.editableNews.hash;
+
+                axios.patch(`http://localhost:3000/user/edit_favourite?token=${this.getToken()}`, {
+                    title: title,
+                    image: image,
+                    summary: summary,
+                    hash: hash
+                })
+                    .then((response) => {
+                        return response.data;
+                    })
+                    .then((data) => {
+                        if (data.success) {
+                            for (let i = 0; i < this.favourites.length; i++) {
+                                if (this.favourites[i].hash === hash) {
+                                    this.favourites[i].title = title;
+                                    this.favourites[i].summary = summary;
+                                    this.favourites[i].image = image;
+                                    break;
+                                }
+                            }
+                        }
+                        else
+                            this.displayMessage(data.message);
+                    })
+                    .catch((error) => {
+                        this.handleError(error);
+                    });
+            },
+            editFavourite(news) {
+                console.log(news);
+                this.editableNews = news;
+                this.showModal = true;
+            },
+            hideModal() {
+                this.editableNews = null;
+                this.showModal = false;
             },
             handleError(error) {
                 console.log(error);

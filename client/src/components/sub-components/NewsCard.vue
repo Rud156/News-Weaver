@@ -14,10 +14,20 @@
                         <icon name="star"></icon>
                         Favourite
                     </div>
-                    <div class="custom-button" style="margin-top: 7px" @click="deleteNews(news.hash)" v-if="deleteNews">
-                        <icon name="trash"></icon>
-                        Delete
-                    </div>
+                    <el-row>
+                        <el-col :span="12">
+                            <div class="custom-button" style="margin-top: 7px" @click="deleteNews(news.hash)" v-if="deleteNews">
+                                <icon name="trash"></icon>
+                                Delete
+                            </div>
+                        </el-col>
+                        <el-col :span="12">
+                            <div class="custom-button" style="margin-top: 7px" @click="editNews(news)" v-if="editNews">
+                                <icon name="pencil"></icon>
+                                Edit
+                            </div>
+                        </el-col>
+                    </el-row>
                 </el-col>
                 <el-col :xs="24" :sm="24" :md="18" :lg="18">
                     <h4 style="font-family: 'Questrial', sans-serif; font-size: 21px">
@@ -48,6 +58,9 @@
                 type: Function
             },
             deleteNews: {
+                type: Function
+            },
+            editNews: {
                 type: Function
             }
         },
