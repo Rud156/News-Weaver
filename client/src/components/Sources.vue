@@ -28,7 +28,7 @@
             <el-col :xs="24" :sm="12" :md="6" :lg="6" v-for="source in sources" :key="source.hash">
                 <feed :feed="source" :delete-feed="deleteFeed" :view-feed="viewFeed"></feed>
             </el-col>
-            <el-col :xs="24" :sm="12" :md="6" :lg="4">
+            <el-col :xs="24" :sm="12" :md="6" :lg="6">
                 <el-card>
                     <div slot="header">
                         <span>Add A New Feed Source</span>

@@ -16,6 +16,14 @@ a {
     cursor: pointer;
 }
 
+.dashboard-link-default {
+    color: black;
+}
+
+.dashboard-link-active {
+    color: #20a0ff;
+}
+
 .custom-button {
     padding: 7px;
     border-radius: 7px;

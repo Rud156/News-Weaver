@@ -11,8 +11,12 @@
             <loader></loader>
         </vodal>
         <div style="margin-top: 14px; font-family: 'Signika', sans-serif">
-            <span v-for=" nav in navigation " :key="nav " style="cursor: pointer; padding: 0 21px " :style="[nav === currentNav? { color: '#20a0ff' } : { color: 'black' }] "
-                @click="changeView(nav) ">{{ nav | capitalize }}</span>
+            <router-link :to="'/dashboard/all/all_news'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
+                All
+            </router-link>
+            <router-link :to="'/dashboard/' + nav" v-for="nav in navigation" :key="nav " style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
+                {{ nav | capitalize }}
+            </router-link>
         </div>
         <br />
         <transition name="fade">
@@ -30,7 +34,7 @@
     export default {
         data() {
             return {
-                navigation: ['all', 'sources', 'favourites', 'settings'],
+                navigation: ['sources', 'favourites', 'settings'],
                 currentNav: this.$route.path.split('/')[2]
             };
         },
@@ -55,19 +59,6 @@
                         break;
                     default:
                         this.$router.push({ path: '/dashboard/all/news_items' });
-                        break;
-                }
-            },
-            changeView(viewName) {
-                switch (viewName) {
-                    case 'all':
-                        this.currentNav = viewName;
-                        this.$router.push({ path: '/dashboard/all/all_news' });
-                        break;
-
-                    default:
-                        this.currentNav = viewName;
-                        this.$router.push({ path: `/dashboard/${viewName}` });
                         break;
                 }
             }
