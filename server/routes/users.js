@@ -23,9 +23,14 @@ router.post('/login', function (req, res) {
                             if (!isMatch)
                                 res.json({ success: false, message: 'User authentication failed' });
                             else {
-                                var token = jwt.sign(user, config.secret, {
-                                    expiresIn: '7d'
-                                });
+                                var token = jwt.sign({
+                                    _doc: {
+                                        username: user.username
+                                    }
+                                },
+                                    config.secret, {
+                                        expiresIn: '7d'
+                                    });
                                 res.json({ success: true, token: token });
                             }
                         });

@@ -16,7 +16,7 @@
         </div>
         <br />
         <transition name="fade">
-            <router-view></router-view>
+            <router-view @validation-failed="handleSelect"></router-view>
         </transition>
     </div>
 </template>

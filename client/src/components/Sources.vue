@@ -131,7 +131,7 @@
                     this.displayMessage('Please enter a category');
                     return;
                 }
-                
+
                 if (!this.feedObject.description)
                     this.feedObject.description = this.feedObject.title;
                 var feed = {
@@ -187,6 +187,8 @@
                     });
             },
             handleError(error) {
+                if (error.response.status === 403)
+                    this.$emit('validation-failed', 'logout');
                 console.log(error);
                 this.openModal('Something went wrong. Please try again');
             },

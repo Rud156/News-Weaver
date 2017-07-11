@@ -137,6 +137,8 @@
                 this.showModal = false;
             },
             handleError(error) {
+                if (error.response.status === 403)
+                    this.$emit('validation-failed', 'logout');
                 console.log(error);
                 this.openModal('Something went wrong. Please try again');
             },
