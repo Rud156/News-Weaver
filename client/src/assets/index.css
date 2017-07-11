@@ -1,3 +1,21 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+    cursor: default;
+}
+
+a {
+    text-decoration: none;
+    color: #fe4a49;
+    cursor: pointer;
+}
+
 .custom-button {
     padding: 7px;
     border-radius: 7px;
@@ -11,4 +29,43 @@
 
 .custom-button:active {
     color: white;
+}
+
+.el-tabs__item.is-active {
+    color: #fe4a49 !important;
+}
+
+.el-tabs__active-bar {
+    background-color: #fe4a49 !important;
+}
+
+.el-tabs__item {
+    color: white !important;
+}
+
+.el-tabs__item:hover {
+    color: lightblue !important;
+}
+
+.el-menu-item {
+    font-size: 25px !important;
+    font-family: 'Signika', sans-serif;
+}
+
+.font-style {
+    font-size: 25px;
+}
+
+.el-textarea__inner {
+    resize: none !important;
+}
+
+@media only screen and (max-width: 600px) {
+    .font-style {
+        font-size: 20px;
+    }
+
+    .brand-logo {
+        display: none;
+    }
 }

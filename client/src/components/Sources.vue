@@ -131,6 +131,9 @@
                     this.displayMessage('Please enter a category');
                     return;
                 }
+                
+                if (!this.feedObject.description)
+                    this.feedObject.description = this.feedObject.title;
                 var feed = {
                     title: this.feedObject.title,
                     description: this.feedObject.description,

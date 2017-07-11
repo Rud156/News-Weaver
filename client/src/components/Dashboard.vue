@@ -1,7 +1,7 @@
 <template>
-    <div style="width: 100%; min-height: 100%; font-size: 25px">
+    <div style="width: 100%; min-height: 100%;" class="font-style">
         <el-menu mode="horizontal" @select="handleSelect" :default-active="'dashboard'">
-            <el-menu-item index="logo" style="font-size: 30px">News Weaver</el-menu-item>
+            <el-menu-item index="logo" style="font-size: 30px" class="brand-logo">News Weaver</el-menu-item>
             <el-menu-item index="logout" style="float: right">Logout</el-menu-item>
             <el-menu-item index="dashboard" style="float: right">
                 {{formatUsername()}}'s Dashboard
@@ -15,7 +15,7 @@
                 @click="changeView(nav) ">{{ nav | capitalize }}</span>
         </div>
         <br />
-        <transition name="fade ">
+        <transition name="fade">
             <router-view></router-view>
         </transition>
     </div>

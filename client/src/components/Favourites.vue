@@ -1,7 +1,23 @@
 <template>
     <div style="width: 100%; min-height: 100%">
-        <vodal :show="showModal" animation="rotate" @hide="hideModal">
-            <!-- TODO: Implement This Modal -->
+        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="270">
+            <h4 style="margin: 7px 0">Edit Feed Details:</h4>
+            <el-form v-if="editableNews" label-width="120px">
+                <el-form-item label="Title">
+                    <el-input v-model="editableNews.title"></el-input>
+                </el-form-item>
+                <el-form-item label="Image URL">
+                    <el-input v-model="editableNews.image" type="url"></el-input>
+                </el-form-item>
+                <el-form-item label="Summary">
+                    <el-input type="textarea" v-model="editableNews.summary"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="saveEditedFavourite" icon="check" style="float: right">
+                        Save
+                    </el-button>
+                </el-form-item>
+            </el-form>
         </vodal>
         <el-card v-if="favourites.length <= 0" style="max-width: 480px; margin: 0 auto">
             <div slot="header" class="clearfix" style="text-align: center">
@@ -72,8 +88,7 @@
                             });
                             this.favourites = updatedFavourites;
                         }
-                        else
-                            this.displayMessage(data.message);
+                        this.displayMessage(data.message);
                     })
                     .catch((error) => {
                         this.handleError(error);
@@ -87,7 +102,7 @@
 
                 axios.patch(`http://localhost:3000/user/edit_favourite?token=${this.getToken()}`, {
                     title: title,
-                    image: image,
+                    imageURL: image,
                     summary: summary,
                     hash: hash
                 })
@@ -105,8 +120,8 @@
                                 }
                             }
                         }
-                        else
-                            this.displayMessage(data.message);
+                        this.displayMessage(data.message);
+                        this.hideModal();
                     })
                     .catch((error) => {
                         this.handleError(error);

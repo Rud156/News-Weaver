@@ -34,13 +34,23 @@
             <el-col :xs="24" :sm="24" :md="12" :lg="12">
                 <el-tabs>
                     <el-tab-pane label="Login">
-                        <el-form label-width="120px" style="padding: 20px 50px">
-                            <el-form-item label="Username:">
-                                <el-input v-model="user.username" required></el-input>
-                            </el-form-item>
-                            <el-form-item label="Password:">
-                                <el-input v-model="user.password" type="password" required></el-input>
-                            </el-form-item>
+                        <el-form label-width="120px" style="padding: 20px">
+                            <el-row style="margin: 14px 0">
+                                <el-col :span="6">
+                                    <div style="float: left; margin-top: 7px">Username:</div>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input v-model="user.username" required></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row style="margin: 14px 0">
+                                <el-col :span="6">
+                                    <div style="float: left; margin-top: 7px">Password:</div>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input v-model="user.password" type="password" required></el-input>
+                                </el-col>
+                            </el-row>
                             <el-form-item>
                                 <el-button type="primary" @click="loginUser">
                                     Login
@@ -49,16 +59,31 @@
                         </el-form>
                     </el-tab-pane>
                     <el-tab-pane label="Register">
-                        <el-form label-width="120px" style="padding: 20px 50px">
-                            <el-form-item label="Username:">
-                                <el-input v-model="user.username" required></el-input>
-                            </el-form-item>
-                            <el-form-item label="Password:">
-                                <el-input v-model="user.password" type="password" required></el-input>
-                            </el-form-item>
-                            <el-form-item label="Re Password:">
-                                <el-input v-model="user.rePassword" type="password" required></el-input>
-                            </el-form-item>
+                        <el-form label-width="120px" style="padding: 20px">
+                            <el-row style="margin: 14px 0">
+                                <el-col :span="6">
+                                    <div style="float: left; margin-top: 7px">Username:</div>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input v-model="user.username" required></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row style="margin: 14px 0">
+                                <el-col :span="6">
+                                    <div style="float: left; margin-top: 7px">Password:</div>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input v-model="user.password" type="password" required></el-input>
+                                </el-col>
+                            </el-row>
+                            <el-row style="margin: 14px 0">
+                                <el-col :span="6">
+                                    <div style="float: left; margin-top: 7px">Re Password:</div>
+                                </el-col>
+                                <el-col :span="18">
+                                    <el-input v-model="user.rePassword" type="password" required></el-input>
+                                </el-col>
+                            </el-row>
                             <el-form-item>
                                 <el-button type="primary" @click="registerUser">
                                     Register
