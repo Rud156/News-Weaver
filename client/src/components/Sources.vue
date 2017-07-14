@@ -18,18 +18,16 @@
                         {{feedObject.description | truncate(25)}}
                     </el-col>
                     <el-col :span="24">
-                        <el-input placeholder="Enter the category..." v-model="category"></el-input>
                         <el-button @click="saveFeed" type="primary" icon="star-on" style="margin-top: 14px;">Save Feed</el-button>
                     </el-col>
                 </el-row>
             </div>
         </vodal>
         <el-row :gutter="20" style="padding: 21px; margin: 0">
-            <el-col :xs="24" :sm="12" :md="6" :lg="6" v-for="source in sources" :key="source.hash">
-                <feed :feed="source" :delete-feed="deleteFeed" :view-feed="viewFeed"></feed>
-            </el-col>
-            <el-col :xs="24" :sm="12" :md="6" :lg="6">
-                <el-card>
+            <div class="masonry">
+                <feed class="masonry-item" :feed="source" :delete-feed="deleteFeed" :view-feed="viewFeed" v-for="source in sources" :key="source.hash"></feed>
+
+                <el-card class="masonry-item">
                     <div slot="header">
                         <span>Add A New Feed Source</span>
                     </div>
@@ -37,7 +35,7 @@
                         <el-button type="success" icon="plus" @click="displayModal = true">Add Source</el-button>
                     </div>
                 </el-card>
-            </el-col>
+            </div>
         </el-row>
     </div>
 </template>
@@ -48,14 +46,16 @@
     import Feed from './sub-components/Feed.vue';
 
     export default {
+        components: {
+            Feed
+        },
         data() {
             return {
                 sources: [],
                 feedURL: '',
                 height: 95,
                 displayModal: false,
-                feedObject: null,
-                category: ''
+                feedObject: null
             };
         },
         mounted() {
@@ -72,7 +72,6 @@
             closeModal() {
                 this.displayModal = false;
                 this.feedURL = '';
-                this.category = '';
                 this.feedObject = null;
                 this.height = 95;
             },
@@ -113,9 +112,10 @@
 
                             if (data.success) {
                                 this.feedObject = data.feedDetails;
-                                this.height = 300;
+                                this.height = 270;
                             }
                             else {
+                                this.closeModal();
                                 this.displayMessage(data.message);
                             }
                         })
@@ -125,13 +125,6 @@
                 }
             },
             saveFeed() {
-                var category = this.category;
-                if (category.trim() === '') {
-                    this.displayModal = false;
-                    this.displayMessage('Please enter a category');
-                    return;
-                }
-
                 if (!this.feedObject.description)
                     this.feedObject.description = this.feedObject.title;
                 var feed = {
@@ -139,7 +132,6 @@
                     description: this.feedObject.description,
                     siteURL: this.feedObject.siteURL,
                     feedURL: this.feedObject.feedURL,
-                    category: this.category,
                     favicon: this.feedObject.favicon
                 };
 
@@ -195,9 +187,6 @@
             displayMessage(message) {
                 this.openModal(message);
             }
-        },
-        components: {
-            Feed
         }
     };
 

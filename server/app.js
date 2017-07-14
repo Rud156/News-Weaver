@@ -1,3 +1,9 @@
+var childProcess = require('child_process');
+var loadDatabase = childProcess.fork('./utilities/load-news.js');
+loadDatabase.on('close', function (code) {
+    console.log('Child process exited with code ' + code);
+});
+
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');

@@ -16,6 +16,11 @@ a {
     cursor: pointer;
 }
 
+.item {
+    width: 250px;
+    margin: 14px;
+}
+
 .dashboard-link-default {
     color: black;
 }

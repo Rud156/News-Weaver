@@ -12,6 +12,8 @@ router.use(utility.checkAuthentication);
 
 
 router.get('/get_feed', function (req, res) {
+    let errorOccurred = false;
+
     var feedURL = req.query.url;
     var feedParser = new FeedParser();
     if (feedURL.trim() === '') {
@@ -20,8 +22,10 @@ router.get('/get_feed', function (req, res) {
 
     var request = requestModule(feedURL);
     request.on('error', function (error) {
+        errorOccurred = true;
+        console.log('Request Error');
         console.log(error);
-        res.status(500).json({
+        res.json({
             success: false,
             message: 'Unable to fetch the request URL. Please try again.'
         });
@@ -36,11 +40,14 @@ router.get('/get_feed', function (req, res) {
 
     var feedResult = [];
     feedParser.on('error', function (error) {
+        errorOccurred = true;
+        console.log('Feed Parser Error');
         console.log(error);
-        res.status(500).json({
+        res.json({
             success: false,
             message: 'Invalid feed stream'
         });
+
     });
     feedParser.on('readable', function () {
         var stream = this;
@@ -49,54 +56,31 @@ router.get('/get_feed', function (req, res) {
             feedResult.push(item);
     });
     feedParser.on('end', function () {
-        var storyLink = url.parse(feedResult[0].link);
-        var siteURL = storyLink.protocol + '//' + storyLink.hostname;
-        var siteTitle = feedResult[0].meta.title;
-        var siteDescription = feedResult[0].meta.description;
-        var favicon = 'http://www.google.com/s2/favicons?domain=' + siteURL;
+        if (errorOccurred)
+            return;
 
-        res.json({
-            success: true,
-            feedDetails: {
-                feedURL: feedURL,
-                siteURL: siteURL,
-                title: siteTitle,
-                description: siteDescription,
-                favicon: favicon
-            }
-        });
+        try {
+            var storyLink = url.parse(feedResult[0].link);
+            var siteURL = storyLink.protocol + '//' + storyLink.hostname;
+            var siteTitle = feedResult[0].meta.title;
+            var siteDescription = feedResult[0].meta.description;
+            var favicon = 'http://www.google.com/s2/favicons?domain=' + siteURL;
+
+            res.json({
+                success: true,
+                feedDetails: {
+                    feedURL: feedURL,
+                    siteURL: siteURL,
+                    title: siteTitle,
+                    description: siteDescription,
+                    favicon: favicon
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            res.json({ success: false, message: 'Invalid feed body. Unable to parse' });
+        }
     });
-});
-
-router.get('/feed_news_category', function (req, res) {
-    var username = req.decoded._doc.username;
-    var category = req.query.category;
-
-    if (!username || !category || typeof username !== 'string' || typeof category !== 'string')
-        return res.json({ success: false, message: 'Invalid fields requested' });
-
-    username = username.toLowerCase();
-    Model.User.findOne({ username: username }).exec()
-        .then(function (user) {
-            if (!user) {
-                res.json({ success: false, message: 'Invalid token user requested' });
-                return Promise.reject('Error');
-            }
-            else
-                return Model.FeedNews.find({ category: category }).exec();
-        })
-        .then(function (news) {
-            res.json({ success: true, message: 'Found matching news', news: news });
-        })
-        .catch(function (err) {
-            if (err !== 'Error' && err) {
-                console.log(err);
-                res.status(500).json({
-                    success: false,
-                    message: 'Something happened at our end. Check back after sometime'
-                });
-            }
-        });
 });
 
 router.get('/feed_news', function (req, res) {
@@ -167,15 +151,14 @@ router.get('/feed_source', function (req, res) {
 
 router.post('/save_feed', function (req, res) {
     var username = req.decoded._doc.username;
-    var category = req.body.category;
     var title = req.body.title;
     var description = req.body.description;
     var favicon = req.body.favicon;
     var feedURL = req.body.feedURL;
     var siteURL = req.body.siteURL;
 
-    if (!username || !category || !title || !description || !favicon || !feedURL || !siteURL ||
-        typeof username !== 'string' || typeof category !== 'string' || typeof title !== 'string' ||
+    if (!username || !title || !description || !favicon || !feedURL || !siteURL ||
+        typeof username !== 'string' || typeof title !== 'string' ||
         typeof description !== 'string' || typeof favicon !== 'string' ||
         typeof feedURL !== 'string' || typeof siteURL !== 'string')
         return res.json({ success: false, message: 'Invalid fields entered' });
@@ -215,7 +198,6 @@ router.post('/save_feed', function (req, res) {
                     favicon: favicon,
                     URL: siteURL,
                     feedURL: feedURL,
-                    category: category,
                     users: [username]
                 }).save();
             }

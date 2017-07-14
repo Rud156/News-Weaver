@@ -40,11 +40,6 @@ var FeedSchema = mongoose.Schema({
     feedURL: {
         type: String,
         required: true
-    },
-    category: {
-        type: String,
-        required: true,
-        default: 'Unknown'
     }
 });
 

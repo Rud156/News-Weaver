@@ -27,10 +27,9 @@ import './assets/masonry.css';
 
 import VueLazyload from 'vue-lazyload';
 Vue.use(VueLazyload, {
-    preload: 1.3,
     error: 'http://localhost:3000/images/place-holder.png',
     loading: 'http://localhost:3000/images/place-holder.png',
-    attempt: 3,
+    attempt: 1,
     lazyComponent: true
 });
 

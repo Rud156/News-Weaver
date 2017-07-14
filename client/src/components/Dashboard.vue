@@ -34,14 +34,8 @@
     export default {
         data() {
             return {
-                navigation: ['sources', 'favourites', 'settings'],
-                currentNav: this.$route.path.split('/')[2]
+                navigation: ['sources', 'favourites']
             };
-        },
-        watch: {
-            '$route'(to, from) {
-                this.currentNav = to.path.split('/')[2];
-            }
         },
         methods: {
             ...mapMutations([

@@ -5,6 +5,8 @@ var jwt = require('jsonwebtoken');
 var config = require('./../models/config');
 var Model = require('./../models/model');
 
+var utility = require('./../utilities/utilities');
+
 router.post('/login', function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
