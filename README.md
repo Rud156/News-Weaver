@@ -1,9 +1,9 @@
 # ![Image](./client/static/NewsWeaver.png)  News-Weaver
 > A simple web based RSS Aggregator
 <br />
-> A work in progress
+A work in progress
 <br />
-> Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
+Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
 
 ![Homepage](./client/static/Homepage.png)
 
