@@ -5,7 +5,7 @@
 <br />
 > Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
 
-[Homepage](./client/static/Homepage.png)
+![Homepage](./client/static/Homepage.png)
 
 ## TODO:
 * Improve UI
