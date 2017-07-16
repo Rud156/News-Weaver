@@ -11,6 +11,7 @@
 * Improve UI
 * Infinite Scroll
 * Improve Animations
+* Add Badges For Unread News
 
 ## Made With:
 * [Express JS](https://expressjs.com)
