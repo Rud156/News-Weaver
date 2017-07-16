@@ -1,4 +1,4 @@
-# [Image](./client/static/NewsWeaver.png)  News-Weaver
+# ![Image](./client/static/NewsWeaver.png)  News-Weaver
 > A simple web based RSS Aggregator
 <br />
 > A work in progress
