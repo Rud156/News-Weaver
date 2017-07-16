@@ -3,21 +3,6 @@ var request = require('request');
 var cheerio = require('cheerio');
 var crypto = require('crypto');
 var moment = require('moment');
-
-var mongoose = require('mongoose');
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/NewsWeaver');
-var db = mongoose.connection;
-db.on('error', function (err) {
-    console.log(err);
-});
-db.on('connected', function () {
-    console.log('Successfully Connected');
-});
-db.on('disconnected', function () {
-    console.log('Database Disconnected');
-});
-
 var Model = require('./../models/model');
 
 var minutes = 10;
@@ -205,4 +190,4 @@ function runAll() {
         });
 }
 
-runAll();
+module.exports = runAll;

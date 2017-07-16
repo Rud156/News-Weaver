@@ -104,7 +104,7 @@
 
 
 <script>
-    import { mapMutations } from 'vuex';
+    import { mapMutations, mapGetters } from 'vuex';
     import axios from 'axios';
 
     export default {
@@ -119,8 +119,10 @@
         },
         methods: {
             ...mapMutations([
-                'openModal',
                 'setUser'
+            ]),
+            ...mapGetters([
+                'getBaseURL'
             ]),
             loginUser() {
                 var username = this.user.username;
@@ -130,7 +132,7 @@
                     return;
                 }
 
-                axios.post('http://localhost:3000/auth/login', {
+                axios.post(`${this.getBaseURL()}/auth/login`, {
                     username: username,
                     password: password
                 })
@@ -158,7 +160,7 @@
                     return;
                 }
 
-                axios.post('http://localhost:3000/auth/register', {
+                axios.post(`${this.getBaseURL()}/auth/register`, {
                     username: username,
                     password: password,
                     rePassword: rePassword
@@ -180,10 +182,18 @@
             },
             handleError(error) {
                 console.log(error);
-                this.openModal('Something went wrong. Please try again');
+                this.$notify({
+                    type: 'error',
+                    title: 'Error',
+                    message: 'Something went wrong. Please try again'
+                });
             },
             displayMessage(message) {
-                this.openModal(message);
+                this.$notify({
+                    type: 'info',
+                    title: 'Info',
+                    message: message
+                });
             }
         }
     };

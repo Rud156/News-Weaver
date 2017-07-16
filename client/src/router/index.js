@@ -36,6 +36,10 @@ export default new Router({
                     path: 'favourites',
                     name: 'favourites',
                     component: Favourites
+                },
+                {
+                    path: '*',
+                    redirect: '/dashboard/all/all_news'
                 }
             ]
         },
@@ -43,5 +47,8 @@ export default new Router({
             path: '*',
             redirect: '/'
         }
-    ]
+    ],
+    scrollBehavior() {
+        return { x: 0, y: 0 };
+    }
 });

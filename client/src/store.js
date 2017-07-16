@@ -7,10 +7,10 @@ const store = new Vuex.Store({
     state: {
         username: '',
         token: '',
-        infoMessage: '',
-        showModal: false,
         displayLoader: false,
-        feedIndexCount: 0
+        feedIndexCount: 0,
+        baseServerURL: 'http://localhost:3000'
+        // baseServerURL: 'https://news-weaver.herokuapp.com'
     },
     getters: {
         formatUsername(state) {
@@ -26,6 +26,9 @@ const store = new Vuex.Store({
         },
         getFeedIndexCount(state) {
             return state.feedIndexCount;
+        },
+        getBaseURL(state) {
+            return state.baseServerURL;
         }
     },
     mutations: {
@@ -44,14 +47,6 @@ const store = new Vuex.Store({
             state.username = '';
             state.token = '';
             window.localStorage.removeItem('user');
-        },
-        openModal(state, message) {
-            state.showModal = true;
-            state.infoMessage = message;
-        },
-        closeModal(state) {
-            state.infoMessage = '';
-            state.showModal = false;
         },
         toggleLoader(state) {
             state.displayLoader = !state.displayLoader;

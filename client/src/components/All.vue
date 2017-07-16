@@ -49,10 +49,10 @@
         methods: {
             ...mapGetters([
                 'getToken',
-                'getFeedIndexCount'
+                'getFeedIndexCount',
+                'getBaseURL'
             ]),
             ...mapMutations([
-                'openModal',
                 'incrementFeedIndex',
                 'resetFeedIndexCount'
             ]),
@@ -63,10 +63,10 @@
 
                 switch (this.id) {
                     case 'all_news':
-                        feedURL = `http://localhost:3000/user/all_feed_news?token=${token}&index=${this.getFeedIndexCount()}`;
+                        feedURL = `${this.getBaseURL()}/user/all_feed_news?token=${token}&index=${this.getFeedIndexCount()}`;
                         break;
                     default:
-                        feedURL = `http://localhost:3000/user/feed_news?token=${token}&hash=${this.id}&index=${this.getFeedIndexCount()}`;
+                        feedURL = `${this.getBaseURL()}/user/feed_news?token=${token}&hash=${this.id}&index=${this.getFeedIndexCount()}`;
                         break;
                 }
 
@@ -111,7 +111,7 @@
                     date: date
                 };
 
-                axios.post(`http://localhost:3000/user/save_favourite?token=${this.getToken()}`,
+                axios.post(`${this.getBaseURL()}/user/save_favourite?token=${this.getToken()}`,
                     {
                         feedNews: feedNews
                     })
@@ -126,13 +126,28 @@
                     });
             },
             handleError(error) {
-                if (error.response.status === 403)
+                if (error.response.status === 403) {
                     this.$emit('validation-failed', 'logout');
+                    this.$notify({
+                        type: 'warning',
+                        title: 'Warning',
+                        message: 'Please login again'
+                    });
+                    return;
+                }
                 console.log(error);
-                this.openModal('Something went wrong. Please try again');
+                this.$notify({
+                    type: 'error',
+                    title: 'Error',
+                    message: 'Something went wrong. Please try again'
+                });
             },
             displayMessage(message) {
-                this.openModal(message);
+                this.$notify({
+                    type: 'info',
+                    title: 'Info',
+                    message: message
+                });
             }
         }
     };

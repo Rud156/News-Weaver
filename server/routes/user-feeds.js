@@ -168,17 +168,23 @@ router.post('/save_favourite', function (req, res) {
                 return username;
         })
         .then(function (username) {
-            return Model.Favourite({
-                hash: hash,
-                username: username,
-                title: feedNews.title,
-                description: feedNews.description,
-                image: feedNews.image,
-                URL: feedNews.URL,
-                summary: feedNews.summary,
-                category: feedNews.category,
-                date: moment(feedNews.date).utc().toDate()
-            });
+            try {
+                return Model.Favourite({
+                    hash: hash,
+                    username: username,
+                    title: feedNews.title,
+                    description: feedNews.description,
+                    image: feedNews.image,
+                    URL: feedNews.URL,
+                    summary: feedNews.summary,
+                    category: feedNews.category,
+                    date: moment(feedNews.date).utc().toDate()
+                });
+            }
+            catch (error) {
+                console.log(error);
+                return Promise.reject('Error');
+            }
         })
         .then(function (news) {
             return news.save();

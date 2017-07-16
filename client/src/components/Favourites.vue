@@ -55,13 +55,11 @@
         },
         methods: {
             ...mapGetters([
-                'getToken'
-            ]),
-            ...mapMutations([
-                'openModal'
+                'getToken',
+                'getBaseURL'
             ]),
             fetchAllFavourites() {
-                axios.get(`http://localhost:3000/user/favourites?token=${this.getToken()}`)
+                axios.get(`${this.getBaseURL()}/user/favourites?token=${this.getToken()}`)
                     .then((response) => {
                         return response.data;
                     })
@@ -76,7 +74,7 @@
                     });
             },
             deleteFavourite(hash) {
-                axios.delete(`http://localhost:3000/user/delete_favourite?token=${this.getToken()}&hash=${hash}`)
+                axios.delete(`${this.getBaseURL()}/user/delete_favourite?token=${this.getToken()}&hash=${hash}`)
                     .then((response) => {
                         return response.data;
                     })
@@ -100,7 +98,7 @@
                 var summary = this.editableNews.summary;
                 var hash = this.editableNews.hash;
 
-                axios.patch(`http://localhost:3000/user/edit_favourite?token=${this.getToken()}`, {
+                axios.patch(`${this.getBaseURL()}/user/edit_favourite?token=${this.getToken()}`, {
                     title: title,
                     imageURL: image,
                     summary: summary,
@@ -128,7 +126,6 @@
                     });
             },
             editFavourite(news) {
-                console.log(news);
                 this.editableNews = news;
                 this.showModal = true;
             },
@@ -137,13 +134,28 @@
                 this.showModal = false;
             },
             handleError(error) {
-                if (error.response.status === 403)
+                if (error.response.status === 403) {
                     this.$emit('validation-failed', 'logout');
+                    this.$notify({
+                        type: 'warning',
+                        title: 'Warning',
+                        message: 'Please login again'
+                    });
+                    return;
+                }
                 console.log(error);
-                this.openModal('Something went wrong. Please try again');
+                this.$notify({
+                    type: 'error',
+                    title: 'Error',
+                    message: 'Something went wrong. Please try again'
+                });
             },
             displayMessage(message) {
-                this.openModal(message);
+                this.$notify({
+                    type: 'info',
+                    title: 'Info',
+                    message: message
+                });
             }
         }
     };

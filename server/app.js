@@ -1,8 +1,4 @@
-var childProcess = require('child_process');
-var loadDatabase = childProcess.fork('./utilities/load-news.js');
-loadDatabase.on('close', function (code) {
-    console.log('Child process exited with code ' + code);
-});
+var loadDatabase = require('./utilities/load-news');
 
 var express = require('express');
 var path = require('path');
@@ -15,6 +11,7 @@ var config = require('./models/config');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
+// mongoose.connect('mongodb://rud156:1234@ds032887.mlab.com:32887/news-weaver');
 var db = mongoose.connection;
 db.on('error', function (err) {
     console.log(err);
@@ -25,6 +22,7 @@ db.on('connected', function () {
 db.on('disconnected', function () {
     console.log('Database Disconnected');
 });
+loadDatabase();
 
 var index = require('./routes/index');
 var users = require('./routes/users');

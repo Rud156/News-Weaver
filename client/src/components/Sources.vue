@@ -43,10 +43,10 @@
         },
         methods: {
             ...mapGetters([
-                'getToken'
+                'getToken',
+                'getBaseURL'
             ]),
             ...mapMutations([
-                'openModal',
                 'toggleLoader'
             ]),
             closeModal() {
@@ -55,7 +55,7 @@
                 this.height = 95;
             },
             getAllSources() {
-                axios.get(`http://localhost:3000/user/all_feed_sources?token=${this.getToken()}`)
+                axios.get(`${this.getBaseURL()}/user/all_feed_sources?token=${this.getToken()}`)
                     .then((response) => {
                         return response.data;
                     })
@@ -81,7 +81,7 @@
                     this.toggleLoader();
                     this.closeModal();
 
-                    axios.get(`http://localhost:3000/user/get_feed?url=${URL}&token=${this.getToken()}`)
+                    axios.get(`${this.getBaseURL()}/user/get_feed?url=${URL}&token=${this.getToken()}`)
                         .then((response) => {
                             return response.data;
                         })
@@ -115,7 +115,7 @@
                 };
 
                 this.closeModal();
-                axios.post(`http://localhost:3000/user/save_feed?token=${this.getToken()}`, feed)
+                axios.post(`${this.getBaseURL()}/user/save_feed?token=${this.getToken()}`, feed)
                     .then((response) => {
                         return response.data;
                     })
@@ -138,7 +138,7 @@
             },
             deleteFeed(feed) {
                 var hash = feed.hash;
-                axios.delete(`http://localhost:3000/user/delete_feed?token=${this.getToken()}&hash=${hash}`)
+                axios.delete(`${this.getBaseURL()}/user/delete_feed?token=${this.getToken()}&hash=${hash}`)
                     .then((response) => {
                         return response.data;
                     })
@@ -158,13 +158,28 @@
                     });
             },
             handleError(error) {
-                if (error.response.status === 403)
+                if (error.response.status === 403) {
                     this.$emit('validation-failed', 'logout');
+                    this.$notify({
+                        type: 'warning',
+                        title: 'Warning',
+                        message: 'Please login again'
+                    });
+                    return;
+                }
                 console.log(error);
-                this.openModal('Something went wrong. Please try again');
+                this.$notify({
+                    type: 'error',
+                    title: 'Error',
+                    message: 'Something went wrong. Please try again'
+                });
             },
             displayMessage(message) {
-                this.openModal(message);
+                this.$notify({
+                    type: 'info',
+                    title: 'Info',
+                    message: message
+                });
             }
         }
     };
