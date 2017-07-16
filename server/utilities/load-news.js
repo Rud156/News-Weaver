@@ -3,9 +3,10 @@ var request = require('request');
 var cheerio = require('cheerio');
 var crypto = require('crypto');
 var moment = require('moment');
+
 var Model = require('./../models/model');
 
-var minutes = 10;
+var minutes = 5;
 const interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;
