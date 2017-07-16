@@ -86,9 +86,19 @@ router.get('/get_feed', function (req, res) {
 router.get('/feed_news', function (req, res) {
     var username = req.decoded._doc.username;
     var hash = req.query.hash;
+    var index = req.query.index;
 
-    if (!hash || typeof hash !== 'string' || !username || typeof username !== 'string')
+    if (!hash || typeof hash !== 'string' || !username || typeof username !== 'string' ||
+        !index || typeof index !== 'string')
         return res.json({ success: false, message: 'Invalid feed provided' });
+
+    try {
+        index = parseInt(index);
+    }
+    catch (error) {
+        console.log(error);
+        return res.json({ success: false, message: 'Index is not a number. Invalid value' });
+    }
 
     username = username.toLowerCase();
 
@@ -105,6 +115,7 @@ router.get('/feed_news', function (req, res) {
                 return Model.FeedNews.find({ feedHash: hash }).sort({ date: -1 }).exec();
         })
         .then(function (feedNews) {
+            feedNews = feedNews.slice(index * 15, index * 15 + 15);
             res.json({ success: true, message: 'Feed successfully retrieved', news: feedNews });
         })
         .catch(function (err) {

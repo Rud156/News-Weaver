@@ -62,8 +62,18 @@ router.get('/all_feed_sources', function (req, res) {
 
 router.get('/all_feed_news', function (req, res) {
     var username = req.decoded._doc.username;
-    if (!username || typeof username !== 'string')
+    var index = req.query.index;
+
+    if (!username || typeof username !== 'string' || !index || typeof index !== 'string')
         return res.json({ success: false, message: 'Invalid credentials format' });
+
+    try {
+        index = parseInt(index);
+    }
+    catch (error) {
+        console.log(error);
+        return res.json({ success: false, message: 'Index is not a number. Invalid value' });
+    }
 
     username = username.toLowerCase();
 
@@ -82,6 +92,7 @@ router.get('/all_feed_news', function (req, res) {
             }
         })
         .then(function (news) {
+            news = news.slice(index * 15, index * 15 + 15);
             res.json({ success: true, message: 'Found all matching feed news', news: news });
         })
         .catch(function (err) {

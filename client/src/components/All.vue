@@ -11,6 +11,7 @@
             <el-row :gutter="20" style="padding: 21px; margin: 0">
                 <news-card v-for="news in allNews" :key="news.hash" :news="news" :favourite="addNewsToFavourite"></news-card>
             </el-row>
+            <el-button @click="loadFeeds" style="margin-bottom: 14px" :loading="loading">Load More</el-button>
         </div>
     </div>
 </template>
@@ -31,33 +32,41 @@
         },
         data() {
             return {
-                allNews: []
+                allNews: [],
+                loading: false
             };
         },
         watch: {
             '$route'(to, from) {
-                this.loadAllFeeds();
+                this.resetFeedIndexCount();
+                this.loadFeeds();
             }
         },
         mounted() {
-            this.loadAllFeeds();
+            this.resetFeedIndexCount();
+            this.loadFeeds();
         },
         methods: {
             ...mapGetters([
-                'getToken'
+                'getToken',
+                'getFeedIndexCount'
             ]),
             ...mapMutations([
-                'openModal'
+                'openModal',
+                'incrementFeedIndex',
+                'resetFeedIndexCount'
             ]),
-            loadAllFeeds() {
+            loadFeeds() {
                 var token = this.getToken();
                 var feedURL = '';
+                this.loading = true;
+
                 switch (this.id) {
                     case 'all_news':
-                        feedURL = `http://localhost:3000/user/all_feed_news?token=${token}`;
+                        feedURL = `http://localhost:3000/user/all_feed_news?token=${token}&index=${this.getFeedIndexCount()}`;
                         break;
                     default:
-                        feedURL = `http://localhost:3000/user/feed_news?token=${token}&hash=${this.id}`;
+                        feedURL = `http://localhost:3000/user/feed_news?token=${token}&hash=${this.id}&index=${this.getFeedIndexCount()}`;
                         break;
                 }
 
@@ -66,8 +75,16 @@
                         return response.data;
                     })
                     .then((data) => {
-                        if (data.success)
-                            this.allNews = data.news;
+                        this.loading = false;
+
+                        if (data.success) {
+                            if (this.getFeedIndexCount() === 0)
+                                this.allNews = data.news;
+                            else
+                                this.allNews.push(...data.news);
+
+                            this.incrementFeedIndex();
+                        }
                         else
                             this.displayMessage(data.message);
                     })

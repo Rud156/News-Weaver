@@ -25,14 +25,6 @@ import './assets/index.css';
 import './assets/loader.css';
 import './assets/masonry.css';
 
-import VueLazyload from 'vue-lazyload';
-Vue.use(VueLazyload, {
-    error: 'http://localhost:3000/images/place-holder.png',
-    loading: 'http://localhost:3000/images/place-holder.png',
-    attempt: 1,
-    lazyComponent: true
-});
-
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 

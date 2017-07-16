@@ -9,7 +9,8 @@ const store = new Vuex.Store({
         token: '',
         infoMessage: '',
         showModal: false,
-        displayLoader: false
+        displayLoader: false,
+        feedIndexCount: 0
     },
     getters: {
         formatUsername(state) {
@@ -22,6 +23,9 @@ const store = new Vuex.Store({
         },
         getToken(state) {
             return state.token;
+        },
+        getFeedIndexCount(state) {
+            return state.feedIndexCount;
         }
     },
     mutations: {
@@ -29,6 +33,12 @@ const store = new Vuex.Store({
             state.username = user.username;
             state.token = user.token;
             window.localStorage.setItem('user', JSON.stringify(user));
+        },
+        incrementFeedIndex(state) {
+            state.feedIndexCount++;
+        },
+        resetFeedIndexCount(state) {
+            state.feedIndexCount = 0;
         },
         removeUser(state) {
             state.username = '';
@@ -44,7 +54,7 @@ const store = new Vuex.Store({
             state.showModal = false;
         },
         toggleLoader(state) {
-            state.displayLoader = !state.displayLoader;   
+            state.displayLoader = !state.displayLoader;
         }
     }
 });
