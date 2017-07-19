@@ -25,6 +25,11 @@ import './assets/index.css';
 import './assets/loader.css';
 import './assets/masonry.css';
 
+import moment from 'moment';
+Vue.filter('ago', date => {
+    return moment(date).fromNow();
+});
+
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 

@@ -3,7 +3,7 @@
         <el-card style="margin: 14px">
             <el-row :gutter="20">
                 <el-col :xs="24" :sm="24" :md="6" :lg="6">
-                        <img :src="news.image" width="100%" />
+                    <img :src="news.image" width="100%" onerror="this.onerror = null; this.src = 'http://localhost:3000/images/place-holder.png'" />
                     <div style="margin-top: 14px">
                         <a :href="news.URL" target="_blank" class="custom-button" style="color: #2ab7ca">
                             <icon name="external-link-square"></icon>
@@ -46,8 +46,6 @@
 </template>
 
 <script>
-    import moment from 'moment';
-
     export default {
         props: {
             news: {
@@ -63,12 +61,7 @@
             editNews: {
                 type: Function
             }
-        },
-        filters: {
-            ago(date) {
-                return moment(date).fromNow();
-            }
-        },
+        }
     };
 
 </script>

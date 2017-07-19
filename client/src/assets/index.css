@@ -44,6 +44,20 @@ a {
     color: white;
 }
 
+.custom-padding {
+    padding: 0 20px;
+}
+
+.page-fixed-component {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    background-color: lightblue;
+    padding: 14px;
+    border-radius: 100%;
+    cursor: pointer;
+}
+
 .el-tabs__item.is-active {
     color: #fe4a49 !important;
 }
@@ -80,5 +94,9 @@ a {
 
     .brand-logo {
         display: none;
+    }
+
+    .custom-padding {
+        padding: 0;
     }
 }

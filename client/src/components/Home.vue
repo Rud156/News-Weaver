@@ -34,7 +34,7 @@
             <el-col :xs="24" :sm="24" :md="12" :lg="12">
                 <el-tabs>
                     <el-tab-pane label="Login">
-                        <el-form label-width="120px" style="padding: 20px">
+                        <el-form label-width="120px" class="custom-padding">
                             <el-row style="margin: 14px 0">
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
@@ -51,15 +51,17 @@
                                     <el-input v-model="user.password" type="password" required></el-input>
                                 </el-col>
                             </el-row>
-                            <el-form-item>
-                                <el-button type="primary" @click="loginUser">
-                                    Login
-                                </el-button>
-                            </el-form-item>
+                            <el-row>
+                                <el-col :span="24">
+                                    <el-button type="primary" @click="loginUser">
+                                        Login
+                                    </el-button>
+                                </el-col>
+                            </el-row>
                         </el-form>
                     </el-tab-pane>
                     <el-tab-pane label="Register">
-                        <el-form label-width="120px" style="padding: 20px">
+                        <el-form label-width="120px" class="custom-padding">
                             <el-row style="margin: 14px 0">
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
@@ -84,11 +86,13 @@
                                     <el-input v-model="user.rePassword" type="password" required></el-input>
                                 </el-col>
                             </el-row>
-                            <el-form-item>
-                                <el-button type="primary" @click="registerUser">
-                                    Register
-                                </el-button>
-                            </el-form-item>
+                            <el-row>
+                                <el-col>
+                                    <el-button type="primary" @click="registerUser">
+                                        Register
+                                    </el-button>
+                                </el-col>
+                            </el-row>
                         </el-form>
                     </el-tab-pane>
                 </el-tabs>
