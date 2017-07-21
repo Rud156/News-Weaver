@@ -4,7 +4,7 @@
             <el-menu-item index="logo" style="font-size: 30px" class="brand-logo">News Weaver</el-menu-item>
             <el-menu-item index="logout" style="float: right">Logout</el-menu-item>
             <el-menu-item index="dashboard" style="float: right">
-                {{formatUsername()}}'s Dashboard
+                Dashboard
             </el-menu-item>
         </el-menu>
         <vodal :show="$store.state.displayLoader" :closeButton="false" :width="50" :height="60" @hide="toggleLoader">
@@ -37,6 +37,9 @@
                 navigation: ['sources', 'favourites']
             };
         },
+        mounted(){
+            window.document.title = `${this.formatUsername()}'s Dashboard`;
+        },
         methods: {
             ...mapMutations([
                 'removeUser',
@@ -52,7 +55,7 @@
                         this.$router.push({ path: '/' });
                         break;
                     default:
-                        this.$router.push({ path: '/dashboard/all/news_items' });
+                        this.$router.push({ path: '/dashboard/all/all_news' });
                         break;
                 }
             }

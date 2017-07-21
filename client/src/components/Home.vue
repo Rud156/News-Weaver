@@ -121,6 +121,9 @@
                 }
             };
         },
+        mounted() {
+            window.document.title = 'News Weaver';
+        },
         methods: {
             ...mapMutations([
                 'setUser'
@@ -177,8 +180,6 @@
                             this.displayMessage("User registration successful. Please login to continue...");
                         else
                             this.displayMessage(data.message);
-
-
                     })
                     .catch((error) => {
                         this.handleError(error);
