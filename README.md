@@ -1,4 +1,4 @@
-# ![Image](./client/static/NewsWeaver.png)  News-Weaver
+ ## ![Image](./client/static/NewsWeaver.png)  News-Weaver
 > A simple web based RSS Aggregator
 #### A work in progress
 #### Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
@@ -11,7 +11,6 @@
 * Improve Animations
 * Add Badges For Unread News
 * Add A GoToTop Button
-* Fix Title To Display Current Page
 
 ## Made With:
 * [Express JS](https://expressjs.com)
