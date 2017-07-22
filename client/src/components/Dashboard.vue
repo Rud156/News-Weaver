@@ -14,7 +14,8 @@
             <router-link :to="'/dashboard/all/all_news'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
                 All
             </router-link>
-            <router-link :to="'/dashboard/' + nav" v-for="nav in navigation" :key="nav " style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
+            <router-link :to="'/dashboard/' + nav" v-for="nav in navigation" :key="nav " style="padding: 0 21px" active-class="dashboard-link-active"
+                class="dashboard-link-default">
                 {{ nav | capitalize }}
             </router-link>
         </div>
@@ -22,13 +23,13 @@
         <transition name="fade">
             <router-view @validation-failed="handleSelect"></router-view>
         </transition>
+        <i class="page-fixed-component el-icon-caret-top" onclick="document.getElementById('app').scrollIntoView();"></i>
     </div>
 </template>
 
 
 <script>
     import { mapMutations, mapGetters } from 'vuex';
-    import axios from 'axios';
     import Loader from './sub-components/Loader';
 
     export default {
@@ -37,7 +38,10 @@
                 navigation: ['sources', 'favourites']
             };
         },
-        mounted(){
+        components: {
+            Loader
+        },
+        mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
         },
         methods: {
@@ -59,9 +63,6 @@
                         break;
                 }
             }
-        },
-        components: {
-            Loader
         }
     };
 

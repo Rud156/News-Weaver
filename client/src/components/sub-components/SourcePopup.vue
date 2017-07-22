@@ -17,7 +17,7 @@
                     {{feedObject.description | truncate(25)}}
                 </el-col>
                 <el-col :span="24">
-                    <el-button @click="saveFeed" type="primary" icon="star-on" style="margin-top: 14px;">Save Feed</el-button>
+                    <el-button @click="saveFeedSource" type="primary" icon="star-on" style="margin-top: 14px;">Save Feed</el-button>
                 </el-col>
             </el-row>
         </div>
@@ -35,7 +35,7 @@
                 type: Function,
                 required: true
             },
-            saveFeed: {
+            saveFeedSource: {
                 type: Function,
                 required: true
             },

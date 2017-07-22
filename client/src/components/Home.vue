@@ -108,8 +108,8 @@
 
 
 <script>
-    import { mapMutations, mapGetters } from 'vuex';
-    import axios from 'axios';
+    import { mapMutations } from 'vuex';
+    import { handleError, displayMessage, loginUser, registerUser } from './../api/api.js';
 
     export default {
         data() {
@@ -128,9 +128,6 @@
             ...mapMutations([
                 'setUser'
             ]),
-            ...mapGetters([
-                'getBaseURL'
-            ]),
             loginUser() {
                 var username = this.user.username;
                 var password = this.user.password;
@@ -139,23 +136,14 @@
                     return;
                 }
 
-                axios.post(`${this.getBaseURL()}/auth/login`, {
-                    username: username,
-                    password: password
-                })
-                    .then((response) => {
-                        return response.data;
-                    })
+                loginUser({ username: username, password: password })
                     .then((data) => {
                         if (data.success) {
                             this.setUser({ username: username, token: data.token });
                             this.$router.push({ path: 'dashboard/all/all_news' });
                         }
                         else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                            handleError(null, data.message);
                     });
             },
             registerUser() {
@@ -167,38 +155,13 @@
                     return;
                 }
 
-                axios.post(`${this.getBaseURL()}/auth/register`, {
-                    username: username,
-                    password: password,
-                    rePassword: rePassword
-                })
-                    .then((response) => {
-                        return response.data;
-                    })
+                registerUser({ username: username, password: password, rePassword: rePassword })
                     .then((data) => {
                         if (data.success)
-                            this.displayMessage("User registration successful. Please login to continue...");
+                            displayMessage("User registration successful. Please login to continue...");
                         else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                            handleError(null, data.message);
                     });
-            },
-            handleError(error) {
-                console.log(error);
-                this.$notify({
-                    type: 'error',
-                    title: 'Error',
-                    message: 'Something went wrong. Please try again'
-                });
-            },
-            displayMessage(message) {
-                this.$notify({
-                    type: 'info',
-                    title: 'Info',
-                    message: message
-                });
             }
         }
     };

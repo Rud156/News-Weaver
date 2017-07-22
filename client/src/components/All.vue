@@ -17,8 +17,14 @@
 </template>
 
 <script>
-    import axios from 'axios';
     import { mapGetters, mapMutations } from 'vuex';
+
+    import {
+        displayMessage,
+        getAllFeeds,
+        getSpecificFeed,
+        addToFavourites
+    } from './../api/api.js';
     import newsCard from './sub-components/NewsCard.vue';
 
     export default {
@@ -48,106 +54,55 @@
         },
         methods: {
             ...mapGetters([
-                'getToken',
                 'getFeedIndexCount',
-                'getBaseURL'
             ]),
             ...mapMutations([
                 'incrementFeedIndex',
                 'resetFeedIndexCount'
             ]),
             loadFeeds() {
-                var token = this.getToken();
                 var feedURL = '';
                 this.loading = true;
 
                 switch (this.id) {
                     case 'all_news':
-                        feedURL = `${this.getBaseURL()}/user/all_feed_news?token=${token}&index=${this.getFeedIndexCount()}`;
+                        getAllFeeds(this.getFeedIndexCount())
+                            .then((data) => {
+                                this.loading = false;
+
+                                if (data.success) {
+                                    if (this.getFeedIndexCount() === 0)
+                                        this.allNews = data.news;
+                                    else
+                                        this.allNews.push(...data.news);
+
+                                    this.incrementFeedIndex();
+                                }
+                                else
+                                    displayMessage(data.message);
+                            });
                         break;
                     default:
-                        feedURL = `${this.getBaseURL()}/user/feed_news?token=${token}&hash=${this.id}&index=${this.getFeedIndexCount()}`;
+                        getSpecificFeed(this.getFeedIndexCount(), this.id)
+                            .then((data) => {
+                                this.loading = false;
+
+                                if (data.success) {
+                                    if (this.getFeedIndexCount() === 0)
+                                        this.allNews = data.news;
+                                    else
+                                        this.allNews.push(...data.news);
+
+                                    this.incrementFeedIndex();
+                                }
+                                else
+                                    displayMessage(data.message);
+                            });
                         break;
                 }
-
-                axios.get(feedURL)
-                    .then((response) => {
-                        return response.data;
-                    })
-                    .then((data) => {
-                        this.loading = false;
-
-                        if (data.success) {
-                            if (this.getFeedIndexCount() === 0)
-                                this.allNews = data.news;
-                            else
-                                this.allNews.push(...data.news);
-
-                            this.incrementFeedIndex();
-                        }
-                        else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
-                    });
             },
             addNewsToFavourite(news) {
-                var URL = news.URL;
-                var category = news.category;
-                var date = news.date;
-                var description = news.description;
-                var image = news.image;
-                var summary = news.summary;
-                var title = news.title;
-
-                var feedNews = {
-                    URL: URL,
-                    title: title,
-                    description: description,
-                    image: image,
-                    category: category,
-                    summary: summary,
-                    date: date
-                };
-
-                axios.post(`${this.getBaseURL()}/user/save_favourite?token=${this.getToken()}`,
-                    {
-                        feedNews: feedNews
-                    })
-                    .then((response) => {
-                        return response.data;
-                    })
-                    .then((data) => {
-                        this.displayMessage(data.message);
-                    })
-                    .catch((err) => {
-                        this.handleError(err);
-                    });
-            },
-            handleError(error) {
-                if (error.response.status === 403) {
-                    this.$emit('validation-failed', 'logout');
-                    this.$notify({
-                        type: 'warning',
-                        title: 'Warning',
-                        message: 'Please login again'
-                    });
-                    return;
-                }
-                console.log(error);
-                this.$notify({
-                    type: 'error',
-                    title: 'Error',
-                    message: 'Something went wrong. Please try again'
-                });
-            },
-            displayMessage(message) {
-                this.$notify({
-                    type: 'info',
-                    title: 'Info',
-                    message: message
-                });
+                addToFavourites(news);
             }
         }
     };

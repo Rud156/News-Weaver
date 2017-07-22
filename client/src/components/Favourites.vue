@@ -35,8 +35,12 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import { mapGetters, mapMutations } from 'vuex';
+    import {
+        displayMessage,
+        getAllFavourites,
+        deleteFavourite,
+        saveEditedFavourite
+    } from './../api/api.js';
     import newsCard from './sub-components/NewsCard.vue';
 
     export default {
@@ -54,30 +58,17 @@
             this.fetchAllFavourites();
         },
         methods: {
-            ...mapGetters([
-                'getToken',
-                'getBaseURL'
-            ]),
             fetchAllFavourites() {
-                axios.get(`${this.getBaseURL()}/user/favourites?token=${this.getToken()}`)
-                    .then((response) => {
-                        return response.data;
-                    })
+                getAllFavourites()
                     .then((data) => {
                         if (data.success)
                             this.favourites = data.favourites;
                         else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                            displayMessage(data.message);
                     });
             },
             deleteFavourite(hash) {
-                axios.delete(`${this.getBaseURL()}/user/delete_favourite?token=${this.getToken()}&hash=${hash}`)
-                    .then((response) => {
-                        return response.data;
-                    })
+                deleteFavourite(hash)
                     .then((data) => {
                         if (data.success) {
                             var updatedFavourites = this.favourites.filter((element) => {
@@ -86,10 +77,7 @@
                             });
                             this.favourites = updatedFavourites;
                         }
-                        this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                        displayMessage(data.message);
                     });
             },
             saveEditedFavourite() {
@@ -98,15 +86,7 @@
                 var summary = this.editableNews.summary;
                 var hash = this.editableNews.hash;
 
-                axios.patch(`${this.getBaseURL()}/user/edit_favourite?token=${this.getToken()}`, {
-                    title: title,
-                    imageURL: image,
-                    summary: summary,
-                    hash: hash
-                })
-                    .then((response) => {
-                        return response.data;
-                    })
+                saveEditedFavourite({ title: title, imageURL: image, summary: summary, hash: hash })
                     .then((data) => {
                         if (data.success) {
                             for (let i = 0; i < this.favourites.length; i++) {
@@ -118,11 +98,8 @@
                                 }
                             }
                         }
-                        this.displayMessage(data.message);
+                        displayMessage(data.message);
                         this.hideModal();
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
                     });
             },
             editFavourite(news) {
@@ -132,30 +109,6 @@
             hideModal() {
                 this.editableNews = null;
                 this.showModal = false;
-            },
-            handleError(error) {
-                if (error.response.status === 403) {
-                    this.$emit('validation-failed', 'logout');
-                    this.$notify({
-                        type: 'warning',
-                        title: 'Warning',
-                        message: 'Please login again'
-                    });
-                    return;
-                }
-                console.log(error);
-                this.$notify({
-                    type: 'error',
-                    title: 'Error',
-                    message: 'Something went wrong. Please try again'
-                });
-            },
-            displayMessage(message) {
-                this.$notify({
-                    type: 'info',
-                    title: 'Info',
-                    message: message
-                });
             }
         }
     };

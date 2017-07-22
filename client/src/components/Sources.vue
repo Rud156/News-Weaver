@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%; min-height: 100%;">
-        <source-popup :displayModal="displayModal" :closeModal="closeModal" :saveFeed="saveFeed" :submitURL="submitURL" :feedObject="feedObject"
-            :height="height"></source-popup>
+        <source-popup :displayModal="displayModal" :closeModal="closeModal" :saveFeedSource="saveFeedSource" :submitURL="submitURL"
+            :feedObject="feedObject" :height="height"></source-popup>
         <el-row :gutter="20" style="padding: 21px; margin: 0">
             <div class="masonry">
                 <el-card class="masonry-item">
@@ -20,8 +20,15 @@
 </template>
 
 <script>
-    import axios from 'axios';
-    import { mapGetters, mapMutations } from 'vuex';
+    import { mapMutations } from 'vuex';
+
+    import {
+        displayMessage,
+        getAllFeedSources,
+        fetchFeedSource,
+        saveFeedSource,
+        deleteFeedSource
+    } from './../api/api.js';
     import Feed from './sub-components/Feed.vue';
     import SourcePopup from './sub-components/SourcePopup.vue';
 
@@ -42,10 +49,6 @@
             this.getAllSources();
         },
         methods: {
-            ...mapGetters([
-                'getToken',
-                'getBaseURL'
-            ]),
             ...mapMutations([
                 'toggleLoader'
             ]),
@@ -55,19 +58,13 @@
                 this.height = 95;
             },
             getAllSources() {
-                axios.get(`${this.getBaseURL()}/user/all_feed_sources?token=${this.getToken()}`)
-                    .then((response) => {
-                        return response.data;
-                    })
+                getAllFeedSources()
                     .then((data) => {
                         if (data.success) {
                             this.sources = data.feeds;
                         }
                         else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                            displayMessage(data.message);
                     });
             },
             submitURL(feedURL) {
@@ -81,10 +78,7 @@
                     this.toggleLoader();
                     this.closeModal();
 
-                    axios.get(`${this.getBaseURL()}/user/get_feed?url=${URL}&token=${this.getToken()}`)
-                        .then((response) => {
-                            return response.data;
-                        })
+                    fetchFeedSource(URL)
                         .then((data) => {
                             this.displayModal = true;
                             this.toggleLoader();
@@ -95,18 +89,15 @@
                             }
                             else {
                                 this.closeModal();
-                                this.displayMessage(data.message);
+                                displayMessage(data.message);
                             }
-                        })
-                        .catch((error) => {
-                            this.handleError(error);
                         });
                 }
             },
-            saveFeed() {
+            saveFeedSource() {
                 if (!this.feedObject.description)
                     this.feedObject.description = this.feedObject.title;
-                var feed = {
+                var feedSource = {
                     title: this.feedObject.title,
                     description: this.feedObject.description,
                     siteURL: this.feedObject.siteURL,
@@ -115,10 +106,7 @@
                 };
 
                 this.closeModal();
-                axios.post(`${this.getBaseURL()}/user/save_feed?token=${this.getToken()}`, feed)
-                    .then((response) => {
-                        return response.data;
-                    })
+                saveFeedSource(feedSource)
                     .then((data) => {
                         if (data.success) {
                             this.sources.push(data.feed);
@@ -126,11 +114,7 @@
                         else {
                             this.displayMessage(data.message);
                         }
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
                     });
-
             },
             viewFeed(feed) {
                 var hash = feed.hash;
@@ -138,10 +122,7 @@
             },
             deleteFeed(feed) {
                 var hash = feed.hash;
-                axios.delete(`${this.getBaseURL()}/user/delete_feed?token=${this.getToken()}&hash=${hash}`)
-                    .then((response) => {
-                        return response.data;
-                    })
+                deleteFeedSource(hash)
                     .then((data) => {
                         if (data.success) {
                             var changedScource = this.sources.filter((source) => {
@@ -151,35 +132,8 @@
                             this.sources = changedScource;
                         }
                         else
-                            this.displayMessage(data.message);
-                    })
-                    .catch((error) => {
-                        this.handleError(error);
+                            displayMessage(data.message);
                     });
-            },
-            handleError(error) {
-                if (error.response.status === 403) {
-                    this.$emit('validation-failed', 'logout');
-                    this.$notify({
-                        type: 'warning',
-                        title: 'Warning',
-                        message: 'Please login again'
-                    });
-                    return;
-                }
-                console.log(error);
-                this.$notify({
-                    type: 'error',
-                    title: 'Error',
-                    message: 'Something went wrong. Please try again'
-                });
-            },
-            displayMessage(message) {
-                this.$notify({
-                    type: 'info',
-                    title: 'Info',
-                    message: message
-                });
             }
         }
     };

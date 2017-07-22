@@ -53,8 +53,11 @@ a {
     bottom: 50px;
     right: 50px;
     background-color: lightblue;
+    font-size: 30px;
     padding: 14px;
     border-radius: 100%;
+    opacity: 0.7;
+    color: white;
     cursor: pointer;
 }
 
@@ -98,5 +101,10 @@ a {
 
     .custom-padding {
         padding: 0;
+    }
+    
+    .page-fixed-component {
+        padding: 7px;
+        font-size: 20px;
     }
 }
