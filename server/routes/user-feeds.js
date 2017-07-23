@@ -212,11 +212,11 @@ router.patch('/edit_favourite', function (req, res) {
 
     var image = req.body.imageURL;
     var title = req.body.title;
-    var summary = req.body.summary;
+    var description = req.body.description;
     var hash = req.body.hash;
 
-    if (!username || !image || !title || !summary || !hash || typeof username !== 'string' ||
-        typeof image !== 'string' || typeof title !== 'string' || typeof summary !== 'string' ||
+    if (!username || !image || !title || !description || !hash || typeof username !== 'string' ||
+        typeof image !== 'string' || typeof title !== 'string' || typeof description !== 'string' ||
         typeof hash !== 'string')
         return res.json({ success: false, message: 'Invalid fields entered' });
 
@@ -238,7 +238,7 @@ router.patch('/edit_favourite', function (req, res) {
             }
             else {
                 favourite.title = title;
-                favourite.summary = summary;
+                favourite.description = description;
                 favourite.image = image;
                 return favourite.save();
             }

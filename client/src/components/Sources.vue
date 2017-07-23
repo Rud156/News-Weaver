@@ -111,9 +111,7 @@
                         if (data.success) {
                             this.sources.push(data.feed);
                         }
-                        else {
-                            this.displayMessage(data.message);
-                        }
+                        displayMessage(data.message);
                     });
             },
             viewFeed(feed) {
@@ -131,8 +129,7 @@
                             });
                             this.sources = changedScource;
                         }
-                        else
-                            displayMessage(data.message);
+                        displayMessage(data.message);
                     });
             }
         }

@@ -221,7 +221,7 @@ router.post('/save_feed', function (req, res) {
             }
         })
         .then(function (feed) {
-            res.json({ success: true, message: 'Feed updated successfully', feed: feed });
+            res.json({ success: true, message: 'Feed source added successfully', feed: feed });
         })
         .catch(function (err) {
             if (err !== 'Error' && err) {
@@ -288,7 +288,7 @@ router.delete('/delete_feed', function (req, res) {
             if (!feed)
                 return Model.FeedNews.remove({ feedHash: hash }).exec();
             else {
-                res.json({ success: true, message: 'Feed successfully removed' });
+                res.json({ success: true, message: 'Feed source successfully removed' });
                 return Promise.reject('Error');
             }
         })

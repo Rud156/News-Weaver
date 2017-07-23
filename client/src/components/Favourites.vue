@@ -10,7 +10,7 @@
                     <el-input v-model="editableNews.image" type="url"></el-input>
                 </el-form-item>
                 <el-form-item label="Summary">
-                    <el-input type="textarea" v-model="editableNews.summary"></el-input>
+                    <el-input type="textarea" v-model="editableNews.description"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="saveEditedFavourite" icon="check" style="float: right">
@@ -83,16 +83,16 @@
             saveEditedFavourite() {
                 var title = this.editableNews.title;
                 var image = this.editableNews.image;
-                var summary = this.editableNews.summary;
+                var description = this.editableNews.description;
                 var hash = this.editableNews.hash;
 
-                saveEditedFavourite({ title: title, imageURL: image, summary: summary, hash: hash })
+                saveEditedFavourite({ title: title, imageURL: image, description: description, hash: hash })
                     .then((data) => {
                         if (data.success) {
                             for (let i = 0; i < this.favourites.length; i++) {
                                 if (this.favourites[i].hash === hash) {
                                     this.favourites[i].title = title;
-                                    this.favourites[i].summary = summary;
+                                    this.favourites[i].description = description;
                                     this.favourites[i].image = image;
                                     break;
                                 }
