@@ -24,6 +24,7 @@ import store from './store';
 import './assets/index.css';
 import './assets/loader.css';
 import './assets/masonry.css';
+require('smoothscroll-polyfill').polyfill();
 
 import moment from 'moment';
 Vue.filter('ago', date => {

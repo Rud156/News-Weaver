@@ -23,7 +23,7 @@
         <transition name="fade">
             <router-view @validation-failed="handleSelect"></router-view>
         </transition>
-        <i class="page-fixed-component el-icon-caret-top" onclick="document.getElementById('app').scrollIntoView();"></i>
+        <i class="page-fixed-component el-icon-caret-top" onclick="window.scroll({ top: 0, left: 0, behavior: 'smooth' });"></i>
     </div>
 </template>
 
