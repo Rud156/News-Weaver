@@ -23,7 +23,9 @@
         <transition name="fade">
             <router-view @validation-failed="handleSelect"></router-view>
         </transition>
-        <i class="page-fixed-component el-icon-caret-top" onclick="window.scroll({ top: 0, left: 0, behavior: 'smooth' });"></i>
+        <transition name="fade">
+            <i v-if="displayCaret" class="page-fixed-component el-icon-caret-top" onclick="window.scroll({ top: 0, left: 0, behavior: 'smooth' });"></i>
+        </transition>
     </div>
 </template>
 
@@ -35,11 +37,18 @@
     export default {
         data() {
             return {
-                navigation: ['sources', 'favourites']
+                navigation: ['sources', 'favourites'],
+                displayCaret: false
             };
         },
         components: {
             Loader
+        },
+        created() {
+            window.addEventListener('scroll', this.handleScroll);
+        },
+        destroyed() {
+            window.removeEventListener('scroll', this.handleScroll);
         },
         mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
@@ -62,6 +71,13 @@
                         this.$router.push({ path: '/dashboard/all/all_news' });
                         break;
                 }
+            },
+            handleScroll() {
+                let currentScroll = window.document.body.scrollTop;
+                if (currentScroll > 500)
+                    this.displayCaret = true;
+                else
+                    this.displayCaret = false;
             }
         }
     };
