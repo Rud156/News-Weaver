@@ -9,6 +9,9 @@
 * Improve UI
 * Improve Animations
 * Add Badges For Unread News
+* Increase padding to reduce text width
+* Change datase schema to imporve performance
+* Fixed navbar
 
 ## Made With:
 * [Express JS](https://expressjs.com)
