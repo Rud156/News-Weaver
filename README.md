@@ -10,8 +10,9 @@
 * Improve Animations
 * Add Badges For Unread News
 * Increase padding to reduce text width
-* Change datase schema to imporve performance
+* Change database schema to imporve performance
 * Fixed navbar
+* Increase image height thus reducing text width
 
 ## Made With:
 * [Express JS](https://expressjs.com)
