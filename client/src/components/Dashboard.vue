@@ -1,7 +1,9 @@
 <template>
     <div style="width: 100%; min-height: 100%;" class="font-style">
         <el-menu mode="horizontal" @select="handleSelect" :default-active="'dashboard'">
-            <el-menu-item index="logo" style="font-size: 30px" class="brand-logo">News Weaver</el-menu-item>
+            <el-menu-item index="logo" style="font-size: 30px" class="brand-logo">
+                News Weaver
+            </el-menu-item>
             <el-menu-item index="logout" style="float: right">Logout</el-menu-item>
             <el-menu-item index="dashboard" style="float: right">
                 Dashboard
@@ -47,11 +49,11 @@
         created() {
             window.addEventListener('scroll', this.handleScroll);
         },
-        destroyed() {
-            window.removeEventListener('scroll', this.handleScroll);
-        },
         mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
+        },
+        destroyed() {
+            window.removeEventListener('scroll', this.handleScroll);
         },
         methods: {
             ...mapMutations([
