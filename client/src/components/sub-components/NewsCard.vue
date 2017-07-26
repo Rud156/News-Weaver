@@ -1,7 +1,7 @@
 <template>
     <el-col :span="24" style="font-size: 20px; font-family: 'Signika', sans-serif">
-        <el-card style="margin: 14px; position: relative">
-            <el-row :gutter="20">
+        <el-card style="margin: 14px">
+            <el-row :gutter="20" class="page-wrap">
                 <el-col :xs="24" :sm="24" :md="8" :lg="8">
                     <img :src="news.image" width="100%" onerror="this.onerror = null; this.src = 'http://localhost:3000/images/place-holder.png'"
                     />
@@ -39,7 +39,7 @@
                     <div v-html="news.description" style="color: gray"></div>
                 </el-col>
             </el-row>
-            <div style="padding: 7px; color: gray; position: absolute; bottom: 21px; right: 21px">
+            <div style="padding: 14px; color: gray; float: right" class="bottom clearfix">
                 {{news.date | ago | capitalize}}
             </div>
         </el-card>
