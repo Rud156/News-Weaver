@@ -47,6 +47,10 @@ a {
     padding: 0 20px;
 }
 
+.el-form-item__content {
+    margin-left: 0 !important;
+}
+
 .page-fixed-component {
     position: fixed;
     bottom: 50px;
@@ -93,15 +97,12 @@ a {
     .font-style {
         font-size: 20px;
     }
-
     .brand-logo {
         display: none;
     }
-
     .custom-padding {
         padding: 0;
     }
-    
     .page-fixed-component {
         padding: 7px;
         font-size: 20px;

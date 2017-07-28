@@ -34,13 +34,15 @@
             <el-col :xs="24" :sm="24" :md="12" :lg="12">
                 <el-tabs>
                     <el-tab-pane label="Login">
-                        <el-form label-width="120px" class="custom-padding">
+                        <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="loginForm">
                             <el-row style="margin: 14px 0">
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input v-model="user.username" required></el-input>
+                                    <el-form-item prop="username">
+                                        <el-input v-model="user.username" required></el-input>
+                                    </el-form-item>
                                 </el-col>
                             </el-row>
                             <el-row style="margin: 14px 0">
@@ -48,7 +50,9 @@
                                     <div style="float: left; margin-top: 7px">Password:</div>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input v-model="user.password" type="password" required></el-input>
+                                    <el-form-item prop="password">
+                                        <el-input v-model="user.password" type="password" required></el-input>
+                                    </el-form-item>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -61,13 +65,15 @@
                         </el-form>
                     </el-tab-pane>
                     <el-tab-pane label="Register">
-                        <el-form label-width="120px" class="custom-padding">
+                        <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="registrationForm">
                             <el-row style="margin: 14px 0">
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input v-model="user.username" required></el-input>
+                                    <el-form-item prop="username">
+                                        <el-input v-model="user.username" required></el-input>
+                                    </el-form-item>
                                 </el-col>
                             </el-row>
                             <el-row style="margin: 14px 0">
@@ -75,7 +81,9 @@
                                     <div style="float: left; margin-top: 7px">Password:</div>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input v-model="user.password" type="password" required></el-input>
+                                    <el-form-item prop="password">
+                                        <el-input v-model="user.password" type="password" required></el-input>
+                                    </el-form-item>
                                 </el-col>
                             </el-row>
                             <el-row style="margin: 14px 0">
@@ -83,7 +91,9 @@
                                     <div style="float: left; margin-top: 7px">Re Password:</div>
                                 </el-col>
                                 <el-col :span="18">
-                                    <el-input v-model="user.rePassword" type="password" required></el-input>
+                                    <el-form-item prop="rePassword">
+                                        <el-input v-model="user.rePassword" type="password" required></el-input>
+                                    </el-form-item>
                                 </el-col>
                             </el-row>
                             <el-row>
@@ -118,6 +128,20 @@
                     username: '',
                     password: '',
                     rePassword: ''
+                },
+                rules: {
+                    username: [
+                        { required: true, message: 'Please enter the username', trigger: 'blur' },
+                        { min: 5, max: 20, message: 'Length should be between 5 and 20', trigger: 'change' }
+                    ],
+                    password: [
+                        { required: true, message: 'Please enter the password', trigger: 'blur' },
+                        { min: 4, message: 'Length should be 4 and greater', trigger: 'change' }
+                    ],
+                    rePassword: [
+                        { required: true, message: 'Please re-enter the password', trigger: 'blur' },
+                        { min: 4, message: 'Length should be 4 and greater', trigger: 'change' }
+                    ]
                 }
             };
         },
@@ -129,39 +153,44 @@
                 'setUser'
             ]),
             loginUser() {
-                var username = this.user.username;
-                var password = this.user.password;
-                if (username.trim() === '' || password.trim === '') {
-                    this.displayMessage('Fields cannot be blank');
-                    return;
-                }
+                let username = this.user.username;
+                let password = this.user.password;
 
-                loginUser({ username: username, password: password })
-                    .then((data) => {
-                        if (data.success) {
-                            this.setUser({ username: username, token: data.token });
-                            this.$router.push({ path: 'dashboard/all/all_news' });
-                        }
-                        else
-                            handleError(null, data.message);
-                    });
+                this.$refs['loginForm'].validate((valid) => {
+                    if (valid) {
+                        loginUser({ username: username, password: password })
+                            .then((data) => {
+                                if (data.success) {
+                                    this.setUser({ username: username, token: data.token });
+                                    this.$router.push({ path: 'dashboard/all/all_news' });
+                                }
+                                else
+                                    handleError(null, data.message);
+                            });
+                    }
+                    else
+                        handleError(null, 'Form fields not valid');
+
+                });
             },
             registerUser() {
-                var username = this.user.username;
-                var password = this.user.password;
-                var rePassword = this.user.rePassword;
-                if (username.trim() === '' || password.trim() === '' || rePassword.trim() === '') {
-                    this.displayMessage('Fields cannot be blank');
-                    return;
-                }
+                let username = this.user.username;
+                let password = this.user.password;
+                let rePassword = this.user.rePassword;
 
-                registerUser({ username: username, password: password, rePassword: rePassword })
-                    .then((data) => {
-                        if (data.success)
-                            displayMessage("User registration successful. Please login to continue...");
-                        else
-                            handleError(null, data.message);
-                    });
+                this.$refs['registrationForm'].validate((valid) => {
+                    if (valid) {
+                        registerUser({ username: username, password: password, rePassword: rePassword })
+                            .then((data) => {
+                                if (data.success)
+                                    displayMessage("User registration successful. Please login to continue...");
+                                else
+                                    handleError(null, data.message);
+                            });
+                    }
+                    else
+                        handleError(null, 'Form fields not valid');
+                });
             }
         }
     };
