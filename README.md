@@ -10,7 +10,6 @@
 * Improve UI
 * Improve Animations
 * Add Badges For Unread News
-* Change database schema to improve performance
 
 ## Made With:
 * [Express JS](https://expressjs.com)

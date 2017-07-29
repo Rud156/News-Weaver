@@ -9,8 +9,8 @@ const store = new Vuex.Store({
         token: '',
         displayLoader: false,
         feedIndexCount: 0,
-        // baseServerURL: 'http://localhost:3000'
-        baseServerURL: 'https://news-weaver.herokuapp.com'
+        baseServerURL: 'http://localhost:3000'
+        // baseServerURL: 'https://news-weaver.herokuapp.com'
     },
     getters: {
         formatUsername(state) {
