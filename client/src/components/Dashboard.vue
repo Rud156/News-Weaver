@@ -33,7 +33,10 @@
 
 
 <script>
-    import { mapMutations, mapGetters } from 'vuex';
+    import {
+        mapMutations,
+        mapGetters
+    } from 'vuex';
     import Loader from './sub-components/Loader';
 
     export default {
@@ -63,14 +66,18 @@
             ...mapGetters([
                 'formatUsername'
             ]),
-            handleSelect(key, keyPath) {
+            handleSelect(key) {
                 switch (key) {
-                    case "logout":
+                    case 'logout':
                         this.removeUser();
-                        this.$router.push({ path: '/' });
+                        this.$router.push({
+                            path: '/'
+                        });
                         break;
                     default:
-                        this.$router.push({ path: '/dashboard/all/all_news' });
+                        this.$router.push({
+                            path: '/dashboard/all/all_news'
+                        });
                         break;
                 }
             },
@@ -83,5 +90,4 @@
             }
         }
     };
-
 </script>

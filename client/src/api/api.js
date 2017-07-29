@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { Notification } from 'element-ui';
+import {
+    Notification
+} from 'element-ui';
 
 import store from './../store';
 import router from './../router/index';
@@ -15,7 +17,9 @@ function handleError(error, message) {
             });
 
             store.commit('removeUser');
-            router.push({ path: '/' });
+            router.push({
+                path: '/'
+            });
             return;
         }
 
@@ -55,7 +59,8 @@ function registerUser(userData) {
 
 function getAllFeeds(indexCount) {
     let token = store.getters.getToken;
-    let feedURL = `${store.getters.getBaseURL}/user/all_feed_news?token=${token}&index=${indexCount}`;
+    let feedURL = `${store.getters.getBaseURL}` +
+        `/user/all_feed_news?token=${token}&index=${indexCount}`;
     return axios.get(feedURL)
         .then((response) => {
             return response.data;
@@ -67,7 +72,8 @@ function getAllFeeds(indexCount) {
 
 function getSpecificFeed(indexCount, hash) {
     let token = store.getters.getToken;
-    let feedURL = `${store.getters.getBaseURL}/user/feed_news?token=${token}&hash=${hash}&index=${indexCount}`;
+    let feedURL = `${store.getters.getBaseURL}` +
+        `/user/feed_news?token=${token}&hash=${hash}&index=${indexCount}`;
     return axios.get(feedURL)
         .then((response) => {
             return response.data;
@@ -85,6 +91,7 @@ function addToFavourites(news) {
     let image = news.image;
     let summary = news.summary;
     let title = news.title;
+    let hash = news.hash;
 
     let favouriteNews = {
         URL: URL,
@@ -93,28 +100,26 @@ function addToFavourites(news) {
         image: image,
         category: category,
         summary: summary,
-        date: date
+        date: date,
+        hash: hash
     };
 
     let token = store.getters.getToken;
-    axios.post(`${store.getters.getBaseURL}/user/save_favourite?token=${token}`,
-        {
+    return axios.post(`${store.getters.getBaseURL}/user/save_favourite?token=${token}`, {
             feedNews: favouriteNews
         })
         .then((response) => {
             return response.data;
         })
-        .then((data) => {
-            displayMessage(data.message);
-        })
         .catch((error) => {
             handleError(error, ERROR_MSG);
         });
 }
 
-function getAllFavourites() {
+function getFavourites(indexCount) {
     let token = store.getters.getToken;
-    return axios.get(`${store.getters.getBaseURL}/user/favourites?token=${token}`)
+    return axios.get(`${store.getters.getBaseURL}` +
+            `/user/favourites?token=${token}&index=${indexCount}`)
         .then((response) => {
             return response.data;
         })
@@ -123,9 +128,10 @@ function getAllFavourites() {
         });
 }
 
-function deleteFavourite(hash) {
+function deleteFavourite(hash, newsHash) {
     let token = store.getters.getToken;
-    return axios.delete(`${store.getters.getBaseURL}/user/delete_favourite?token=${token}&hash=${hash}`)
+    return axios.delete(`${store.getters.getBaseURL}` +
+            `/user/delete_favourite?token=${token}&hash=${hash}&newsHash=${newsHash}`)
         .then((response) => {
             return response.data;
         })
@@ -143,7 +149,7 @@ function saveEditedFavourite(favourite) {
         })
         .catch((error) => {
             handleError(error, ERROR_MSG);
-        })
+        });
 }
 
 function getAllFeedSources() {
@@ -198,7 +204,7 @@ export {
     getAllFeeds,
     getSpecificFeed,
     addToFavourites,
-    getAllFavourites,
+    getFavourites,
     deleteFavourite,
     saveEditedFavourite,
     getAllFeedSources,

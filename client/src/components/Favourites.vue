@@ -1,8 +1,8 @@
 <template>
     <div style="width: 100%; min-height: 100%">
-        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="270">
+        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="380">
             <h4 style="margin: 7px 0">Edit Feed Details:</h4>
-            <el-form v-if="editableNews" label-width="120px">
+            <el-form v-if="editableNews">
                 <el-form-item label="Title">
                     <el-input v-model="editableNews.title"></el-input>
                 </el-form-item>
@@ -28,19 +28,25 @@
         </el-card>
         <div v-else>
             <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <news-card v-for="fav in favourites" :key="fav.hash" :news="fav" :delete-news="deleteFavourite" :edit-news="editFavourite"></news-card>
+                <news-card v-for="fav in favourites" :key="fav.hash" :news="fav" :deleteNews="deleteFavourite" :editNews="editFavourite"></news-card>
             </el-row>
+            <el-button @click="fetchFavourites" style="margin-bottom: 14px" :loading="loading">Load More</el-button>
         </div>
     </div>
 </template>
 
 <script>
     import {
+        mapGetters,
+        mapMutations
+    } from 'vuex';
+
+    import {
         displayMessage,
-        getAllFavourites,
+        getFavourites,
         deleteFavourite,
         saveEditedFavourite
-    } from './../api/api.js';
+    } from './../api/api';
     import newsCard from './sub-components/NewsCard.vue';
 
     export default {
@@ -48,27 +54,45 @@
             return {
                 favourites: [],
                 showModal: false,
-                editableNews: null
+                editableNews: null,
+                loading: false
             };
         },
         components: {
             newsCard
         },
+        watch: {
+            '$route' () {
+                this.resetFeedIndexCount();
+                this.loadFeeds();
+            }
+        },
         mounted() {
-            this.fetchAllFavourites();
+            this.resetFeedIndexCount();
+            this.fetchFavourites();
         },
         methods: {
-            fetchAllFavourites() {
-                getAllFavourites()
+            ...mapGetters([
+                'getFeedIndexCount',
+            ]),
+            ...mapMutations([
+                'incrementFeedIndex',
+                'resetFeedIndexCount'
+            ]),
+            fetchFavourites() {
+                this.loading = true;
+                getFavourites(this.getFeedIndexCount())
                     .then((data) => {
-                        if (data.success)
+                        this.loading = false;
+                        if (data.success) {
                             this.favourites = data.favourites;
-                        else
+                            this.incrementFeedIndex();
+                        } else
                             displayMessage(data.message);
                     });
             },
-            deleteFavourite(hash) {
-                deleteFavourite(hash)
+            deleteFavourite(hash, newsHash) {
+                deleteFavourite(hash, newsHash)
                     .then((data) => {
                         if (data.success) {
                             var updatedFavourites = this.favourites.filter((element) => {
@@ -86,7 +110,12 @@
                 var description = this.editableNews.description;
                 var hash = this.editableNews.hash;
 
-                saveEditedFavourite({ title: title, imageURL: image, description: description, hash: hash })
+                saveEditedFavourite({
+                        title: title,
+                        imageURL: image,
+                        description: description,
+                        hash: hash
+                    })
                     .then((data) => {
                         if (data.success) {
                             for (let i = 0; i < this.favourites.length; i++) {
@@ -112,5 +141,4 @@
             }
         }
     };
-
 </script>

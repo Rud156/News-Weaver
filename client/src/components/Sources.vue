@@ -20,7 +20,9 @@
 </template>
 
 <script>
-    import { mapMutations } from 'vuex';
+    import {
+        mapMutations
+    } from 'vuex';
 
     import {
         displayMessage,
@@ -28,7 +30,7 @@
         fetchFeedSource,
         saveFeedSource,
         deleteFeedSource
-    } from './../api/api.js';
+    } from './../api/api';
     import Feed from './sub-components/Feed.vue';
     import SourcePopup from './sub-components/SourcePopup.vue';
 
@@ -62,8 +64,7 @@
                     .then((data) => {
                         if (data.success) {
                             this.sources = data.feeds;
-                        }
-                        else
+                        } else
                             displayMessage(data.message);
                     });
             },
@@ -73,8 +74,7 @@
                     this.displayModal = false;
                     this.displayMessage('Invalid empty URL');
                     return;
-                }
-                else {
+                } else {
                     this.toggleLoader();
                     this.closeModal();
 
@@ -86,8 +86,7 @@
                             if (data.success) {
                                 this.feedObject = data.feedDetails;
                                 this.height = 270;
-                            }
-                            else {
+                            } else {
                                 this.closeModal();
                                 displayMessage(data.message);
                             }
@@ -116,23 +115,24 @@
             },
             viewFeed(feed) {
                 var hash = feed.hash;
-                this.$router.push({ path: `/dashboard/all/${hash}` });
+                this.$router.push({
+                    path: `/dashboard/all/${hash}`
+                });
             },
             deleteFeed(feed) {
                 var hash = feed.hash;
                 deleteFeedSource(hash)
                     .then((data) => {
                         if (data.success) {
-                            var changedScource = this.sources.filter((source) => {
+                            var changedSource = this.sources.filter((source) => {
                                 if (source.hash !== hash)
                                     return source;
                             });
-                            this.sources = changedScource;
+                            this.sources = changedSource;
                         }
                         displayMessage(data.message);
                     });
             }
         }
     };
-
 </script>

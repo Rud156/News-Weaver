@@ -14,11 +14,12 @@ const maxNewsPerFeed = 470;
 
 function getDataBases() {
     return Model.FeedSchema.find({}).exec()
-        .then(function (feeds) {
+        .then(function(feeds) {
             maxDataToReceive = feeds.length;
+            console.log('Total number of feeds: ', maxDataToReceive);
             return feeds;
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log(error);
             return [];
         });
@@ -32,62 +33,80 @@ function getFeedResults(feedURL, hash, category, callback) {
     var requestError = false;
 
     request(feedURL)
-        .on('response', function (res) {
+        .on('response', function(res) {
             if (res.statusCode !== 200) {
                 console.log('Invalid status code');
                 requestError = true;
-            }
-            else {
+            } else {
                 this.pipe(feedParser);
             }
         })
-        .on('error', function (error) {
+        .on('error', function(error) {
             console.log(error);
             requestError = true;
         });
 
     feedParser
-        .on('readable', function () {
+        .on('readable', function() {
             if (requestError) {
-                callback({ feed: [], hash: hash, category: category, feedURL: feedURL });
+                callback({
+                    feed: [],
+                    hash: hash,
+                    category: category,
+                    feedURL: feedURL
+                });
                 return;
-            }
-            else {
+            } else {
                 var stream = this;
                 var item;
                 while ((item = stream.read()) !== null)
                     feedResult.push(item);
             }
         })
-        .on('end', function () {
-            callback({ feed: feedResult, hash: hash, category: category, feedURL: feedURL });
+        .on('end', function() {
+            callback({
+                feed: feedResult,
+                hash: hash,
+                category: category,
+                feedURL: feedURL
+            });
         })
-        .on('error', function (error) {
+        .on('error', function(error) {
             console.log(error);
-            callback({ feed: [], hash: hash, category: category, feedURL: feedURL });
+            callback({
+                feed: [],
+                hash: hash,
+                category: category,
+                feedURL: feedURL
+            });
         });
 }
 
 function runAll() {
     getDataBases()
-        .then(function (feeds) {
-            if (feeds) {
+        .then(function(feeds) {
+            if (feeds.length !== 0) {
                 /* jshint loopfunc: true */
                 for (let j = 0; j < feeds.length; j++)
                     getFeedResults(feeds[j].feedURL, feeds[j].hash, feeds[j].category,
-                        function (data) {
-                            dataReceivedCount++;
+                        function(data) {
 
                             console.log('Feed length: ', data.feed.length);
                             var feedHash = data.hash;
                             var slicedNews;
-                            Model.FeedNews.find({ feedHash: feedHash }).sort({ date: -1 }).exec()
-                                .then(function (news) {
+                            Model.FeedNews.find({
+                                    feedHash: feedHash
+                                }).sort({
+                                    date: -1
+                                }).exec()
+                                .then(function(news) {
                                     slicedNews = news.slice(0, maxNewsPerFeed);
-                                    return Model.FeedNews.remove({ feedHash: feedHash }).exec();
+                                    return Model.FeedNews.remove({
+                                        feedHash: feedHash
+                                    }).exec();
                                 })
-                                .then(function () {
-                                    var mappedArray = slicedNews.map(function (element) {
+                                .then(function() {
+                                    var mappedArray = slicedNews.map(function(element) {
                                         return {
                                             hash: element.hash,
                                             feedHash: element.feedHash,
@@ -142,8 +161,8 @@ function runAll() {
 
 
                                         let hash = crypto.
-                                            createHash('sha256').
-                                            update(title + description + URL).digest('hex');
+                                        createHash('sha256').
+                                        update(title + description + URL).digest('hex');
 
                                         if (!(hash in resultDictionary))
                                             resultDictionary[hash] = {
@@ -164,29 +183,35 @@ function runAll() {
                                     let promiseArray = [];
                                     for (let i = 0; i < finalValues.length; i++) {
                                         promiseArray.
-                                            push(new Model.FeedNews(finalValues[i]).save());
+                                        push(new Model.FeedNews(finalValues[i]).save());
                                     }
                                     return Promise.all(promiseArray);
                                 })
-                                .then(function () {
+                                .then(function() {
+                                    dataReceivedCount++;
                                     console.log('Current Set Of News Saved');
+                                    if (dataReceivedCount === maxDataToReceive) {
+                                        dataReceivedCount = 0;
+                                        setTimeout(runAll, interval);
+                                    }
                                 })
-                                .catch(function (err) {
+                                .catch(function(err) {
                                     if (err) {
                                         console.log(err);
                                     }
+                                    dataReceivedCount++;
+                                    if (dataReceivedCount === maxDataToReceive) {
+                                        dataReceivedCount = 0;
+                                        setTimeout(runAll, interval);
+                                    }
                                 });
-
-
-                            if (dataReceivedCount === maxDataToReceive) {
-                                dataReceivedCount = 0;
-                                setTimeout(runAll, interval);
-                            }
                         });
 
+            } else if (feeds.length === 0) {
+                setTimeout(runAll, interval);
             }
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log(error);
         });
 }

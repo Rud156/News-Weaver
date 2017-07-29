@@ -11,13 +11,14 @@
                             Open
                         </a>
                     </div>
-                    <div class="custom-button" style="margin-top: 7px" @click="favourite(news)" v-if="favourite">
+                    <div class="custom-button" style="margin-top: 7px" :style="[isFav ?  { color: '#f2b53c' } : { color: '#2c3e50' }]" @click="addToFavourites(news)"
+                        v-if="addToFavourite">
                         <icon name="star"></icon>
                         Favourite
                     </div>
                     <el-row>
                         <el-col :span="12">
-                            <div class="custom-button" style="margin-top: 7px" @click="deleteNews(news.hash)" v-if="deleteNews">
+                            <div class="custom-button" style="margin-top: 7px" @click="deleteNews(news.hash, news.newsHash)" v-if="deleteNews">
                                 <icon name="trash"></icon>
                                 Delete
                             </div>
@@ -47,6 +48,11 @@
 </template>
 
 <script>
+    import {
+        displayMessage,
+        addToFavourites
+    } from './../../api/api';
+
     export default {
         props: {
             news: {
@@ -54,7 +60,10 @@
                 required: true
             },
             favourite: {
-                type: Function
+                type: Boolean
+            },
+            addToFavourite: {
+                type: Boolean
             },
             deleteNews: {
                 type: Function
@@ -62,7 +71,24 @@
             editNews: {
                 type: Function
             }
+        },
+        data() {
+            return {
+                isFav: this.favourite
+            }
+        },
+        methods: {
+            addToFavourites(news) {
+                addToFavourites(news)
+                    .then(data => {
+                        if (data.success)
+                            this.isFav = true;
+
+
+                        displayMessage(data.message);
+                    });
+
+            }
         }
     };
-
 </script>

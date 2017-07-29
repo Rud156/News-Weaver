@@ -11,8 +11,7 @@ Vue.use(Router);
 
 export default new Router({
     mode: 'history',
-    routes: [
-        {
+    routes: [{
             path: '/',
             name: 'Home',
             component: Home
@@ -21,8 +20,7 @@ export default new Router({
             path: '/dashboard',
             name: 'dashboard',
             component: Dashboard,
-            children: [
-                {
+            children: [{
                     path: 'all/:id',
                     name: 'all',
                     component: All,
@@ -50,6 +48,9 @@ export default new Router({
         }
     ],
     scrollBehavior() {
-        return { x: 0, y: 0 };
+        return {
+            x: 0,
+            y: 0
+        };
     }
 });

@@ -40,11 +40,12 @@ router.beforeEach((to, from, next) => {
 
     if (to.path === '/') {
         if (window.localStorage.getItem('user') !== null)
-            router.push({ path: 'dashboard/all/all_news' });
+            router.push({
+                path: 'dashboard/all/all_news'
+            });
         else
             next();
-    }
-    else
+    } else
         next();
 });
 
@@ -54,6 +55,8 @@ new Vue({
     router,
     store,
     template: '<App/>',
-    components: { App }
+    components: {
+        App
+    }
 });
 // #fe4a49 #2ab7ca #fed766 #e6e6ea #f4f4f8

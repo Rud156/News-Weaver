@@ -35,7 +35,7 @@
                 <el-tabs>
                     <el-tab-pane label="Login">
                         <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="loginForm">
-                            <el-row style="margin: 14px 0">
+                            <el-row>
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
                                 </el-col>
@@ -45,7 +45,7 @@
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row style="margin: 14px 0">
+                            <el-row>
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Password:</div>
                                 </el-col>
@@ -66,7 +66,7 @@
                     </el-tab-pane>
                     <el-tab-pane label="Register">
                         <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="registrationForm">
-                            <el-row style="margin: 14px 0">
+                            <el-row>
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Username:</div>
                                 </el-col>
@@ -76,7 +76,7 @@
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row style="margin: 14px 0">
+                            <el-row>
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Password:</div>
                                 </el-col>
@@ -86,7 +86,7 @@
                                     </el-form-item>
                                 </el-col>
                             </el-row>
-                            <el-row style="margin: 14px 0">
+                            <el-row>
                                 <el-col :span="6">
                                     <div style="float: left; margin-top: 7px">Re Password:</div>
                                 </el-col>
@@ -118,8 +118,15 @@
 
 
 <script>
-    import { mapMutations } from 'vuex';
-    import { handleError, displayMessage, loginUser, registerUser } from './../api/api.js';
+    import {
+        mapMutations
+    } from 'vuex';
+    import {
+        handleError,
+        displayMessage,
+        loginUser,
+        registerUser
+    } from './../api/api';
 
     export default {
         data() {
@@ -130,17 +137,39 @@
                     rePassword: ''
                 },
                 rules: {
-                    username: [
-                        { required: true, message: 'Please enter the username', trigger: 'blur' },
-                        { min: 5, max: 20, message: 'Length should be between 5 and 20', trigger: 'change' }
+                    username: [{
+                            required: true,
+                            message: 'Please enter the username',
+                            trigger: 'blur'
+                        },
+                        {
+                            min: 5,
+                            max: 20,
+                            message: 'Length should be between 5 and 20',
+                            trigger: 'change'
+                        }
                     ],
-                    password: [
-                        { required: true, message: 'Please enter the password', trigger: 'blur' },
-                        { min: 4, message: 'Length should be 4 and greater', trigger: 'change' }
+                    password: [{
+                            required: true,
+                            message: 'Please enter the password',
+                            trigger: 'blur'
+                        },
+                        {
+                            min: 8,
+                            message: 'Length should be 8 and greater',
+                            trigger: 'change'
+                        }
                     ],
-                    rePassword: [
-                        { required: true, message: 'Please re-enter the password', trigger: 'blur' },
-                        { min: 4, message: 'Length should be 4 and greater', trigger: 'change' }
+                    rePassword: [{
+                            required: true,
+                            message: 'Please re-enter the password',
+                            trigger: 'blur'
+                        },
+                        {
+                            min: 8,
+                            message: 'Length should be 8 and greater',
+                            trigger: 'change'
+                        }
                     ]
                 }
             };
@@ -156,19 +185,25 @@
                 let username = this.user.username;
                 let password = this.user.password;
 
-                this.$refs['loginForm'].validate((valid) => {
+                this.$refs.loginForm.validate((valid) => {
                     if (valid) {
-                        loginUser({ username: username, password: password })
+                        loginUser({
+                                username: username,
+                                password: password
+                            })
                             .then((data) => {
                                 if (data.success) {
-                                    this.setUser({ username: username, token: data.token });
-                                    this.$router.push({ path: 'dashboard/all/all_news' });
-                                }
-                                else
+                                    this.setUser({
+                                        username: username,
+                                        token: data.token
+                                    });
+                                    this.$router.push({
+                                        path: 'dashboard/all/all_news'
+                                    });
+                                } else
                                     handleError(null, data.message);
                             });
-                    }
-                    else
+                    } else
                         handleError(null, 'Form fields not valid');
 
                 });
@@ -178,23 +213,26 @@
                 let password = this.user.password;
                 let rePassword = this.user.rePassword;
 
-                this.$refs['registrationForm'].validate((valid) => {
+                this.$refs.registrationForm.validate((valid) => {
                     if (valid) {
-                        registerUser({ username: username, password: password, rePassword: rePassword })
+                        registerUser({
+                                username: username,
+                                password: password,
+                                rePassword: rePassword
+                            })
                             .then((data) => {
                                 if (data.success)
-                                    displayMessage("User registration successful. Please login to continue...");
+                                    displayMessage(`User registration successful.` +
+                                        ` Please login to continue...`);
                                 else
                                     handleError(null, data.message);
                             });
-                    }
-                    else
+                    } else
                         handleError(null, 'Form fields not valid');
                 });
             }
         }
     };
-
 </script>
 
 

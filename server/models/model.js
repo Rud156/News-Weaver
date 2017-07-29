@@ -5,20 +5,30 @@ var UserSchema = mongoose.Schema({
     username: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        lowercase: true,
+        unique: true
     },
     password: {
         type: String,
         required: true
     },
-    feeds: [String]
+    feeds: {
+        type: Array,
+        default: []
+    },
+    favourites: {
+        type: Array,
+        default: []
+    }
 });
 
 var FeedSchema = mongoose.Schema({
     hash: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        unique: true
     },
     users: [String],
     title: {
@@ -47,7 +57,8 @@ var FeedNews = mongoose.Schema({
     hash: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        unique: true
     },
     feedHash: {
         type: String,
@@ -85,12 +96,17 @@ var Favourite = mongoose.Schema({
     hash: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        unique: true
     },
     username: {
         type: String,
         required: true,
         index: true
+    },
+    newsHash: {
+        type: String,
+        required: true
     },
     title: String,
     description: String,
@@ -98,9 +114,7 @@ var Favourite = mongoose.Schema({
     URL: String,
     summary: String,
     date: Date,
-    category: [
-        String
-    ]
+    category: [String]
 });
 
 var createHash = function (password) {

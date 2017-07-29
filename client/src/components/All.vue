@@ -9,7 +9,7 @@
         </el-card>
         <div v-else>
             <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <news-card v-for="news in allNews" :key="news.hash" :news="news" :favourite="addNewsToFavourite"></news-card>
+                <newsCard v-for="news in allNews" :key="news.hash" :news="news" :favourite="favourites.has(news.hash)" :addToFavourite="true"></newsCard>
             </el-row>
             <el-button @click="loadFeeds" style="margin-bottom: 14px" :loading="loading">Load More</el-button>
         </div>
@@ -17,14 +17,16 @@
 </template>
 
 <script>
-    import { mapGetters, mapMutations } from 'vuex';
+    import {
+        mapGetters,
+        mapMutations
+    } from 'vuex';
 
     import {
         displayMessage,
         getAllFeeds,
-        getSpecificFeed,
-        addToFavourites
-    } from './../api/api.js';
+        getSpecificFeed
+    } from './../api/api';
     import newsCard from './sub-components/NewsCard.vue';
 
     export default {
@@ -39,11 +41,12 @@
         data() {
             return {
                 allNews: [],
-                loading: false
+                loading: false,
+                favourites: null
             };
         },
         watch: {
-            '$route'(to, from) {
+            '$route' () {
                 this.resetFeedIndexCount();
                 this.loadFeeds();
             }
@@ -61,7 +64,6 @@
                 'resetFeedIndexCount'
             ]),
             loadFeeds() {
-                var feedURL = '';
                 this.loading = true;
 
                 switch (this.id) {
@@ -75,10 +77,10 @@
                                         this.allNews = data.news;
                                     else
                                         this.allNews.push(...data.news);
+                                    this.favourites = new Set(data.favourites);
 
                                     this.incrementFeedIndex();
-                                }
-                                else
+                                } else
                                     displayMessage(data.message);
                             });
                         break;
@@ -92,19 +94,15 @@
                                         this.allNews = data.news;
                                     else
                                         this.allNews.push(...data.news);
+                                    this.favourites = new Set(data.favourites);
 
                                     this.incrementFeedIndex();
-                                }
-                                else
+                                } else
                                     displayMessage(data.message);
                             });
                         break;
                 }
-            },
-            addNewsToFavourite(news) {
-                addToFavourites(news);
             }
         }
     };
-
 </script>
