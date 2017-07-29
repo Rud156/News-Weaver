@@ -1,9 +1,15 @@
 <template>
     <vodal :show="displayModal" @hide="closeModal" :height="height" animation="flip">
-        <el-input placeholder="Enter the URL of the feed" v-model="feedURL" type="url"></el-input>
-        <el-button @click="submitURL(feedURL)" type="primary" icon="search" style="margin-top: 21px;">Fetch URL</el-button>
+        <el-form :model="sourceForm" :rules="rules" ref="sourceForm">
+            <el-form-item label="URL Of The Feed Source:" prop="feedURL">
+                <el-input v-model="sourceForm.feedURL" type="url"></el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button @click="validateAndSubmitForm" type="primary" icon="search">Fetch URL</el-button>
+            </el-form-item>
+        </el-form>
         <div v-if="feedObject">
-            <el-row style="padding: 21px">
+            <el-row>
                 <el-col :span="24">
                     <hr />
                 </el-col>
@@ -25,6 +31,10 @@
 </template>
 
 <script>
+    import {
+        handleError
+    } from './../../api/api';
+
     export default {
         props: {
             displayModal: {
@@ -52,9 +62,37 @@
             }
         },
         data() {
-            return {
-                feedURL: ''
+            var validateURL = (rule, value, callback) => {
+                var regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+                if (!regex.test(value)) {
+                    return callback(new Error('Invalid URL format'));
+                } else {
+                    callback();
+                }
             };
+            return {
+                sourceForm: {
+                    feedURL: ''
+                },
+                rules: {
+                    feedURL: [{
+                        validator: validateURL,
+                        required: true,
+                        trigger: 'change'
+                    }]
+                }
+            };
+        },
+        methods: {
+            validateAndSubmitForm() {
+                let feedURL = this.sourceForm.feedURL;
+                this.$refs.sourceForm.validate(valid => {
+                    if (valid)
+                        this.submitURL(feedURL);
+                    else
+                        handleError(null, 'Please enter a valid URL');
+                });
+            }
         }
     };
 </script>

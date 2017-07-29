@@ -42,7 +42,7 @@
         data() {
             return {
                 sources: [],
-                height: 95,
+                height: 130,
                 displayModal: false,
                 feedObject: null
             };
@@ -57,7 +57,7 @@
             closeModal() {
                 this.displayModal = false;
                 this.feedObject = null;
-                this.height = 95;
+                this.height = 130;
             },
             getAllSources() {
                 getAllFeedSources()
@@ -85,7 +85,7 @@
 
                             if (data.success) {
                                 this.feedObject = data.feedDetails;
-                                this.height = 270;
+                                this.height = 310;
                             } else {
                                 this.closeModal();
                                 displayMessage(data.message);
