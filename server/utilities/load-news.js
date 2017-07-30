@@ -32,7 +32,10 @@ function getFeedResults(feedURL, hash, category, callback) {
     var feedParser = new FeedParser();
     var requestError = false;
 
-    request(feedURL)
+    request({
+            url: feedURL,
+            maxRedirects: 3
+        })
         .on('response', function(res) {
             if (res.statusCode !== 200) {
                 console.log('Invalid status code');

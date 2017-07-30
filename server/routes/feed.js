@@ -23,70 +23,78 @@ router.get('/get_feed', function(req, res) {
         });
     }
 
-    var request = requestModule(feedURL);
-    request.on('error', function(error) {
-        errorOccurred = true;
-        console.log('Request Error');
-        console.log(error);
-        res.json({
-            success: false,
-            message: 'Unable to fetch the request URL. Please try again.'
-        });
-    });
-    request.on('response', function(response) {
-        if (response.statusCode !== 200)
-            this.emit('error', new Error('Bad status code'));
-        else {
-            this.pipe(feedParser);
-        }
-    });
-
-    var feedResult = [];
-    feedParser.on('error', function(error) {
-        errorOccurred = true;
-        console.log('Feed Parser Error');
-        console.log(error);
-        res.json({
-            success: false,
-            message: 'Invalid feed stream'
-        });
-
-    });
-    feedParser.on('readable', function() {
-        var stream = this;
-        var item;
-        while ((item = stream.read()) !== null)
-            feedResult.push(item);
-    });
-    feedParser.on('end', function() {
-        if (errorOccurred)
-            return;
-
-        try {
-            var storyLink = url.parse(feedResult[0].link);
-            var siteURL = storyLink.protocol + '//' + storyLink.hostname;
-            var siteTitle = feedResult[0].meta.title;
-            var siteDescription = feedResult[0].meta.description;
-            var favicon = 'https://www.google.com/s2/favicons?domain=' + siteURL;
-
-            res.json({
-                success: true,
-                feedDetails: {
-                    feedURL: feedURL,
-                    siteURL: siteURL,
-                    title: siteTitle,
-                    description: siteDescription,
-                    favicon: favicon
-                }
-            });
-        } catch (error) {
+    var request = requestModule({
+            url: feedURL,
+            maxRedirects: 3
+        })
+        .on('error', function(error) {
+            errorOccurred = true;
+            console.log('Request Error');
             console.log(error);
             res.json({
                 success: false,
-                message: 'Invalid feed body. Unable to parse'
+                message: `Unable to fetch the requested URL. ${error.message}`
             });
-        }
-    });
+        })
+        .on('response', function(response) {
+            if (errorOccurred)
+                return;
+
+            if (response.statusCode !== 200)
+                this.emit('error', new Error('Bad status code'));
+            else {
+                this.pipe(feedParser);
+            }
+        });
+
+    var feedResult = [];
+    feedParser
+        .on('error', function(error) {
+            errorOccurred = true;
+            console.log('Feed Parser Error');
+            console.log(error);
+            if (!errorOccurred)
+                res.json({
+                    success: false,
+                    message: `Invalid feed stream. ${error.message}`
+                });
+
+        })
+        .on('readable', function() {
+            var stream = this;
+            var item;
+            while ((item = stream.read()) !== null)
+                feedResult.push(item);
+        })
+        .on('end', function() {
+            if (errorOccurred)
+                return;
+
+            try {
+                var storyLink = url.parse(feedResult[0].link);
+                var siteURL = storyLink.protocol + '//' + storyLink.hostname;
+                var siteTitle = feedResult[0].meta.title;
+                var siteDescription = feedResult[0].meta.description;
+                var favicon = 'https://www.google.com/s2/favicons?domain=' + siteURL;
+
+                res.json({
+                    success: true,
+                    feedDetails: {
+                        feedURL: feedURL,
+                        siteURL: siteURL,
+                        title: siteTitle,
+                        description: siteDescription,
+                        favicon: favicon
+                    }
+                });
+            } catch (error) {
+                console.log(error);
+                res.json({
+                    success: false,
+                    message: 'Invalid feed body. Unable to parse'
+                });
+            }
+        });
 });
 
 router.get('/feed_news', function(req, res) {
