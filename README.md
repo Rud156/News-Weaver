@@ -10,7 +10,8 @@
 * Improve UI
 * Improve Animations
 * Add Badges For Unread News
-* Add a deferred reading list
+* Add A Deferred Reading List
+* Fix Notification Messages
 
 ## Made With:
 * [Express JS](https://expressjs.com)
