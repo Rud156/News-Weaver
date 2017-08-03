@@ -11,7 +11,7 @@
 * Improve Animations
 * Add Badges For Unread News
 * Add A Deferred Reading List
-* Fix Notification Messages
+* Add Categorization for Favourites
 
 ## Made With:
 * [Express JS](https://expressjs.com)

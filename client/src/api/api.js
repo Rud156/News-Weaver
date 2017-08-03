@@ -13,7 +13,7 @@ function handleError(error, message) {
         if (error.response.status === 403) {
             Notification.warning({
                 title: 'Authentication Error',
-                message: message
+                message: 'You need to login to continue...'
             });
 
             store.commit('removeUser');
@@ -31,7 +31,7 @@ function handleError(error, message) {
 
 function displayMessage(message) {
     Notification.info({
-        title: 'Some Info',
+        title: 'Info',
         message: message
     });
 }
