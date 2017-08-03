@@ -12,7 +12,7 @@
         <vodal :show="$store.state.displayLoader" :closeButton="false" :width="50" :height="60" @hide="toggleLoader">
             <loader></loader>
         </vodal>
-        <div style="margin-top: 14px; font-family: 'Signika', sans-serif">
+        <div style="margin-top: 14px; font-family: 'Signika', sans-serif;">
             <router-link :to="'/dashboard/all/all_news'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
                 All
             </router-link>
@@ -50,13 +50,13 @@
             Loader
         },
         created() {
-            window.addEventListener('scroll', this.handleScroll);
+            window.document.addEventListener('scroll', this.handleScroll);
         },
         mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
         },
         destroyed() {
-            window.removeEventListener('scroll', this.handleScroll);
+            window.document.addEventListener('scroll', this.handleScroll);
         },
         methods: {
             ...mapMutations([
@@ -82,7 +82,8 @@
                 }
             },
             handleScroll() {
-                let currentScroll = window.document.body.scrollTop;
+                let currentScroll = window.document.body.scrollTop ||
+                    window.document.documentElement.scrollTop;
                 if (currentScroll > 500)
                     this.displayCaret = true;
                 else
