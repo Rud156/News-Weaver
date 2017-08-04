@@ -12,6 +12,7 @@
 * Add Badges For Unread News
 * Add A Deferred Reading List
 * Add Categorization for Favourites
+* Fix modal width and height for mobile devices
 
 ## Made With:
 * [Express JS](https://expressjs.com)
