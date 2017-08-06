@@ -102,7 +102,8 @@ var Favourite = mongoose.Schema({
     username: {
         type: String,
         required: true,
-        index: true
+        index: true,
+        lowercase: true
     },
     newsHash: {
         type: String,
@@ -117,14 +118,36 @@ var Favourite = mongoose.Schema({
     category: [String]
 });
 
-var createHash = function (password) {
+var ReadingList = mongoose.Schema({
+    hash: {
+        type: String,
+        required: true,
+        index: true,
+        unique: true
+    },
+    username: {
+        type: String,
+        index: true,
+        required: true,
+        lowercase: true
+    },
+    title: String,
+    description: String,
+    image: String,
+    URL: String,
+    summary: String,
+    date: String,
+    read: Boolean
+});
+
+var createHash = function(password) {
     return bcrypt.genSalt(10)
-        .then(function (salt) {
+        .then(function(salt) {
             return bcrypt.hash(password, salt);
         });
 };
 
-var validatePassword = function (password, hash) {
+var validatePassword = function(password, hash) {
     return bcrypt.compare(password, hash);
 };
 
@@ -133,6 +156,7 @@ module.exports = {
     FeedSchema: mongoose.model('Feed', FeedSchema),
     FeedNews: mongoose.model('News', FeedNews),
     Favourite: mongoose.model('Favourite', Favourite),
+    ReadingList: mongoose.model('ReadingList', ReadingList),
     createHash: createHash,
     validatePassword: validatePassword
 };

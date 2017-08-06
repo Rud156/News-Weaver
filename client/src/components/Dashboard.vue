@@ -20,6 +20,9 @@
                 class="dashboard-link-default">
                 {{ nav | capitalize }}
             </router-link>
+            <router-link :to="'/dashboard/read_later'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
+                Read Later
+            </router-link>
         </div>
         <br />
         <transition name="fade">

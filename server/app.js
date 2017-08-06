@@ -28,6 +28,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var feeds = require('./routes/feed');
 var userFeedDetails = require('./routes/user-feeds');
+var userReadingList = require('./routes/user-reading-list');
 
 var app = express();
 
@@ -46,6 +47,7 @@ app.use('/', index);
 app.use('/auth', users);
 app.use('/user', feeds);
 app.use('/user', userFeedDetails);
+app.use('/user', userReadingList);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

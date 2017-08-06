@@ -6,6 +6,7 @@ import Dashboard from '@/components/Dashboard';
 import All from '@/components/All';
 import Sources from '@/components/Sources';
 import Favourites from '@/components/Favourites';
+import ReadLater from '@/components/ReadLater';
 
 Vue.use(Router);
 
@@ -35,6 +36,11 @@ export default new Router({
                     path: 'favourites',
                     name: 'favourites',
                     component: Favourites
+                },
+                {
+                    path: 'read_later',
+                    name: 'read_later',
+                    component: ReadLater
                 },
                 {
                     path: '*',
