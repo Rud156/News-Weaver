@@ -1,4 +1,5 @@
-## ![Image](./client/static/NewsWeaver.png)  News-Weaver
+
+*## ![Image](./client/static/NewsWeaver.png)  News-Weaver
 > A simple web based RSS Aggregator
 #### A work in progress
 #### Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
@@ -8,6 +9,7 @@
 
 ## TODO:
 * Improve UI -> Change opening of article content (Full Page and Truncate Text)
+* Complete UI Revamp using Vuetify
 * Make a static button to add a feed source
 * Reflow news like in a newspaper
 * Improve Animations
