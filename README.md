@@ -7,7 +7,9 @@
 ![Homepage](./client/static/Homepage.png)
 
 ## TODO:
-* Improve UI
+* Improve UI -> Change opening of article content (Full Page and Truncate Text)
+* Make a static button to add a feed source
+* Reflow news like in a newspaper
 * Improve Animations
 * Add Badges For Unread News
 * Add A Deferred Reading List
