@@ -1,6 +1,6 @@
 <template>
     <div style="width: 100%; min-height: 100%">
-        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="380">
+        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="380" :width="width">
             <h4 style="margin: 7px 0">Edit Feed Details:</h4>
             <el-form v-if="editableNews">
                 <el-form-item label="Title">
@@ -55,7 +55,8 @@
                 favourites: [],
                 showModal: false,
                 editableNews: null,
-                loading: false
+                loading: false,
+                width: window.innerWidth - 20 < 400 ? window.innerWidth - 20 : 400
             };
         },
         components: {
@@ -64,12 +65,13 @@
         watch: {
             '$route' () {
                 this.resetFeedIndexCount();
-                this.loadFeeds();
+                this.fetchFavourites();
             }
         },
         mounted() {
             this.resetFeedIndexCount();
             this.fetchFavourites();
+            this.width = window.innerWidth - 20 < 400 ? window.innerWidth - 20 : 400;
         },
         methods: {
             ...mapGetters([

@@ -1,7 +1,4 @@
 import axios from 'axios';
-import {
-    Notification
-} from 'element-ui';
 
 import store from './../store';
 import router from './../router/index';
@@ -10,32 +7,22 @@ const ERROR_MSG = 'Something happened. Please try again.';
 
 function handleError(error, message) {
     if (error)
-        if (error.response.status === 403) {
-            Notification.warning({
-                title: 'Authentication Error',
-                message: 'You need to login to continue...'
-            });
+        if (error.response)
+            if (error.response.status === 403) {
+                store.commit('removeUser');
+                router.push({
+                    path: '/'
+                });
+                return {
+                    error: message
+                };
+            }
 
-            store.commit('removeUser');
-            router.push({
-                path: '/'
-            });
-            return;
-        }
-
-    Notification.error({
-        title: 'Error Occurred',
-        message: message
-    });
+    console.log(error);
+    return {
+        error: message
+    };
 }
-
-function displayMessage(message) {
-    Notification.info({
-        title: 'Info',
-        message: message
-    });
-}
-
 
 function loginUser(userData) {
     return axios.post(`${store.getters.getBaseURL}/auth/login`, userData)
@@ -43,7 +30,7 @@ function loginUser(userData) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -53,7 +40,7 @@ function registerUser(userData) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -66,7 +53,7 @@ function getAllFeeds(indexCount) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -79,7 +66,7 @@ function getSpecificFeed(indexCount, hash) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -112,7 +99,7 @@ function addToFavourites(news) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -124,7 +111,7 @@ function getFavourites(indexCount) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -136,7 +123,7 @@ function deleteFavourite(hash, newsHash) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -148,7 +135,7 @@ function saveEditedFavourite(favourite) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -159,7 +146,7 @@ function getAllFeedSources() {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -170,7 +157,7 @@ function fetchFeedSource(feedURL) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -181,7 +168,7 @@ function saveFeedSource(feedObject) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
         });
 }
 
@@ -192,13 +179,70 @@ function deleteFeedSource(hash) {
             return response.data;
         })
         .catch((error) => {
-            handleError(error, ERROR_MSG);
+            return handleError(error, ERROR_MSG);
+        });
+}
+
+function getReadingList() {
+    let token = store.getters.getToken;
+    return axios.get(`${store.getters.getBaseURL}/user/reading_list?token=${token}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            return handleError(error, ERROR_MSG);
+        });
+}
+
+function addToReadingList(newsObject) {
+    let token = store.getters.getToken;
+    let title = newsObject.title;
+    let description = newsObject.description;
+    let image = newsObject.image;
+    let URL = newsObject.URL;
+    let summary = newsObject.summary;
+
+    return axios.post(`${store.getters.getBaseURL}/user/reading_list?token=${token}`, {
+            title: title,
+            description: description,
+            image: image,
+            URL: URL,
+            summary: summary
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            return handleError(error, ERROR_MSG);
+        });
+}
+
+function markAsRead(hash) {
+    let token = store.getters.getToken;
+
+    return axios.patch(`${store.getters.getBaseURL}/user/reading_list?token=${token}&hash=${hash}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            return handleError(error, ERROR_MSG);
+        });
+}
+
+function removeFromReadingList(hash) {
+    let token = store.getters.getToken;
+
+    return axios.delete(`${store.getters.getBaseURL}/user/reading_list?token=${token}&hash=${hash}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            return handleError(error, ERROR_MSG);
         });
 }
 
 export {
     handleError,
-    displayMessage,
     loginUser,
     registerUser,
     getAllFeeds,
@@ -210,5 +254,9 @@ export {
     getAllFeedSources,
     fetchFeedSource,
     saveFeedSource,
-    deleteFeedSource
+    deleteFeedSource,
+    getReadingList,
+    addToReadingList,
+    markAsRead,
+    removeFromReadingList
 };

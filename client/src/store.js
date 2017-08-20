@@ -9,8 +9,9 @@ const store = new Vuex.Store({
         token: '',
         displayLoader: false,
         feedIndexCount: 0,
-        baseServerURL: 'http://localhost:3000'
-        // baseServerURL: 'https://news-weaver.herokuapp.com'
+        baseServerURL: 'http://localhost:3000',
+        // baseServerURL: 'https://news-weaver.herokuapp.com',
+        feedSources: []
     },
     getters: {
         formatUsername(state) {
@@ -29,6 +30,9 @@ const store = new Vuex.Store({
         },
         getBaseURL(state) {
             return state.baseServerURL;
+        },
+        getFeedSources(state) {
+            return state.feedSources;
         }
     },
     mutations: {
@@ -50,6 +54,17 @@ const store = new Vuex.Store({
         },
         toggleLoader(state) {
             state.displayLoader = !state.displayLoader;
+        },
+        setFeedSources(state, sources) {
+            state.feedSources = sources;
+        },
+        removeFeedSources(state, hash) {
+            state.feedSources = state.feedSources.filter(element => {
+                return element.hash !== hash;
+            });
+        },
+        addFeedSource(state, feed) {
+            state.feedSources.push(feed);
         }
     }
 });

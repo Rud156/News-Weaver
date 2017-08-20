@@ -1,94 +1,83 @@
 <template>
-    <el-col :span="24" style="font-size: 20px; font-family: 'Signika', sans-serif">
-        <el-card style="margin: 14px">
-            <el-row :gutter="20" class="page-wrap">
-                <el-col :xs="24" :sm="24" :md="8" :lg="8">
-                    <img :src="news.image" width="100%" onerror="this.onerror = null; this.src = 'http://localhost:3000/images/place-holder.png'"
-                    />
-                    <div style="margin-top: 14px">
-                        <a :href="news.URL" target="_blank" class="custom-button" style="color: #2ab7ca; display: block">
-                            <icon name="external-link-square"></icon>
-                            Open
-                        </a>
-                    </div>
-                    <div class="custom-button" style="margin-top: 7px" :style="[isFav ?  { color: '#f2b53c' } : { color: '#2c3e50' }]" @click="addToFavourites(news)"
-                        v-if="addToFavourite">
-                        <icon name="star"></icon>
-                        Favourite
-                    </div>
-                    <el-row>
-                        <el-col :span="12">
-                            <div class="custom-button" style="margin-top: 7px" @click="deleteNews(news.hash, news.newsHash)" v-if="deleteNews">
-                                <icon name="trash"></icon>
-                                Delete
-                            </div>
-                        </el-col>
-                        <el-col :span="12">
-                            <div class="custom-button" style="margin-top: 7px" @click="editNews(news)" v-if="editNews">
-                                <icon name="pencil"></icon>
-                                Edit
-                            </div>
-                        </el-col>
-                    </el-row>
-                </el-col>
-                <el-col :xs="24" :sm="24" :md="16" :lg="16">
-                    <h4 style="font-family: 'Questrial', sans-serif; font-size: 21px">
-                        <a :href="news.URL" target="_blank" style="color: #2ab7ca;">
-                        {{news.title}}
-                        </a>
-                    </h4>
-                    <div v-html="news.description" style="color: gray"></div>
-                </el-col>
-            </el-row>
-            <div style="padding: 14px; color: gray; float: right" class="bottom clearfix">
-                {{news.date | ago | capitalize}}
+    <v-card class="masonry-item" raised>
+        <v-card-media
+            class="white--text image-zoom"
+            height="200px"
+            :src="item.image"
+        >
+            <v-container fill-height fluid>
+            <v-layout fill-height>
+                <v-flex xs12 align-end flexbox>
+                    <span class="headline default-text-shadow">{{ item.title }}</span>
+                </v-flex>
+            </v-layout>
+            </v-container>
+        </v-card-media>
+        <v-card-title>
+            <div>
+                <span style="color: #5a5e66">{{ item.summary | truncate | removeHTML }}</span>
             </div>
-        </el-card>
-    </el-col>
+        </v-card-title>
+        <v-card-actions>
+            <v-spacer></v-spacer>
+            <div class="subheading">{{ item.date | ago | titleCase }}</div>
+        </v-card-actions>
+        <v-card-actions>
+            <div class="one-fourth">
+                    <v-btn
+                    class="blue--text"
+                    flat
+                    icon
+                    @click.stop="viewNews(item)"
+                >
+                    <v-icon class="blue--text">fa-eye</v-icon>
+                </v-btn>
+            </div>
+            <div class="one-fourth">
+                <v-btn 
+                    class="orange--text"
+                    flat
+                    icon
+                >
+                    <v-icon class="orange--text">fa-heart-o</v-icon>
+                </v-btn>
+            </div>
+            <div class="one-fourth">
+                <v-btn 
+                    class="red--text"
+                    flat
+                    icon
+                    target="_blank"
+                    :href="item.URL"
+                >
+                    <v-icon class="red--text">fa-external-link</v-icon>
+                </v-btn>
+            </div>
+            <div class="one-fourth">
+                <v-btn
+                    class="pink--text"
+                    flat
+                    icon
+                >
+                    <v-icon class="pink--text">fa-book</v-icon>
+                </v-btn>
+            </div>
+        </v-card-actions>
+    </v-card>
 </template>
 
-<script>
-    import {
-        displayMessage,
-        addToFavourites
-    } from './../../api/api';
 
+<script>
     export default {
         props: {
-            news: {
+            item: {
                 type: Object,
                 required: true
             },
-            favourite: {
-                type: Boolean
-            },
-            addToFavourite: {
-                type: Boolean
-            },
-            deleteNews: {
-                type: Function
-            },
-            editNews: {
-                type: Function
-            }
-        },
-        data() {
-            return {
-                isFav: this.favourite
-            }
-        },
-        methods: {
-            addToFavourites(news) {
-                addToFavourites(news)
-                    .then(data => {
-                        if (data.success)
-                            this.isFav = true;
-
-
-                        displayMessage(data.message);
-                    });
-
+            viewNews: {
+                type: Function,
+                required: true
             }
         }
-    };
+    }
 </script>

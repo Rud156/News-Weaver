@@ -3,13 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-default/index.css';
-import 'element-ui/lib/theme-default/base.css';
 import 'vue2-animate/dist/vue2-animate.min.css';
-
-import Vue2Filters from 'vue2-filters';
-Vue.use(Vue2Filters);
 
 import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
@@ -27,12 +21,31 @@ import './assets/masonry.css';
 require('smoothscroll-polyfill').polyfill();
 
 import moment from 'moment';
+import he from 'he';
 Vue.filter('ago', date => {
     return moment(date).fromNow();
 });
+Vue.filter('truncate', data => {
+    return data.substring(0, 100) + '...';
+});
+Vue.filter('removeHTML', data => {
+    return he.decode(data.replace(/<[^>]+>/g, ''));
+});
+Vue.filter('titleCase', data => {
+    data = data.trim();
+    return data.toLowerCase().split(' ').map(function(word) {
+        return word.replace(word[0], word[0].toUpperCase());
+    }).join(' ');
+});
+Vue.filter('capitalCase', data => {
+    return data.charAt(0).toUpperCase() + data.slice(1);
+});
 
 Vue.config.productionTip = false;
-Vue.use(ElementUI);
+
+import 'vuetify/dist/vuetify.min.css';
+import Vuetify from 'vuetify';
+Vue.use(Vuetify);
 
 router.beforeEach((to, from, next) => {
     if (window.localStorage.getItem('user') != null && store.state.username === '')

@@ -1,36 +1,107 @@
 <template>
-    <div style="width: 100%; min-height: 100%;" class="font-style">
-        <el-menu mode="horizontal" @select="handleSelect" :default-active="'dashboard'">
-            <el-menu-item index="logo" style="font-size: 30px" class="brand-logo">
-                News Weaver
-            </el-menu-item>
-            <el-menu-item index="logout" style="float: right">Logout</el-menu-item>
-            <el-menu-item index="dashboard" style="float: right">
-                Dashboard
-            </el-menu-item>
-        </el-menu>
-        <vodal :show="$store.state.displayLoader" :closeButton="false" :width="50" :height="60" @hide="toggleLoader">
-            <loader></loader>
-        </vodal>
-        <div style="margin-top: 14px; font-family: 'Signika', sans-serif;">
-            <router-link :to="'/dashboard/all/all_news'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
-                All
-            </router-link>
-            <router-link :to="'/dashboard/' + nav" v-for="nav in navigation" :key="nav " style="padding: 0 21px" active-class="dashboard-link-active"
-                class="dashboard-link-default">
-                {{ nav | capitalize }}
-            </router-link>
-            <router-link :to="'/dashboard/read_later'" style="padding: 0 21px" active-class="dashboard-link-active" class="dashboard-link-default">
-                Read Later
-            </router-link>
-        </div>
-        <br />
-        <transition name="fade">
-            <router-view @validation-failed="handleSelect"></router-view>
-        </transition>
-        <transition name="fade">
-            <i v-if="displayCaret" class="page-fixed-component el-icon-caret-top" onclick="window.scroll({ top: 0, left: 0, behavior: 'smooth' });"></i>
-        </transition>
+    <div>
+        <v-snackbar
+            :timeout="3000"
+            :top="true"
+            :right="true"
+            :success="snackBarType === 'success'"
+            :info="snackBarType === 'info'"
+            :warning="snackBarType === 'warning'"
+            :error="snackBarType === 'error'"
+            v-model="displaySnackBar"
+        >
+            {{ snackBarMessage }}
+            <v-btn flat class="white--text" @click="displaySnackBar = false">Close</v-btn>
+        </v-snackbar>
+        <v-app
+            height="415px"
+            standalone
+        >
+            <v-navigation-drawer
+                class="grey lighten-4 pb-0"
+                temporary
+                height="100%"
+                enable-resize-watcher
+                clipped
+                v-model="showDrawer"
+            >
+                <v-list dense>
+                    <v-list-tile
+                        :href="'/dashboard/all/all_news'"
+                    >
+                        <v-list-tile-action>
+                            <v-icon>fa-newspaper-o</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                All News
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-list-tile 
+                        v-for="item in navigations" 
+                        :key="item.name" 
+                        :to="'/dashboard/' + item.nav"
+                    >
+                        <v-list-tile-action>
+                            <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-tile-action>
+                        <v-list-tile-content>
+                            <v-list-tile-title>
+                                {{ item.name }}
+                            </v-list-tile-title>
+                        </v-list-tile-content>
+                    </v-list-tile>
+                    <v-divider></v-divider>
+                    <v-subheader class="mt-3 black--text text--darken-1">SUBSCRIPTIONS</v-subheader>
+                    <v-list>
+                        <v-list-tile 
+                            v-for="item in getFeedSources()" 
+                            :key="item.hash" 
+                            avatar 
+                            :to="'/dashboard/all/' + item.hash"
+                        >
+                          <v-list-tile-avatar>
+                            <img :src="item.favicon" :alt="item.title">
+                          </v-list-tile-avatar>
+                          <v-list-tile-title v-text="item.title"></v-list-tile-title>
+                        </v-list-tile>
+                    </v-list>
+                </v-list>
+            </v-navigation-drawer>
+            <v-toolbar
+                :fixed="true"
+            >
+                <v-toolbar-title class="white--text">
+                    <v-btn icon @click.stop="showDrawer = !showDrawer">
+                        <v-icon>fa-bars</v-icon>
+                    </v-btn>
+                    <span class="hidden-sm-and-down">
+                        <span class="black--text">NEWS</span>
+                        <span class="red--text slide-line">WEAVER</span>
+                    </span>
+                </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                    <v-btn flat @click="handleSelect('dashboard')">
+                        Dashboard
+                    </v-btn>
+                    <v-btn flat @click="handleSelect('logout')">
+                        Logout
+                    </v-btn>
+                </v-toolbar-items>
+            </v-toolbar>
+            <main>
+                <v-container>
+                    <v-layout>
+                    <v-flex xs12>
+                        <router-view @displayMessage="displayMessage">
+                        </router-view>
+                    </v-flex>
+                    </v-layout>
+                </v-container>
+            </main>
+        </v-app>
     </div>
 </template>
 
@@ -40,23 +111,44 @@
         mapMutations,
         mapGetters
     } from 'vuex';
-    import Loader from './sub-components/Loader';
+
+    import {
+        getAllFeedSources
+    } from './../api/api';
 
     export default {
         data() {
             return {
                 navigation: ['sources', 'favourites'],
-                displayCaret: false
+                displayCaret: false,
+                showDrawer: false,
+                navigations: [{
+                        name: 'Sources',
+                        icon: 'fa-cog',
+                        nav: 'sources'
+                    },
+                    {
+                        name: 'Favourites',
+                        icon: 'fa-star',
+                        nav: 'favourites'
+                    },
+                    {
+                        name: 'Read Later',
+                        icon: 'fa-book',
+                        nav: 'read_later'
+                    }
+                ],
+                snackBarMessage: '',
+                snackBarType: '',
+                displaySnackBar: false
             };
-        },
-        components: {
-            Loader
         },
         created() {
             window.document.addEventListener('scroll', this.handleScroll);
         },
         mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
+            this.fetchFeedSources();
         },
         destroyed() {
             window.document.addEventListener('scroll', this.handleScroll);
@@ -64,10 +156,11 @@
         methods: {
             ...mapMutations([
                 'removeUser',
-                'toggleLoader'
+                'setFeedSources'
             ]),
             ...mapGetters([
-                'formatUsername'
+                'formatUsername',
+                'getFeedSources'
             ]),
             handleSelect(key) {
                 switch (key) {
@@ -91,6 +184,26 @@
                     this.displayCaret = true;
                 else
                     this.displayCaret = false;
+            },
+            displayMessage(messageType, message) {
+                console.log(arguments);
+                this.snackBarType = messageType;
+                this.displaySnackBar = true;
+                this.snackBarMessage = message;
+            },
+            fetchFeedSources() {
+                getAllFeedSources()
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.setFeedSources(data.feeds);
+                            } else {
+                                this.displayMessage('warning', data.message);
+                            }
+                        } else {
+                            this.displayMessage('error', data.error);
+                        }
+                    });
             }
         }
     };

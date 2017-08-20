@@ -1,118 +1,122 @@
 <template>
-    <div style="width: 100%; min-height: 100%" id="mainDiv">
-        <el-row :gutter="20" style="margin: 0">
-            <el-col :span="24" style="margin-bottom: 21px">
-                <h1>
-                    <span id="logo-text" style="font-family: 'Signika', sans-serif; font-size: 45px">
-                        News Weaver
-                    </span>
-                </h1>
-            </el-col>
-            <el-col :xs="24" :sm="24" :md="12" :lg="12">
-                <el-row :gutter="20" style="font-family: 'Signika', sans-serif; font-size: 40px">
-                    <el-col :span="24" style="padding: 14px 0">
-                        An RSS Reader for the Web
-                    </el-col>
-                    <el-col :span="24" style="padding: 14px 0">
-                        Made using
-                        <a href="https://expressjs.com" target="_blank" class="slide-line">
-                            Express
-                        </a> and
-                        <a href="https://vuejs.org" target="_blank" class="slide-line">
-                            VueJS
-                        </a>
-                    </el-col>
-                    <el-col :span="24" style="padding: 14px 0">
-                        <a href="https://www.github.com/rud156/news-weaver" target="_blank">
-                            <el-button icon="search">
-                                See On Github
-                            </el-button>
-                        </a>
-                    </el-col>
-                </el-row>
-            </el-col>
-            <el-col :xs="24" :sm="24" :md="12" :lg="12">
-                <el-tabs>
-                    <el-tab-pane label="Login">
-                        <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="loginForm">
-                            <el-row>
-                                <el-col :span="6">
-                                    <div style="float: left; margin-top: 7px">Username:</div>
-                                </el-col>
-                                <el-col :span="18">
-                                    <el-form-item prop="username">
-                                        <el-input v-model="user.username" required></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="6">
-                                    <div style="float: left; margin-top: 7px">Password:</div>
-                                </el-col>
-                                <el-col :span="18">
-                                    <el-form-item prop="password">
-                                        <el-input v-model="user.password" type="password" required></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="24">
-                                    <el-button type="primary" @click="loginUser">
-                                        Login
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                        </el-form>
-                    </el-tab-pane>
-                    <el-tab-pane label="Register">
-                        <el-form label-width="120px" class="custom-padding" :rules="rules" :model="user" ref="registrationForm">
-                            <el-row>
-                                <el-col :span="6">
-                                    <div style="float: left; margin-top: 7px">Username:</div>
-                                </el-col>
-                                <el-col :span="18">
-                                    <el-form-item prop="username">
-                                        <el-input v-model="user.username" required></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="6">
-                                    <div style="float: left; margin-top: 7px">Password:</div>
-                                </el-col>
-                                <el-col :span="18">
-                                    <el-form-item prop="password">
-                                        <el-input v-model="user.password" type="password" required></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col :span="6">
-                                    <div style="float: left; margin-top: 7px">Re Password:</div>
-                                </el-col>
-                                <el-col :span="18">
-                                    <el-form-item prop="rePassword">
-                                        <el-input v-model="user.rePassword" type="password" required></el-input>
-                                    </el-form-item>
-                                </el-col>
-                            </el-row>
-                            <el-row>
-                                <el-col>
-                                    <el-button type="primary" @click="registerUser">
-                                        Register
-                                    </el-button>
-                                </el-col>
-                            </el-row>
-                        </el-form>
-                    </el-tab-pane>
-                </el-tabs>
-            </el-col>
-            <el-col>
-                <h1 style="padding-top: 21px; font-family: 'Signika', sans-serif; font-size: 40px">
-                    Keep all your news in a single place. Simple and easy to read.
-                </h1>
-            </el-col>
-        </el-row>
+    <div class="main-background" :style="styleObject">
+        <v-snackbar
+            :timeout="3000"
+            :top="true"
+            :right="true"
+            :success="snackBarType === 'success'"
+            :info="snackBarType === 'info'"
+            :warning="snackBarType === 'warning'"
+            :error="snackBarType === 'error'"
+            v-model="displaySnackBar"
+        >
+        {{ snackBarMessage }}
+        <v-btn flat class="white--text" @click="displaySnackBar = false">Close</v-btn>
+        </v-snackbar>
+        <div style="padding-bottom: 7vh">
+            <div class="display-1" style="padding: 7px">
+                NEWS 
+                <a 
+                    href="https://www.github.com/Rud156/News-Weaver" 
+                    target="_blank" 
+                    class="red--text slide-line"
+                >
+                    WEAVER
+                </a>
+            </div>
+            <div class="title">One stop shop for all your news</div>
+        </div>
+        <v-layout>
+            <v-flex xs12 sm4 offset-sm4>
+                <v-card class="elevation-12">
+                    <v-card-media 
+                        src="https://unsplash.it/971/360?image=24" 
+                        alt="Header"
+                        height="200px"
+                        class="white--text"
+                    >
+                        <v-container fill-height fluid>
+                            <v-layout fill-height>
+                                <v-flex xs12 align-end flexbox>
+                                    <span class="headline" v-if="showLogin">Sign in to continue</span>
+                                    <span class="headline" v-else>Sign up to register</span>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </v-card-media>
+                    <v-card-title class="white">
+                        <v-flex xs12>
+                            <v-text-field
+                                name="username"
+                                label="Enter Username: "
+                                v-model="user.username"
+                                required
+                            >
+                            </v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-text-field
+                                name="password"
+                                label="Enter Password: "
+                                v-model="user.password"
+                                type="password"
+                                hint="At least 8 characters"
+                                min="8"
+                                counter
+                                required
+                            >
+                            </v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            <v-text-field
+                                v-if="!showLogin"
+                                name="rePass"
+                                label="Re Enter Password: "
+                                v-model="user.rePassword"
+                                type="password"
+                                hint="At least 8 characters"
+                                min="8"
+                                counter
+                                required
+                            >
+                            </v-text-field>
+                        </v-flex>
+                        <v-flex xs12 v-if="showLogin">
+                            <v-btn 
+                                class="red darken-3 white--text" 
+                                style="float: right"
+                                @click="handleUserLogin"
+                            >
+                                <v-icon>fa-paper-plane</v-icon>
+                                <span style="padding: 0 7px">Sign In</span>
+                            </v-btn>
+                            <span 
+                                class="subheading prompt-main-text" 
+                                @click="setRenderState"
+                            >
+                                Not yet registered?
+                            </span>
+                        </v-flex>
+                        <v-flex xs12 v-else>
+                            <v-btn 
+                                class="red darken-3 white--text" 
+                                style="float: right"
+                                @click="handleUserRegistration"
+                            >
+                                <v-icon>fa-paper-plane</v-icon>
+                                <span style="padding: 0 7px">Sign Up</span>
+                            </v-btn>
+                            <span 
+                                class="subheading prompt-main-text"
+                                @click="setRenderState"
+                            >
+                                Already registered?
+                            </span>
+                        </v-flex>
+                    </v-card-title>
+                </v-card>
+            </v-flex>
+        </v-layout>
     </div>
 </template>
 
@@ -122,8 +126,6 @@
         mapMutations
     } from 'vuex';
     import {
-        handleError,
-        displayMessage,
         loginUser,
         registerUser
     } from './../api/api';
@@ -136,42 +138,13 @@
                     password: '',
                     rePassword: ''
                 },
-                rules: {
-                    username: [{
-                            required: true,
-                            message: 'Please enter the username',
-                            trigger: 'blur'
-                        },
-                        {
-                            min: 5,
-                            max: 20,
-                            message: 'Length should be between 5 and 20',
-                            trigger: 'change'
-                        }
-                    ],
-                    password: [{
-                            required: true,
-                            message: 'Please enter the password',
-                            trigger: 'blur'
-                        },
-                        {
-                            min: 8,
-                            message: 'Length should be 8 and greater',
-                            trigger: 'change'
-                        }
-                    ],
-                    rePassword: [{
-                            required: true,
-                            message: 'Please re-enter the password',
-                            trigger: 'blur'
-                        },
-                        {
-                            min: 8,
-                            message: 'Length should be 8 and greater',
-                            trigger: 'change'
-                        }
-                    ]
-                }
+                showLogin: true,
+                styleObject: {
+                    paddingBottom: '0'
+                },
+                snackBarMessage: '',
+                displaySnackBar: false,
+                snackBarType: 'info'
             };
         },
         mounted() {
@@ -181,105 +154,91 @@
             ...mapMutations([
                 'setUser'
             ]),
-            loginUser() {
+            setRenderState() {
+                if (this.showLogin) {
+                    this.showLogin = false;
+                    this.styleObject.paddingBottom = '42px';
+                } else {
+                    this.showLogin = true;
+                    this.styleObject.paddingBottom = '0';
+                }
+            },
+            displayMessage(messageType, message) {
+                this.snackBarType = messageType;
+                this.displaySnackBar = true;
+                this.snackBarMessage = message;
+            },
+            handleUserLogin() {
                 let username = this.user.username;
                 let password = this.user.password;
 
-                this.$refs.loginForm.validate((valid) => {
-                    if (valid) {
-                        loginUser({
-                                username: username,
-                                password: password
-                            })
-                            .then((data) => {
-                                if (data.success) {
-                                    this.setUser({
-                                        username: username,
-                                        token: data.token
-                                    });
-                                    this.$router.push({
-                                        path: 'dashboard/all/all_news'
-                                    });
-                                } else
-                                    handleError(null, data.message);
-                            });
-                    } else
-                        handleError(null, 'Form fields not valid');
+                if (username.trim() === '' || password.trim() === '') {
+                    this.displayMessage('warning', 'Fields cannot ne blank');
+                    return;
+                }
+                if (password.length < 8 || password.length > 25) {
+                    this.displayMessage('error', 'Password must be between 8 and 25 characters long');
+                    return;
+                }
+                loginUser({
+                        username: username,
+                        password: password
+                    })
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.setUser({
+                                    username: username,
+                                    token: data.token
+                                });
+                                this.$router.push({
+                                    path: 'dashboard/all/all_news'
+                                });
+                            } else {
+                                this.displayMessage('warning', data.message);
+                            }
+                        } else {
+                            this.displayMessage('error', data.error);
+                        }
+                    });
 
-                });
             },
-            registerUser() {
+            handleUserRegistration() {
                 let username = this.user.username;
                 let password = this.user.password;
                 let rePassword = this.user.rePassword;
 
-                this.$refs.registrationForm.validate((valid) => {
-                    if (valid) {
-                        registerUser({
-                                username: username,
-                                password: password,
-                                rePassword: rePassword
-                            })
-                            .then((data) => {
-                                if (data.success)
-                                    displayMessage(`User registration successful.` +
-                                        ` Please login to continue...`);
-                                else
-                                    handleError(null, data.message);
-                            });
-                    } else
-                        handleError(null, 'Form fields not valid');
-                });
+                if (username.trim() === '' || password.trim() === '' || rePassword.trim() === '') {
+                    this.displayMessage('warning', 'Fields cannot be blank');
+                    return;
+                }
+                if (password.length < 8 || password.length > 25 ||
+                    rePassword.length < 8 || rePassword.length > 25) {
+                    this.displayMessage('error', 'Password must be between 8 and 25 characters long');
+                    return;
+                }
+                if (password !== rePassword) {
+                    this.displayMessage('error', 'Passwords do not match');
+                    return;
+                }
+
+                registerUser({
+                        username: username,
+                        password: password,
+                        rePassword: rePassword
+                    })
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.displayMessage('success', data.message);
+                            } else {
+                                this.displayMessage('info', data.message);
+                            }
+                        } else {
+                            this.displayMessage('error', data.error);
+                        }
+                    });
             }
         }
     };
 </script>
-
-
-<style scoped>
-    #mainDiv {
-        background: url('./../assets/background_1.jpg');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: fixed;
-        color: white;
-    }
-
-    #logo-text {
-        border-bottom: 1px solid white;
-        border-right: 1px solid white;
-        position: relative;
-        padding: 14px;
-        display: inline-block;
-    }
-
-    #logo-text:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 0;
-        height: 0;
-        border-style: solid;
-        border-width: 0 0 25px 25px;
-        border-color: transparent transparent white transparent;
-    }
-
-    .slide-line {
-        position: relative;
-    }
-
-    .slide-line:after {
-        position: absolute;
-        content: "";
-        width: 0%;
-        bottom: 0;
-        left: 0;
-        border-bottom: 2px dashed #fe4a49;
-        transition-duration: 0.5s;
-    }
-
-    .slide-line:hover:after {
-        width: 100%;
-    }
-</style>
