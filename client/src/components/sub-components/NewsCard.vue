@@ -24,7 +24,7 @@
         </v-card-actions>
         <v-card-actions>
             <div class="one-fourth">
-                    <v-btn
+                <v-btn
                     class="blue--text"
                     flat
                     icon

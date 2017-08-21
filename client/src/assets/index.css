@@ -37,6 +37,10 @@ body {
     width: 25%;
 }
 
+.one-third {
+    width: 33.33333%;
+}
+
 .image-zoom:hover .card__media__background,
 .image-zoom:focus .card__media__background {
     transform: scale(1.2);

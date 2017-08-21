@@ -23,7 +23,7 @@ router.get('/get_feed', function(req, res) {
         });
     }
 
-    var request = requestModule({
+    requestModule({
             url: feedURL,
             maxRedirects: 3
         })
@@ -296,6 +296,7 @@ router.post('/save_feed', function(req, res) {
             }
         })
         .then(function(feed) {
+            console.log(feed);
             res.json({
                 success: true,
                 message: 'Feed source added successfully',

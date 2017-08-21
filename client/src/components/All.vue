@@ -11,6 +11,7 @@
                 v-for="item in allNews" 
                 :item="item"
                 :viewNews="viewNews"
+                :key="item.hash"
             >
             </NewsCard>
         </div>

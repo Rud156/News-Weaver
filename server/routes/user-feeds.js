@@ -45,12 +45,12 @@ router.get('/all_feed_sources', function(req, res) {
                     hash: feed.hash,
                     title: feed.title,
                     description: feed.description,
-                    category: feed.category,
                     feedURL: feed.feedURL,
-                    siteURL: feed.URl,
+                    URL: feed.URL,
                     favicon: feed.favicon
                 };
             });
+            console.log(modifiedFeed);
             res.json({
                 success: true,
                 message: 'Found user\'s all feeds',

@@ -1,21 +1,96 @@
 <template>
-    <div style="width: 100%; min-height: 100%;">
-        <source-popup :displayModal="displayModal" :closeModal="closeModal" :saveFeedSource="saveFeedSource" :submitURL="submitURL"
-            :feedObject="feedObject" :height="height"></source-popup>
-        <el-row :gutter="20" style="padding: 21px; margin: 0">
-            <div class="masonry">
-                <el-card class="masonry-item">
-                    <div slot="header">
-                        <span>Add A New Feed Source</span>
+    <div>
+        <v-dialog v-model="showConfirmationDialog" persistent>
+            <v-card>
+                <v-card-title>
+                    <div class="headline align-center">
+                        Do you want to remove {{ potentiallyRemovableSource.title }}?
                     </div>
-                    <div class="bottom clearfix">
-                        <el-button type="success" icon="plus" @click="displayModal = true">Add Source</el-button>
-                    </div>
-                </el-card>
+                </v-card-title>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn class="red--text" flat @click.stop="deleteFinalDecided(true)">Yes</v-btn>
+                    <v-btn class="green--text" flat @click.stop="deleteFinalDecided(false)">No</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
 
-                <feed class="masonry-item" :feed="source" :deleteFeed="deleteFeed" :viewFeed="viewFeed" v-for="source in sources" :key="source.hash"></feed>
-            </div>
-        </el-row>
+        <v-dialog v-model="showURLDialog">
+            <v-card>
+                <v-card-text class="py-0">
+                    <v-text-field 
+                        label="Enter URL: " 
+                        required 
+                        type="email"
+                        v-model="sourceUrl"
+                    >
+                    </v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn 
+                        class="green--text" 
+                        flat 
+                        @click.stop="getNewFeedSource"
+                        :loading="showURLLoading"
+                        :disabled="showURLLoading"
+                    >
+                        <v-icon class="green--text">fa-paper-plane</v-icon>
+                        <span style="padding: 0 7px">Send</span>
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="showSourceDialog" scrollable>
+            <v-card v-if="newSource">
+                <v-card-text>
+                    <v-layout row align-center>
+                        <v-flex xs3 class="text-xs-center">
+                            <img :src="newSource.favicon" :alt="newSource.title" style="height: 25px" />
+                        </v-flex>
+                        <v-flex xs9>
+                            <v-container>
+                                <div class="headline">
+                                    {{ newSource.title }}
+                                </div>
+                            </v-container>
+                        </v-flex>
+                    </v-layout>
+                    <v-layout row>
+                        <v-flex xs12>
+                            <div class="title grey--text" style="padding: 0 7px">
+                                {{ newSource.description }}
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn class="green--text" flat @click.stop="saveNewFeedSource">Add Source</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <div class="masonry">
+            <FeedSource
+                v-for="source in sources"
+                :feedSource="source"
+                :deleteSource="deleteConfirmationSource"
+                :key="source.hash"
+            >
+            </FeedSource>
+        </div>
+        <v-btn
+            class="green"
+            fab
+            bottom
+            right
+            fixed
+            @click.stop="showURLDialog = true"
+        >
+            <v-icon class="white--text">fa-plus</v-icon>
+        </v-btn>
     </div>
 </template>
 
@@ -25,26 +100,30 @@
     } from 'vuex';
 
     import {
-        displayMessage,
         getAllFeedSources,
         fetchFeedSource,
         saveFeedSource,
         deleteFeedSource
     } from './../api/api';
-    import Feed from './sub-components/Feed.vue';
-    import SourcePopup from './sub-components/SourcePopup.vue';
+    import FeedSource from './sub-components/FeedSource.vue';
 
     export default {
         components: {
-            Feed,
-            SourcePopup
+            FeedSource
         },
         data() {
             return {
                 sources: [],
-                height: 130,
-                displayModal: false,
-                feedObject: null
+                potentiallyRemovableSource: {
+                    hash: '',
+                    title: ''
+                },
+                showConfirmationDialog: false,
+                showURLDialog: false,
+                showSourceDialog: false,
+                showURLLoading: false,
+                sourceUrl: '',
+                newSource: null
             };
         },
         mounted() {
@@ -52,86 +131,93 @@
         },
         methods: {
             ...mapMutations([
-                'toggleLoader'
+                'toggleLoader',
+                'removeFeedSources',
+                'addFeedSource'
             ]),
-            closeModal() {
-                this.displayModal = false;
-                this.feedObject = null;
-                this.height = 130;
-            },
             getAllSources() {
                 getAllFeedSources()
-                    .then((data) => {
-                        if (data.success) {
-                            this.sources = data.feeds;
-                        } else
-                            displayMessage(data.message);
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.sources = data.feeds;
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
                     });
             },
-            submitURL(feedURL) {
-                var URL = feedURL;
-                if (URL.trim() === '') {
-                    this.displayModal = false;
-                    this.displayMessage('Invalid empty URL');
-                    return;
-                } else {
-                    this.toggleLoader();
-                    this.closeModal();
-
-                    fetchFeedSource(URL)
-                        .then((data) => {
-                            this.displayModal = true;
-                            this.toggleLoader();
-
+            getNewFeedSource() {
+                this.showURLLoading = true;
+                fetchFeedSource(this.sourceUrl)
+                    .then(data => {
+                        if (data.error === undefined) {
                             if (data.success) {
-                                this.feedObject = data.feedDetails;
-                                this.height = 310;
+                                this.sourceUrl = '';
+                                this.newSource = data.feedDetails;
+                                this.showSourceDialog = true;
                             } else {
-                                this.closeModal();
-                                displayMessage(data.message);
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+
+                        this.showURLDialog = false;
+                        this.showURLLoading = false;
+                    });
+            },
+            saveNewFeedSource() {
+                saveFeedSource(this.newSource)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.sources.push(data.feed);
+                                this.addFeedSource(data.feed);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+
+                        this.newSource = null;
+                        this.showSourceDialog = false;
+                    });
+            },
+            deleteConfirmationSource(hash, title) {
+                this.potentiallyRemovableSource.hash = hash;
+                this.potentiallyRemovableSource.title = title;
+                this.showConfirmationDialog = true;
+            },
+            deleteFinalDecided(value) {
+                if (value) {
+                    let hash = this.potentiallyRemovableSource.hash;
+                    deleteFeedSource(hash)
+                        .then(data => {
+                            if (data.error === undefined) {
+                                if (data.success) {
+                                    this.removeFeedSources(hash);
+                                    let sources = this.sources.filter(element => {
+                                        return element.hash !== hash;
+                                    });
+                                    this.sources = sources;
+                                    this.$emit('displayMessage', 'success', data.message);
+                                } else {
+                                    this.$emit('displayMessage', 'warning', data.message);
+                                }
+                            } else {
+                                this.$emit('displayMessage', 'error', data.error);
                             }
                         });
                 }
-            },
-            saveFeedSource() {
-                if (!this.feedObject.description)
-                    this.feedObject.description = this.feedObject.title;
-                var feedSource = {
-                    title: this.feedObject.title,
-                    description: this.feedObject.description,
-                    siteURL: this.feedObject.siteURL,
-                    feedURL: this.feedObject.feedURL,
-                    favicon: this.feedObject.favicon
+                this.potentiallyRemovableSource = {
+                    hash: '',
+                    title: ''
                 };
-
-                this.closeModal();
-                saveFeedSource(feedSource)
-                    .then((data) => {
-                        if (data.success) {
-                            this.sources.push(data.feed);
-                        }
-                        displayMessage(data.message);
-                    });
-            },
-            viewFeed(feed) {
-                var hash = feed.hash;
-                this.$router.push({
-                    path: `/dashboard/all/${hash}`
-                });
-            },
-            deleteFeed(feed) {
-                var hash = feed.hash;
-                deleteFeedSource(hash)
-                    .then((data) => {
-                        if (data.success) {
-                            var changedSource = this.sources.filter((source) => {
-                                if (source.hash !== hash)
-                                    return source;
-                            });
-                            this.sources = changedSource;
-                        }
-                        displayMessage(data.message);
-                    });
+                this.showConfirmationDialog = false;
             }
         }
     };

@@ -186,7 +186,6 @@
                     this.displayCaret = false;
             },
             displayMessage(messageType, message) {
-                console.log(arguments);
                 this.snackBarType = messageType;
                 this.displaySnackBar = true;
                 this.snackBarMessage = message;
