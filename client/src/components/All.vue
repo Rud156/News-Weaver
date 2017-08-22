@@ -8,12 +8,12 @@
         </EmptyFeed>
         <div class="masonry">
             <NewsCard 
-                v-for="item in allNews" 
+                v-for="(item, index) in allNews" 
                 :item="item"
                 :viewNews="viewNews"
                 :key="item.hash"
-                :favourite="favourites.indexOf(item.hash) > -1"
                 :addNewsAsFavourite="saveNewsAsFavourite"
+                :index="index"
             >
             </NewsCard>
         </div>
@@ -21,10 +21,19 @@
             :showModal="showNewsModal"
             :item="selectedNews"
             :closeModal="closeNewsModal"
-            :favourite="favourites.indexOf(selectedNews.hash) > -1"
             :addNewsAsFavourite="saveNewsAsFavourite"
+            :index="selectedNewsIndex"
         >
         </NewsView>
+        <v-btn
+            class="blue darken-2 white--text"
+            :loading="loading"
+            :disabled="loading"
+            @click.stop="loadFeeds"
+            flat
+        >
+            Load More News
+        </v-btn>
     </div>
 </template>
 
@@ -54,7 +63,8 @@
                 allNews: [],
                 showNewsModal: false,
                 selectedNews: {},
-                favourites: []
+                selectedNewsIndex: -1,
+                loading: false
             };
         },
         components: {
@@ -81,6 +91,8 @@
                 'resetFeedIndexCount'
             ]),
             loadFeeds() {
+                this.loading = true;
+
                 let currentIndex = this.getFeedIndexCount();
                 switch (this.id) {
                     case 'all_news':
@@ -88,11 +100,16 @@
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        if (currentIndex === 0)
-                                            this.allNews = data.news;
-                                        else
-                                            this.allNews.push(...data.news);
-                                        this.favourites = data.favourites;
+                                        let favourites = new Set(data.favourites);
+
+                                        let allNews = data.news.map(element => {
+                                            return {
+                                                ...element,
+                                                favourite: favourites.has(element.hash)
+                                            };
+                                        });
+                                        this.allNews.push(...allNews);
+
                                         this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
@@ -100,6 +117,8 @@
                                 } else {
                                     this.$emit('displayMessage', 'error', data.error);
                                 }
+
+                                this.loading = false;
                             });
                         break;
 
@@ -108,11 +127,27 @@
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        if (currentIndex === 0)
-                                            this.allNews = data.news;
-                                        else
-                                            this.allNews.push(...data.news);
-                                        this.favourites = data.favourites;
+                                        let favourites = new Set(data.favourites);
+
+                                        if (currentIndex === 0) {
+                                            let allNews = data.news.map(element => {
+                                                return {
+                                                    ...element,
+                                                    favourite: favourites.has(element.hash)
+                                                };
+                                            });
+                                            this.allNews = allNews;
+
+                                        } else {
+                                            let newNews = data.news.map(element => {
+                                                return {
+                                                    ...element,
+                                                    favourite: favourites.has(element.hash)
+                                                };
+                                            });
+                                            this.allNews.push(...newNews);
+                                        }
+
                                         this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
@@ -120,17 +155,23 @@
                                 } else {
                                     this.$emit('displayMessage', 'error', data.error);
                                 }
+
+                                this.loading = false;
                             });
                         break;
                 }
             },
-            saveNewsAsFavourite(news) {
+            saveNewsAsFavourite(news, index) {
                 addToFavourites(news)
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                let length = this.favourites.length;
-                                this.$set(this.favourites, length, data.favourite.hash);
+                                this.allNews[index].favourite = true;
+
+                                if (this.selectedNews.favourite !== undefined) {
+                                    this.selectedNews.favourite = true;
+                                }
+
                                 this.$emit('displayMessage', 'success', data.message);
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
@@ -140,13 +181,15 @@
                         }
                     });
             },
-            viewNews(item) {
+            viewNews(item, index) {
                 this.showNewsModal = true;
                 this.selectedNews = item;
+                this.selectedNewsIndex = index;
             },
             closeNewsModal() {
                 this.showNewsModal = false;
                 this.selectedNews = {};
+                this.selectedNewsIndex = -1;
             }
         }
     };

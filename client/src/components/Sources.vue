@@ -139,7 +139,7 @@
         methods: {
             ...mapMutations([
                 'toggleLoader',
-                'removeFeedSources',
+                'removeFeedSource',
                 'addFeedSource'
             ]),
             getAllSources() {
@@ -210,7 +210,7 @@
                         .then(data => {
                             if (data.error === undefined) {
                                 if (data.success) {
-                                    this.removeFeedSources(hash);
+                                    this.removeFeedSource(hash);
                                     let sources = this.sources.filter(element => {
                                         return element.hash !== hash;
                                     });

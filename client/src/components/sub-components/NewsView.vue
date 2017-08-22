@@ -32,11 +32,11 @@
                         flat
                         class="orange--text"
                         :value="true"
-                        @click.stop="addNewsAsFavourite(item)"
+                        @click.stop="addNewsAsFavourite(item, index)"
                     >
                         <span>Favourite</span>
                         <v-icon>
-                            {{ favourite ? 'fa-heart' : 'fa-heart-o' }}
+                            {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
                         </v-icon>
                     </v-btn>
                     <v-btn
@@ -70,12 +70,12 @@
                 type: Function,
                 required: true
             },
-            favourite: {
-                type: Boolean,
-                required: true
-            },
             addNewsAsFavourite: {
                 type: Function
+            },
+            index: {
+                type: Number,
+                required: true
             }
         },
         data() {

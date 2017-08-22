@@ -58,7 +58,7 @@ const store = new Vuex.Store({
         setFeedSources(state, sources) {
             state.feedSources = sources;
         },
-        removeFeedSources(state, hash) {
+        removeFeedSource(state, hash) {
             state.feedSources = state.feedSources.filter(element => {
                 return element.hash !== hash;
             });

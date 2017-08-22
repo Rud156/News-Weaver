@@ -28,7 +28,7 @@
                     class="blue--text"
                     flat
                     icon
-                    @click.stop="viewNews(item)"
+                    @click.stop="viewNews(item, index)"
                 >
                     <v-icon class="blue--text">fa-eye</v-icon>
                 </v-btn>
@@ -38,10 +38,10 @@
                     class="orange--text"
                     flat
                     icon
-                    @click.stop="addNewsAsFavourite(item)"
+                    @click.stop="addNewsAsFavourite(item, index)"
                 >
                     <v-icon class="orange--text">
-                        {{ favourite ? 'fa-heart' : 'fa-heart-o' }}
+                        {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
                     </v-icon>
                 </v-btn>
             </div>
@@ -81,12 +81,12 @@
                 type: Function,
                 required: true
             },
-            favourite: {
-                type: Boolean,
-                required: true
-            },
             addNewsAsFavourite: {
                 type: Function
+            },
+            index: {
+                type: Number,
+                required: true
             }
         }
     }

@@ -195,7 +195,7 @@
                                     path: 'dashboard/all/all_news'
                                 });
                             } else {
-                                this.displayMessage('warning', data.message);
+                                this.displayMessage('error', data.message);
                             }
                         } else {
                             this.displayMessage('error', data.error);
