@@ -12,6 +12,8 @@
                 :item="item"
                 :viewNews="viewNews"
                 :key="item.hash"
+                :favourite="favourites.indexOf(item.hash) > -1"
+                :addNewsAsFavourite="saveNewsAsFavourite"
             >
             </NewsCard>
         </div>
@@ -19,6 +21,8 @@
             :showModal="showNewsModal"
             :item="selectedNews"
             :closeModal="closeNewsModal"
+            :favourite="favourites.indexOf(selectedNews.hash) > -1"
+            :addNewsAsFavourite="saveNewsAsFavourite"
         >
         </NewsView>
     </div>
@@ -32,7 +36,8 @@
 
     import {
         getAllFeeds,
-        getSpecificFeed
+        getSpecificFeed,
+        addToFavourites
     } from './../api/api';
     import EmptyFeed from './sub-components/EmptyFeed.vue';
     import NewsCard from './sub-components/NewsCard.vue';
@@ -48,7 +53,8 @@
             return {
                 allNews: [],
                 showNewsModal: false,
-                selectedNews: {}
+                selectedNews: {},
+                favourites: []
             };
         },
         components: {
@@ -86,6 +92,7 @@
                                             this.allNews = data.news;
                                         else
                                             this.allNews.push(...data.news);
+                                        this.favourites = data.favourites;
                                         this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
@@ -105,6 +112,7 @@
                                             this.allNews = data.news;
                                         else
                                             this.allNews.push(...data.news);
+                                        this.favourites = data.favourites;
                                         this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
@@ -115,6 +123,22 @@
                             });
                         break;
                 }
+            },
+            saveNewsAsFavourite(news) {
+                addToFavourites(news)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                let length = this.favourites.length;
+                                this.$set(this.favourites, length, data.favourite.hash);
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
             },
             viewNews(item) {
                 this.showNewsModal = true;

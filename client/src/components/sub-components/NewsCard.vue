@@ -38,8 +38,11 @@
                     class="orange--text"
                     flat
                     icon
+                    @click.stop="addNewsAsFavourite(item)"
                 >
-                    <v-icon class="orange--text">fa-heart-o</v-icon>
+                    <v-icon class="orange--text">
+                        {{ favourite ? 'fa-heart' : 'fa-heart-o' }}
+                    </v-icon>
                 </v-btn>
             </div>
             <div class="one-fourth">
@@ -77,6 +80,13 @@
             viewNews: {
                 type: Function,
                 required: true
+            },
+            favourite: {
+                type: Boolean,
+                required: true
+            },
+            addNewsAsFavourite: {
+                type: Function
             }
         }
     }

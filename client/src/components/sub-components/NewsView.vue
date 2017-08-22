@@ -32,9 +32,12 @@
                         flat
                         class="orange--text"
                         :value="true"
+                        @click.stop="addNewsAsFavourite(item)"
                     >
                         <span>Favourite</span>
-                        <v-icon>fa-heart-o</v-icon>
+                        <v-icon>
+                            {{ favourite ? 'fa-heart' : 'fa-heart-o' }}
+                        </v-icon>
                     </v-btn>
                     <v-btn
                         flat
@@ -66,6 +69,13 @@
             closeModal: {
                 type: Function,
                 required: true
+            },
+            favourite: {
+                type: Boolean,
+                required: true
+            },
+            addNewsAsFavourite: {
+                type: Function
             }
         },
         data() {

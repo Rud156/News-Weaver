@@ -17,16 +17,17 @@
 
         <v-dialog v-model="showURLDialog">
             <v-card>
-                <v-card-text class="py-0">
+                <v-card-text style="padding-bottom: 0">
                     <v-text-field 
                         label="Enter URL: " 
                         required 
                         type="email"
                         v-model="sourceUrl"
+                        :rules="[rules.url]"
                     >
                     </v-text-field>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions style="padding-top: 0">
                     <v-spacer></v-spacer>
                     <v-btn 
                         class="green--text" 
@@ -123,7 +124,13 @@
                 showSourceDialog: false,
                 showURLLoading: false,
                 sourceUrl: '',
-                newSource: null
+                newSource: null,
+                regex: /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+                rules: {
+                    url: (value) => {
+                        return this.regex.test(value) || 'Invalid URL';
+                    }
+                }
             };
         },
         mounted() {
@@ -150,6 +157,10 @@
                     });
             },
             getNewFeedSource() {
+                if (!this.regex.test(this.sourceUrl)) {
+                    return;
+                }
+
                 this.showURLLoading = true;
                 fetchFeedSource(this.sourceUrl)
                     .then(data => {
