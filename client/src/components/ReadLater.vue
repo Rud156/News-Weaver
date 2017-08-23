@@ -1,28 +1,16 @@
 <template>
     <div>
-        <el-card v-if="readingList.length <= 0" style="max-width: 480px; margin: 0 auto">
-            <div slot="header" class="clearfix" style="text-align: center">
-                <icon name="bell-o" scale="5"></icon>
-                <br />
-                <span style="font-size: 25px">No News In Read Later Right Now...</span>
-            </div>
-        </el-card>
-        <div v-else>
-            <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <news-card v-for="news in readingList" :key="news.hash" :news="news"></news-card>
-            </el-row>
-        </div>
+        
     </div>
 </template>
 
 <script>
     import {
-        displayMessage,
         getReadingList,
         markAsRead,
         removeFromReadingList
     } from './../api/api';
-    import newsCard from './sub-components/NewsCard.vue';
+    import NewsCard from './sub-components/NewsCard.vue';
 
     export default {
         data() {
@@ -32,7 +20,7 @@
             };
         },
         components: {
-            newsCard
+            NewsCard
         },
         watch: {
             '$route' () {

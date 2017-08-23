@@ -23,22 +23,17 @@
                             :alt="item.title" 
                             class="image-view"
                         />
-                        <div class="title" v-html="item.description" style="margin-top: 35px; margin-bottom: 40px;">
+                        <div 
+                            class="title" 
+                            v-html="item.description" 
+                            style="margin-top: 35px; margin-bottom: 40px;"
+                        >
                         </div>
                     </v-container>
                 </v-card-title>
                 <v-bottom-nav value="true" class="white">
-                    <v-btn
-                        flat
-                        class="orange--text"
-                        :value="true"
-                        @click.stop="addNewsAsFavourite(item, index)"
-                    >
-                        <span>Favourite</span>
-                        <v-icon>
-                            {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
-                        </v-icon>
-                    </v-btn>
+                    <slot name="favourite"></slot>
+                    <slot name="delete"></slot>
                     <v-btn
                         flat
                         class="red--text"
@@ -49,6 +44,7 @@
                         <span>Open Link</span>
                         <v-icon>fa-external-link</v-icon>
                     </v-btn>
+                    <slot name="edit"></slot>
                 </v-bottom-nav>         
             </v-card>
         </v-dialog>
@@ -69,13 +65,6 @@
             closeModal: {
                 type: Function,
                 required: true
-            },
-            addNewsAsFavourite: {
-                type: Function
-            },
-            index: {
-                type: Number,
-                required: true
             }
         },
         data() {
@@ -85,8 +74,7 @@
         },
         watch: {
             showModal(updatedValue) {
-                if (updatedValue)
-                    this.displayModal = updatedValue;
+                this.displayModal = updatedValue;
             }
         },
         methods: {

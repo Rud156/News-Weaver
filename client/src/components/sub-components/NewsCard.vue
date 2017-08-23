@@ -33,18 +33,8 @@
                     <v-icon class="blue--text">fa-eye</v-icon>
                 </v-btn>
             </div>
-            <div class="one-fourth">
-                <v-btn 
-                    class="orange--text"
-                    flat
-                    icon
-                    @click.stop="addNewsAsFavourite(item, index)"
-                >
-                    <v-icon class="orange--text">
-                        {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
-                    </v-icon>
-                </v-btn>
-            </div>
+            <slot name="favourite"></slot>
+            <slot name="delete"></slot>
             <div class="one-fourth">
                 <v-btn 
                     class="red--text"
@@ -56,15 +46,8 @@
                     <v-icon class="red--text">fa-external-link</v-icon>
                 </v-btn>
             </div>
-            <div class="one-fourth">
-                <v-btn
-                    class="pink--text"
-                    flat
-                    icon
-                >
-                    <v-icon class="pink--text">fa-book</v-icon>
-                </v-btn>
-            </div>
+            <slot name="readLater"></slot>
+            <slot name="edit"></slot>
         </v-card-actions>
     </v-card>
 </template>
@@ -81,15 +64,8 @@
                 type: Function,
                 required: true
             },
-            addNewsAsFavourite: {
-                type: Function
-            },
             index: {
                 type: Number,
-                required: true
-            },
-            oneFourth: {
-                type: Boolean,
                 required: true
             }
         }

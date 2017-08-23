@@ -14,8 +14,70 @@
                 :index="index"
                 :viewNews="viewNews"
             >
+                <div class="one-fourth" slot="delete">
+                    <v-btn 
+                        class="orange--text"
+                        flat
+                        icon
+                        @click.stop="deleteNewsFromFavourite(item.hash, item.newsHash)"
+                    >
+                        <v-icon class="orange--text">
+                            fa-trash-o
+                        </v-icon>
+                    </v-btn>
+                </div>
+                <div class="one-fourth" slot="edit">
+                    <v-btn 
+                        class="pink--text"
+                        flat
+                        icon
+                        @click.stop="editNews(item, index)"
+                    >
+                        <v-icon class="pink--text">
+                         fa-pencil
+                        </v-icon>
+                    </v-btn>
+                </div>
             </NewsCard>
         </div>
+        <NewsView
+            :showModal="showNewsModal"
+            :closeModal="closeNewsModal"
+            :item="selectedNews"
+        >
+            <v-btn 
+                class="orange--text"
+                flat
+                :value="true"
+                slot="delete"
+                @click.stop="deleteNewsFromFavourite(selectedNews.hash, selectedNews.newsHash)"
+            >
+                <span>Delete</span>
+                <v-icon class="orange--text">
+                    fa-trash-o
+                </v-icon>
+            </v-btn>
+            <v-btn 
+                class="pink--text"
+                flat
+                :value="true"
+                slot="edit"
+                @click.stop="editNews(selectedNews, selectedNewsIndex)"
+            >
+                <span>Edit</span>
+                <v-icon class="pink--text">
+                    fa-pencil
+                </v-icon>
+            </v-btn>
+        </NewsView>
+        <EditFavourite
+            :editableNews="editableNews"
+            :closeModal="closeEditableNewsModal"
+            :index="editableNewsIndex"
+            :showModal="showEditableNewsModal"
+            :saveEditedNews="saveEditedNews"
+        >
+        </EditFavourite>
         <v-btn
             class="blue darken-2 white--text"
             :loading="loading"
@@ -42,22 +104,26 @@
     import EmptyFeed from './sub-components/EmptyFeed.vue';
     import NewsCard from './sub-components/NewsCard.vue';
     import NewsView from './sub-components/NewsView.vue';
+    import EditFavourite from './sub-components/EditFavourite.vue';
 
     export default {
         data() {
             return {
                 favourites: [],
-                showModal: false,
-                editableNews: null,
+                showNewsModal: false,
+                showEditableNewsModal: false,
+                editableNews: {},
+                editableNewsIndex: -1,
                 loading: false,
                 selectedNews: {},
-                index: -1
+                selectedNewsIndex: -1
             };
         },
         components: {
             NewsCard,
             NewsView,
-            EmptyFeed
+            EmptyFeed,
+            EditFavourite
         },
         watch: {
             '$route' () {
@@ -96,7 +162,59 @@
                     });
             },
             viewNews(item, index) {
-                console.log(item);
+                this.showNewsModal = true;
+                this.selectedNews = item;
+                this.selectedNewsIndex = index;
+            },
+            editNews(item, index) {
+                this.editableNews = Object.assign({}, item);
+                this.editableNewsIndex = index;
+                this.closeNewsModal();
+                this.showEditableNewsModal = true;
+            },
+            saveEditedNews(item, index) {
+                saveEditedFavourite(item)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.favourites[index] = item;
+                                this.closeEditableNewsModal();
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            deleteNewsFromFavourite(hash, newsHash) {
+                deleteFavourite(hash, newsHash)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.favourites = this.favourites.filter(element => {
+                                    return element.hash !== hash;
+                                });
+                                this.closeNewsModal();
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            closeNewsModal() {
+                this.showNewsModal = false;
+                this.selectedNews = {};
+                this.selectedNewsIndex = -1;
+            },
+            closeEditableNewsModal() {
+                this.showEditableNewsModal = false;
+                this.editableNews = {};
+                this.editableNewsIndex = -1;
             }
         }
     };

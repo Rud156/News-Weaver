@@ -12,18 +12,48 @@
                 :item="item"
                 :viewNews="viewNews"
                 :key="item.hash"
-                :addNewsAsFavourite="saveNewsAsFavourite"
                 :index="index"
             >
+                <div class="one-fourth" slot="favourite">
+                    <v-btn 
+                        class="orange--text"
+                        flat
+                        icon
+                        @click.stop="saveNewsAsFavourite(item, index)"
+                    >
+                        <v-icon class="orange--text">
+                            {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                        </v-icon>
+                    </v-btn>
+                </div>
+                <div class="one-fourth" slot="readLater">
+                    <v-btn
+                        class="pink--text"
+                        flat
+                        icon
+                    >
+                        <v-icon class="pink--text">fa-book</v-icon>
+                    </v-btn>
+                </div>
             </NewsCard>
         </div>
         <NewsView
             :showModal="showNewsModal"
             :item="selectedNews"
             :closeModal="closeNewsModal"
-            :addNewsAsFavourite="saveNewsAsFavourite"
-            :index="selectedNewsIndex"
         >
+            <v-btn
+                slot="favourite"
+                flat 
+                class="orange--text" 
+                :value="true" 
+                @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
+            >
+                <span>Favourite</span>
+                <v-icon>
+                    {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                </v-icon>
+            </v-btn>
         </NewsView>
         <v-btn
             class="blue darken-2 white--text"

@@ -277,7 +277,7 @@ router.post('/save_favourite', function(req, res) {
 router.patch('/edit_favourite', function(req, res) {
     var username = req.decoded._doc.username;
 
-    var image = req.body.imageURL;
+    var image = req.body.image;
     var title = req.body.title;
     var description = req.body.description;
     var hash = req.body.hash;

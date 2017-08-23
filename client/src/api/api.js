@@ -128,7 +128,6 @@ function deleteFavourite(hash, newsHash) {
 }
 
 function saveEditedFavourite(favourite) {
-    console.log(favourite);
     let token = store.getters.getToken;
     return axios.patch(`${store.getters.getBaseURL}/user/edit_favourite?token=${token}`, favourite)
         .then((response) => {
