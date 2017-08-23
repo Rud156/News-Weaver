@@ -2,7 +2,7 @@
     <v-layout row justify-center style="position: relative;">
         <v-dialog 
             v-model="displayModal"
-            transition="dialog-bottom-transition"
+            transition="scale-transition"
             persistent
         >
             <v-card>
