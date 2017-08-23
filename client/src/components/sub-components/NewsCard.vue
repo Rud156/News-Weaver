@@ -87,6 +87,10 @@
             index: {
                 type: Number,
                 required: true
+            },
+            oneFourth: {
+                type: Boolean,
+                required: true
             }
         }
     }

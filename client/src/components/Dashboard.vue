@@ -19,15 +19,14 @@
         >
             <v-navigation-drawer
                 class="grey lighten-4 pb-0"
-                temporary
                 height="100%"
-                enable-resize-watcher
                 clipped
+                temporary
                 v-model="showDrawer"
             >
                 <v-list dense>
                     <v-list-tile
-                        :href="'/dashboard/all/all_news'"
+                        :to="'/dashboard/all/all_news'"
                     >
                         <v-list-tile-action>
                             <v-icon>fa-newspaper-o</v-icon>
@@ -57,9 +56,9 @@
                     <v-list>
                         <v-list-tile 
                             v-for="item in getFeedSources()" 
-                            :key="item.hash" 
-                            avatar 
+                            :key="item.hash"  
                             :to="'/dashboard/all/' + item.hash"
+                            avatar
                         >
                           <v-list-tile-avatar>
                             <img :src="item.favicon" :alt="item.title">

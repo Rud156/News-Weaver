@@ -30,7 +30,7 @@
             <v-flex xs12 sm4 offset-sm4>
                 <v-card class="elevation-12">
                     <v-card-media 
-                        src="https://unsplash.it/971/360?image=24" 
+                        src="/static/360.jpg" 
                         alt="Header"
                         height="200px"
                         class="white--text"

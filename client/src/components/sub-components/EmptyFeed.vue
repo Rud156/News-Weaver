@@ -1,7 +1,7 @@
 <template>
     <v-card :raised="true">
         <v-card-title primary-title>
-          <div>
+          <div style="width: 100%">
             <h3 class="headline">{{ heading }}</h3>
             <div>{{ description }}</div>
           </div>
