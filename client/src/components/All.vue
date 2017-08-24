@@ -120,11 +120,13 @@
             '$route' () {
                 this.resetFeedIndexCount();
                 this.loadFeeds();
+                this.allNews = [];
             }
         },
         mounted() {
             this.resetFeedIndexCount();
             this.loadFeeds();
+            this.allNews = [];
         },
         methods: {
             ...mapGetters([
