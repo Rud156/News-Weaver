@@ -3,16 +3,6 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import 'vue2-animate/dist/vue2-animate.min.css';
-
-import 'vue-awesome/icons';
-import Icon from 'vue-awesome/components/Icon';
-Vue.component('icon', Icon);
-
-import Vodal from 'vodal';
-Vue.component(Vodal.name, Vodal);
-import 'vodal/common.css';
-import 'vodal/rotate.css';
 
 import store from './store';
 import './assets/index.css';
