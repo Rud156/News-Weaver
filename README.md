@@ -7,29 +7,18 @@
 
 ### Massive Breaking Changes in this branch don't clone. The entire UI and functionality is being overhauled.
 
-![Homepage](./client/static/Homepage.png)
+![Homepage](./client/static/HomePage.png)
 
 ## TODO:
-* Improve UI -> Change opening of article content (Full Page and Truncate Text)
-* Complete UI Revamp using Vuetify
-* Make a static button to add a feed source
-* Reflow news like in a newspaper
-* Improve Animations
 * Add Badges For Unread News
-* Add A Deferred Reading List
 * Add Categorization for Favourites
-* Fix modal width and height for mobile devices
 
 ## Made With:
 * [Express JS](https://expressjs.com)
 * [Vue JS](https://vuejs.org)
-* [Element UI](http://element.eleme.io/#/en-US)
+* [VuetifyJS](https://www.vuetifyjs.com)
 * [Moment JS](https://momentjs.com)
 * [Axios JS](https://github.com/mzabriskie/axios)
-* [Vodal](https://github.com/chenjiahan/vodal)
-* [Vue Awesome](https://github.com/Justineo/vue-awesome)
-* [Vue Animation](https://github.com/asika32764/vue2-animate)
-* [Vue Filters](https://github.com/freearhey/vue2-filters)
 
 
 ## Getting Started:
