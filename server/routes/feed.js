@@ -23,7 +23,7 @@ router.get('/get_feed', function(req, res) {
         });
     }
 
-    var request = requestModule({
+    requestModule({
             url: feedURL,
             maxRedirects: 3
         })
@@ -120,7 +120,6 @@ router.get('/feed_news', function(req, res) {
     }
 
     username = username.toLowerCase();
-    var favourites;
 
     Model.User.findOne({
             username: username
@@ -133,36 +132,44 @@ router.get('/feed_news', function(req, res) {
                 });
                 return Promise.reject('Error');
             } else {
-                favourites = user.favourites;
-                return Model.FeedSchema.findOne({
+                var array = [];
+                array.push(user.favourites);
+                array[1] = Model.FeedSchema.findOne({
                     hash: hash,
                     users: {
                         $in: [username]
                     }
                 }).exec();
+
+                return Promise.all(array);
             }
         })
-        .then(function(feed) {
-            if (!feed) {
+        .then(function(data) {
+            if (!data[1]) {
                 res.json({
                     success: false,
                     message: 'You don\'t seem to have the feed in your list. Try something else'
                 });
                 return Promise.reject('Error');
-            } else
-                return Model.FeedNews.find({
+            } else {
+                var array = [];
+                array.push(data[0]);
+                array[1] = Model.FeedNews.find({
                     feedHash: hash
                 }).sort({
                     date: -1
                 }).exec();
+
+                return Promise.all(array);
+            }
         })
-        .then(function(feedNews) {
-            feedNews = feedNews.slice(index * 15, index * 15 + 15);
+        .then(function(data) {
+            data[1] = data[1].slice(index * 15, index * 15 + 15);
             res.json({
                 success: true,
                 message: 'Feed successfully retrieved',
-                news: feedNews,
-                favourites: favourites
+                news: data[1],
+                favourites: data[0]
             });
         })
         .catch(function(err) {
@@ -296,6 +303,7 @@ router.post('/save_feed', function(req, res) {
             }
         })
         .then(function(feed) {
+            console.log(feed);
             res.json({
                 success: true,
                 message: 'Feed source added successfully',

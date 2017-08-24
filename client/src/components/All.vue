@@ -1,18 +1,82 @@
 <template>
-    <div style="width: 100%; min-height: 100%;">
-        <el-card v-if="allNews.length <= 0" style="max-width: 480px; margin: 0 auto">
-            <div slot="header" class="clearfix" style="text-align: center">
-                <icon name="bell-o" scale="5"></icon>
-                <br />
-                <span style="font-size: 25px">No Feeds To Show Right Now...</span>
-            </div>
-        </el-card>
-        <div v-else>
-            <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <newsCard v-for="news in allNews" :key="news.hash" :news="news" :favourite="favourites.has(news.hash)" :addToFavourite="true"></newsCard>
-            </el-row>
-            <el-button @click="loadFeeds" style="margin-bottom: 14px" :loading="loading">Load More</el-button>
-        </div>
+    <div>
+        <EmptyFeed
+            v-if="allNews.length <= 0"
+            heading="No results found"
+            description="I'm sorry but nothing turned up when I searched. This might be a problem with the way the data is fetched once you add a new source. Check back in 5 mins."
+        >
+        </EmptyFeed>
+        <v-layout row wrap>
+            <NewsCard 
+                v-for="(item, index) in allNews" 
+                :item="item"
+                :viewNews="viewNews"
+                :key="item.hash"
+                :index="index"
+            >
+                <div class="one-fourth" slot="slot_1">
+                    <v-btn 
+                        class="orange--text"
+                        flat
+                        icon
+                        @click.stop="saveNewsAsFavourite(item, index)"
+                    >
+                        <v-icon class="orange--text">
+                            {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                        </v-icon>
+                    </v-btn>
+                </div>
+                <div class="one-fourth" slot="slot_2">
+                    <v-btn
+                        class="pink--text"
+                        flat
+                        icon
+                        @click.stop="addNewsToReadingList(item)"
+                    >
+                        <v-icon class="pink--text">fa-book</v-icon>
+                    </v-btn>
+                </div>
+            </NewsCard>
+        </v-layout>
+        <NewsView
+            :showModal="showNewsModal"
+            :item="selectedNews"
+            :closeModal="closeNewsModal"
+        >
+            <v-btn
+                slot="slot_1"
+                flat 
+                class="orange--text" 
+                :value="true" 
+                @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
+            >
+                <span>Favourite</span>
+                <v-icon>
+                    {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                </v-icon>
+            </v-btn>
+            <v-btn
+                slot="slot_2"
+                flat 
+                class="pink--text" 
+                :value="true" 
+                @click.stop="addNewsToReadingList(selectedNews)"
+            >
+                <span>Read Later</span>
+                <v-icon>
+                    fa-book
+                </v-icon>
+            </v-btn>
+        </NewsView>
+        <v-btn
+            class="blue darken-2 white--text"
+            :loading="loading"
+            :disabled="loading"
+            @click.stop="loadFeeds"
+            flat
+        >
+            Load More News
+        </v-btn>
     </div>
 </template>
 
@@ -23,11 +87,14 @@
     } from 'vuex';
 
     import {
-        displayMessage,
         getAllFeeds,
-        getSpecificFeed
+        getSpecificFeed,
+        addToFavourites,
+        addToReadingList
     } from './../api/api';
-    import newsCard from './sub-components/NewsCard.vue';
+    import EmptyFeed from './sub-components/EmptyFeed.vue';
+    import NewsCard from './sub-components/NewsCard.vue';
+    import NewsView from './sub-components/NewsView.vue';
 
     export default {
         props: {
@@ -35,15 +102,19 @@
                 type: String
             }
         },
-        components: {
-            newsCard
-        },
         data() {
             return {
                 allNews: [],
-                loading: false,
-                favourites: null
+                showNewsModal: false,
+                selectedNews: {},
+                selectedNewsIndex: -1,
+                loading: false
             };
+        },
+        components: {
+            EmptyFeed,
+            NewsCard,
+            NewsView
         },
         watch: {
             '$route' () {
@@ -66,42 +137,117 @@
             loadFeeds() {
                 this.loading = true;
 
+                let currentIndex = this.getFeedIndexCount();
                 switch (this.id) {
                     case 'all_news':
-                        getAllFeeds(this.getFeedIndexCount())
-                            .then((data) => {
+                        getAllFeeds(currentIndex)
+                            .then(data => {
+                                if (data.error === undefined) {
+                                    if (data.success) {
+                                        let favourites = new Set(data.favourites);
+
+                                        let allNews = data.news.map(element => {
+                                            return {
+                                                ...element,
+                                                favourite: favourites.has(element.hash)
+                                            };
+                                        });
+                                        this.allNews.push(...allNews);
+
+                                        this.incrementFeedIndex();
+                                    } else {
+                                        this.$emit('displayMessage', 'warning', data.message);
+                                    }
+                                } else {
+                                    this.$emit('displayMessage', 'error', data.error);
+                                }
+
                                 this.loading = false;
-
-                                if (data.success) {
-                                    if (this.getFeedIndexCount() === 0)
-                                        this.allNews = data.news;
-                                    else
-                                        this.allNews.push(...data.news);
-                                    this.favourites = new Set(data.favourites);
-
-                                    this.incrementFeedIndex();
-                                } else
-                                    displayMessage(data.message);
                             });
                         break;
+
                     default:
-                        getSpecificFeed(this.getFeedIndexCount(), this.id)
-                            .then((data) => {
+                        getSpecificFeed(currentIndex, this.id)
+                            .then(data => {
+                                if (data.error === undefined) {
+                                    if (data.success) {
+                                        let favourites = new Set(data.favourites);
+
+                                        if (currentIndex === 0) {
+                                            let allNews = data.news.map(element => {
+                                                return {
+                                                    ...element,
+                                                    favourite: favourites.has(element.hash)
+                                                };
+                                            });
+                                            this.allNews = allNews;
+
+                                        } else {
+                                            let newNews = data.news.map(element => {
+                                                return {
+                                                    ...element,
+                                                    favourite: favourites.has(element.hash)
+                                                };
+                                            });
+                                            this.allNews.push(...newNews);
+                                        }
+
+                                        this.incrementFeedIndex();
+                                    } else {
+                                        this.$emit('displayMessage', 'warning', data.message);
+                                    }
+                                } else {
+                                    this.$emit('displayMessage', 'error', data.error);
+                                }
+
                                 this.loading = false;
-
-                                if (data.success) {
-                                    if (this.getFeedIndexCount() === 0)
-                                        this.allNews = data.news;
-                                    else
-                                        this.allNews.push(...data.news);
-                                    this.favourites = new Set(data.favourites);
-
-                                    this.incrementFeedIndex();
-                                } else
-                                    displayMessage(data.message);
                             });
                         break;
                 }
+            },
+            saveNewsAsFavourite(news, index) {
+                addToFavourites(news)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.allNews[index].favourite = true;
+
+                                if (this.selectedNews.favourite !== undefined) {
+                                    this.selectedNews.favourite = true;
+                                }
+
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            addNewsToReadingList(item) {
+                addToReadingList(item)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            viewNews(item, index) {
+                this.showNewsModal = true;
+                this.selectedNews = item;
+                this.selectedNewsIndex = index;
+            },
+            closeNewsModal() {
+                this.showNewsModal = false;
+                this.selectedNews = {};
+                this.selectedNewsIndex = -1;
             }
         }
     };

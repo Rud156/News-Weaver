@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <transition name="zoom" enter-active-class="zoomLeft" leave-active-class="zoomOutRight">
+        <transition name="slide-x-transition">
             <router-view></router-view>
         </transition>
     </div>

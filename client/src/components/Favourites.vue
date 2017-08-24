@@ -1,37 +1,92 @@
 <template>
-    <div style="width: 100%; min-height: 100%">
-        <vodal :show="showModal" animation="rotate" @hide="hideModal" style="font-family: 'Signika', sans-serif;" :height="380">
-            <h4 style="margin: 7px 0">Edit Feed Details:</h4>
-            <el-form v-if="editableNews">
-                <el-form-item label="Title">
-                    <el-input v-model="editableNews.title"></el-input>
-                </el-form-item>
-                <el-form-item label="Image URL">
-                    <el-input v-model="editableNews.image" type="url"></el-input>
-                </el-form-item>
-                <el-form-item label="Summary">
-                    <el-input type="textarea" v-model="editableNews.description"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="saveEditedFavourite" icon="check" style="float: right">
-                        Save
-                    </el-button>
-                </el-form-item>
-            </el-form>
-        </vodal>
-        <el-card v-if="favourites.length <= 0" style="max-width: 480px; margin: 0 auto">
-            <div slot="header" class="clearfix" style="text-align: center">
-                <icon name="bell-o" scale="5"></icon>
-                <br />
-                <span style="font-size: 25px">No Favourites To Show Right Now...</span>
-            </div>
-        </el-card>
-        <div v-else>
-            <el-row :gutter="20" style="padding: 21px; margin: 0">
-                <news-card v-for="fav in favourites" :key="fav.hash" :news="fav" :deleteNews="deleteFavourite" :editNews="editFavourite"></news-card>
-            </el-row>
-            <el-button @click="fetchFavourites" style="margin-bottom: 14px" :loading="loading">Load More</el-button>
-        </div>
+    <div>
+        <EmptyFeed
+            v-if="favourites.length <= 0"
+            heading="No results found"
+            description="I'm sorry but it looks like you have no favourites to show. Add a few and check back later."
+        >
+        </EmptyFeed>
+        <v-layout row wrap>
+            <NewsCard
+                v-for="(item, index) in favourites"
+                :item="item"
+                :key="item.hash"
+                :index="index"
+                :viewNews="viewNews"
+            >
+                <div class="one-fourth" slot="slot_1">
+                    <v-btn 
+                        class="orange--text"
+                        flat
+                        icon
+                        @click.stop="deleteNewsFromFavourite(item.hash, item.newsHash)"
+                    >
+                        <v-icon class="orange--text">
+                            fa-trash-o
+                        </v-icon>
+                    </v-btn>
+                </div>
+                <div class="one-fourth" slot="slot_2">
+                    <v-btn 
+                        class="pink--text"
+                        flat
+                        icon
+                        @click.stop="editNews(item, index)"
+                    >
+                        <v-icon class="pink--text">
+                         fa-pencil
+                        </v-icon>
+                    </v-btn>
+                </div>
+            </NewsCard>
+        </v-layout>
+        <NewsView
+            :showModal="showNewsModal"
+            :closeModal="closeNewsModal"
+            :item="selectedNews"
+        >
+            <v-btn 
+                class="orange--text"
+                flat
+                :value="true"
+                slot="slot_1"
+                @click.stop="deleteNewsFromFavourite(selectedNews.hash, selectedNews.newsHash)"
+            >
+                <span>Delete</span>
+                <v-icon class="orange--text">
+                    fa-trash-o
+                </v-icon>
+            </v-btn>
+            <v-btn 
+                class="pink--text"
+                flat
+                :value="true"
+                slot="slot_2"
+                @click.stop="editNews(selectedNews, selectedNewsIndex)"
+            >
+                <span>Edit</span>
+                <v-icon class="pink--text">
+                    fa-pencil
+                </v-icon>
+            </v-btn>
+        </NewsView>
+        <EditFavourite
+            :editableNews="editableNews"
+            :closeModal="closeEditableNewsModal"
+            :index="editableNewsIndex"
+            :showModal="showEditableNewsModal"
+            :saveEditedNews="saveEditedNews"
+        >
+        </EditFavourite>
+        <v-btn
+            class="blue darken-2 white--text"
+            :loading="loading"
+            :disabled="loading"
+            @click.stop="fetchFavourites"
+            flat
+        >
+            Load More News
+        </v-btn>
     </div>
 </template>
 
@@ -42,29 +97,38 @@
     } from 'vuex';
 
     import {
-        displayMessage,
         getFavourites,
         deleteFavourite,
         saveEditedFavourite
     } from './../api/api';
-    import newsCard from './sub-components/NewsCard.vue';
+    import EmptyFeed from './sub-components/EmptyFeed.vue';
+    import NewsCard from './sub-components/NewsCard.vue';
+    import NewsView from './sub-components/NewsView.vue';
+    import EditFavourite from './sub-components/EditFavourite.vue';
 
     export default {
         data() {
             return {
                 favourites: [],
-                showModal: false,
-                editableNews: null,
-                loading: false
+                showNewsModal: false,
+                showEditableNewsModal: false,
+                editableNews: {},
+                editableNewsIndex: -1,
+                loading: false,
+                selectedNews: {},
+                selectedNewsIndex: -1
             };
         },
         components: {
-            newsCard
+            NewsCard,
+            NewsView,
+            EmptyFeed,
+            EditFavourite
         },
         watch: {
             '$route' () {
                 this.resetFeedIndexCount();
-                this.loadFeeds();
+                this.fetchFavourites();
             }
         },
         mounted() {
@@ -82,62 +146,75 @@
             fetchFavourites() {
                 this.loading = true;
                 getFavourites(this.getFeedIndexCount())
-                    .then((data) => {
-                        this.loading = false;
-                        if (data.success) {
-                            this.favourites = data.favourites;
-                            this.incrementFeedIndex();
-                        } else
-                            displayMessage(data.message);
-                    });
-            },
-            deleteFavourite(hash, newsHash) {
-                deleteFavourite(hash, newsHash)
-                    .then((data) => {
-                        if (data.success) {
-                            var updatedFavourites = this.favourites.filter((element) => {
-                                if (element.hash !== hash)
-                                    return element;
-                            });
-                            this.favourites = updatedFavourites;
-                        }
-                        displayMessage(data.message);
-                    });
-            },
-            saveEditedFavourite() {
-                var title = this.editableNews.title;
-                var image = this.editableNews.image;
-                var description = this.editableNews.description;
-                var hash = this.editableNews.hash;
-
-                saveEditedFavourite({
-                        title: title,
-                        imageURL: image,
-                        description: description,
-                        hash: hash
-                    })
-                    .then((data) => {
-                        if (data.success) {
-                            for (let i = 0; i < this.favourites.length; i++) {
-                                if (this.favourites[i].hash === hash) {
-                                    this.favourites[i].title = title;
-                                    this.favourites[i].description = description;
-                                    this.favourites[i].image = image;
-                                    break;
-                                }
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.favourites.push(...data.favourites);
+                                this.incrementFeedIndex();
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
                             }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
                         }
-                        displayMessage(data.message);
-                        this.hideModal();
+
+                        this.loading = false;
                     });
             },
-            editFavourite(news) {
-                this.editableNews = news;
-                this.showModal = true;
+            viewNews(item, index) {
+                this.showNewsModal = true;
+                this.selectedNews = item;
+                this.selectedNewsIndex = index;
             },
-            hideModal() {
-                this.editableNews = null;
-                this.showModal = false;
+            editNews(item, index) {
+                this.editableNews = Object.assign({}, item);
+                this.editableNewsIndex = index;
+                this.closeNewsModal();
+                this.showEditableNewsModal = true;
+            },
+            saveEditedNews(item, index) {
+                saveEditedFavourite(item)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.favourites[index] = item;
+                                this.closeEditableNewsModal();
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            deleteNewsFromFavourite(hash, newsHash) {
+                deleteFavourite(hash, newsHash)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.favourites = this.favourites.filter(element => {
+                                    return element.hash !== hash;
+                                });
+                                this.closeNewsModal();
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            closeNewsModal() {
+                this.showNewsModal = false;
+                this.selectedNews = {};
+                this.selectedNewsIndex = -1;
+            },
+            closeEditableNewsModal() {
+                this.showEditableNewsModal = false;
+                this.editableNews = {};
+                this.editableNewsIndex = -1;
             }
         }
     };

@@ -7,104 +7,90 @@ body {
     margin: 0;
     padding: 0;
     cursor: default;
+    overflow: auto;
 }
 
-a {
-    text-decoration: none;
-    color: #fe4a49;
+.flex-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-content {
+    flex: 1 0 auto;
+}
+
+.flex-footer {
+    flex-shrink: 0;
+}
+
+.main-background {
+    min-height: 100vh;
+    padding: 21px 0;
+    background: url('/static/memphis-colorful.png');
+    background-repeat: repeat;
+    overflow-x: hidden;
+}
+
+.prompt-main-text {
+    float: left;
+    padding-top: 14px;
     cursor: pointer;
+    transition-duration: 0.3s;
 }
 
-.item {
-    width: 250px;
-    margin: 14px;
+.prompt-main-text:hover {
+    color: lightcoral;
 }
 
-.dashboard-link-default {
-    color: black;
+.default-text-shadow {
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
 }
 
-.dashboard-link-active {
-    color: #20a0ff;
+.one-fourth {
+    width: 25%;
 }
 
-.custom-button {
-    padding: 7px;
+.one-third {
+    width: 33.33333%;
+}
+
+.one-half {
+    width: 50%;
+}
+
+.image-zoom:hover .card__media__background,
+.image-zoom:focus .card__media__background {
+    transform: scale(1.2);
+}
+
+.card__media__background {
+    transition: all 0.7s;
+}
+
+.image-view {
+    margin-top: 21px;
+    width: 90%;
     border-radius: 7px;
-    cursor: pointer;
+    -webkit-box-shadow: 0px 20px 70px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 20px 70px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 20px 70px 0px rgba(0, 0, 0, 0.75);
+}
+
+.slide-line {
+    position: relative;
+    text-decoration: none;
+}
+
+.slide-line:after {
+    position: absolute;
+    content: "";
+    width: 0%;
+    bottom: 0;
+    left: 0;
+    border-bottom: 2px dashed #fe4a49;
     transition-duration: 0.5s;
 }
 
-.custom-button:hover {
-    box-shadow: 0px 0px 7px 7px #e5e5e5;
-}
-
-.custom-button:active {
-    color: white;
-}
-
-.custom-padding {
-    padding: 0 20px;
-}
-
-.el-form-item__content {
-    margin-left: 0 !important;
-}
-
-.page-fixed-component {
-    position: fixed;
-    bottom: 50px;
-    right: 50px;
-    background-color: lightblue;
-    font-size: 30px;
-    padding: 14px;
-    border-radius: 100%;
-    opacity: 0.7;
-    color: white;
-    cursor: pointer;
-}
-
-.el-tabs__item.is-active {
-    color: #fe4a49 !important;
-}
-
-.el-tabs__active-bar {
-    background-color: #fe4a49 !important;
-}
-
-.el-tabs__item {
-    color: white !important;
-}
-
-.el-tabs__item:hover {
-    color: lightblue !important;
-}
-
-.el-menu-item {
-    font-size: 25px !important;
-    font-family: 'Signika', sans-serif;
-}
-
-.font-style {
-    font-size: 25px;
-}
-
-.el-textarea__inner {
-    resize: none !important;
-}
-
-@media only screen and (max-width: 600px) {
-    .font-style {
-        font-size: 20px;
-    }
-    .brand-logo {
-        display: none;
-    }
-    .custom-padding {
-        padding: 0;
-    }
-    .page-fixed-component {
-        padding: 7px;
-        font-size: 20px;
-    }
+.slide-line:hover:after {
+    width: 100%;
 }
