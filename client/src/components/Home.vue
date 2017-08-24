@@ -140,7 +140,7 @@
                 },
                 showLogin: true,
                 styleObject: {
-                    paddingBottom: '0'
+                    paddingBottom: '42px'
                 },
                 snackBarMessage: '',
                 displaySnackBar: false,
@@ -160,7 +160,7 @@
                     this.styleObject.paddingBottom = '42px';
                 } else {
                     this.showLogin = true;
-                    this.styleObject.paddingBottom = '0';
+                    this.styleObject.paddingBottom = '42px';
                 }
             },
             displayMessage(messageType, message) {

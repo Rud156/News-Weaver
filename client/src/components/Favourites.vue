@@ -6,7 +6,7 @@
             description="I'm sorry but it looks like you have no favourites to show. Add a few and check back later."
         >
         </EmptyFeed>
-        <div class="masonry">
+        <v-layout row wrap>
             <NewsCard
                 v-for="(item, index) in favourites"
                 :item="item"
@@ -14,7 +14,7 @@
                 :index="index"
                 :viewNews="viewNews"
             >
-                <div class="one-fourth" slot="delete">
+                <div class="one-fourth" slot="slot_1">
                     <v-btn 
                         class="orange--text"
                         flat
@@ -26,7 +26,7 @@
                         </v-icon>
                     </v-btn>
                 </div>
-                <div class="one-fourth" slot="edit">
+                <div class="one-fourth" slot="slot_2">
                     <v-btn 
                         class="pink--text"
                         flat
@@ -39,7 +39,7 @@
                     </v-btn>
                 </div>
             </NewsCard>
-        </div>
+        </v-layout>
         <NewsView
             :showModal="showNewsModal"
             :closeModal="closeNewsModal"
@@ -49,7 +49,7 @@
                 class="orange--text"
                 flat
                 :value="true"
-                slot="delete"
+                slot="slot_1"
                 @click.stop="deleteNewsFromFavourite(selectedNews.hash, selectedNews.newsHash)"
             >
                 <span>Delete</span>
@@ -61,7 +61,7 @@
                 class="pink--text"
                 flat
                 :value="true"
-                slot="edit"
+                slot="slot_2"
                 @click.stop="editNews(selectedNews, selectedNewsIndex)"
             >
                 <span>Edit</span>

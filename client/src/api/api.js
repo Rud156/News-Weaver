@@ -200,13 +200,16 @@ function addToReadingList(newsObject) {
     let image = newsObject.image;
     let URL = newsObject.URL;
     let summary = newsObject.summary;
+    var date = new Date();
+    date = date.toISOString();
 
     return axios.post(`${store.getters.getBaseURL}/user/reading_list?token=${token}`, {
             title: title,
             description: description,
             image: image,
             URL: URL,
-            summary: summary
+            summary: summary,
+            date: date
         })
         .then((response) => {
             return response.data;

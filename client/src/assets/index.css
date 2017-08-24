@@ -10,11 +10,24 @@ body {
     overflow: auto;
 }
 
+.flex-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-content {
+    flex: 1 0 auto;
+}
+
+.flex-footer {
+    flex-shrink: 0;
+}
+
 .main-background {
     min-height: 100vh;
     padding: 21px 0;
     background: url('/static/memphis-colorful.png');
-    background-attachment: fixed;
+    background-repeat: repeat;
     overflow-x: hidden;
 }
 
@@ -39,6 +52,10 @@ body {
 
 .one-third {
     width: 33.33333%;
+}
+
+.one-half {
+    width: 50%;
 }
 
 .image-zoom:hover .card__media__background,

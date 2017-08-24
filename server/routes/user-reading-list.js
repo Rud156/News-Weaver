@@ -15,16 +15,34 @@ router.get('/reading_list', function(req, res) {
             success: false,
             message: 'Invalid token requested'
         });
+
     username = username.toLowerCase();
 
-    Model.ReadingList.find({
+    Model.User.findOne({
             username: username
         }).exec()
-        .then(function(news) {
+        .then(function(user) {
+            if (!user) {
+                res.json({
+                    success: false,
+                    message: 'Invalid token user requested'
+                });
+                return Promise.reject('Error');
+            } else {
+                var array = [];
+                array.push(user.favourites);
+                array[1] = Model.ReadingList.find({
+                    username: username
+                }).exec();
+                return Promise.all(array);
+            }
+        })
+        .then(function(data) {
             res.json({
                 success: true,
                 message: 'All Deferred Reading News',
-                news: news
+                news: data[1],
+                favourites: data[0]
             });
         })
         .catch(function(error) {
@@ -45,7 +63,7 @@ router.post('/reading_list', function(req, res) {
     var image = req.body.image;
     var URL = req.body.URL;
     var summary = req.body.summary;
-    var date = new Date();
+    var date = req.body.date;
     var hash;
 
     if (!username || !title || !description || !image || !URL || !summary ||

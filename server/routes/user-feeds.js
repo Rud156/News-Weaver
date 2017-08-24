@@ -89,7 +89,6 @@ router.get('/all_feed_news', function(req, res) {
     }
 
     username = username.toLowerCase();
-    var favourites;
 
     Model.User.findOne({
             username: username
@@ -102,23 +101,26 @@ router.get('/all_feed_news', function(req, res) {
                 });
                 return Promise.reject('Error');
             } else {
-                favourites = user.favourites;
-                return Model.FeedNews.find({
+                var array = [];
+                array.push(user.favourites);
+                array[1] = Model.FeedNews.find({
                     feedHash: {
                         $in: user.feeds
                     }
                 }).sort({
                     date: -1
                 }).exec();
+
+                return Promise.all(array);
             }
         })
-        .then(function(news) {
-            news = news.slice(index * 15, index * 15 + 15);
+        .then(function(data) {
+            data[1] = data[1].slice(index * 15, index * 15 + 15);
             res.json({
                 success: true,
                 message: 'Found all matching feed news',
-                news: news,
-                favourites: favourites
+                news: data[1],
+                favourites: data[0]
             });
         })
         .catch(function(err) {

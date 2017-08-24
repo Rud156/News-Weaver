@@ -32,8 +32,7 @@
                     </v-container>
                 </v-card-title>
                 <v-bottom-nav value="true" class="white">
-                    <slot name="favourite"></slot>
-                    <slot name="delete"></slot>
+                    <slot name="slot_1"></slot>
                     <v-btn
                         flat
                         class="red--text"
@@ -44,7 +43,7 @@
                         <span>Open Link</span>
                         <v-icon>fa-external-link</v-icon>
                     </v-btn>
-                    <slot name="edit"></slot>
+                    <slot name="slot_2"></slot>
                 </v-bottom-nav>         
             </v-card>
         </v-dialog>

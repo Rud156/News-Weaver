@@ -6,7 +6,7 @@
             description="I'm sorry but nothing turned up when I searched. This might be a problem with the way the data is fetched once you add a new source. Check back in 5 mins."
         >
         </EmptyFeed>
-        <div class="masonry">
+        <v-layout row wrap>
             <NewsCard 
                 v-for="(item, index) in allNews" 
                 :item="item"
@@ -14,7 +14,7 @@
                 :key="item.hash"
                 :index="index"
             >
-                <div class="one-fourth" slot="favourite">
+                <div class="one-fourth" slot="slot_1">
                     <v-btn 
                         class="orange--text"
                         flat
@@ -26,24 +26,25 @@
                         </v-icon>
                     </v-btn>
                 </div>
-                <div class="one-fourth" slot="readLater">
+                <div class="one-fourth" slot="slot_2">
                     <v-btn
                         class="pink--text"
                         flat
                         icon
+                        @click.stop="addNewsToReadingList(item)"
                     >
                         <v-icon class="pink--text">fa-book</v-icon>
                     </v-btn>
                 </div>
             </NewsCard>
-        </div>
+        </v-layout>
         <NewsView
             :showModal="showNewsModal"
             :item="selectedNews"
             :closeModal="closeNewsModal"
         >
             <v-btn
-                slot="favourite"
+                slot="slot_1"
                 flat 
                 class="orange--text" 
                 :value="true" 
@@ -52,6 +53,18 @@
                 <span>Favourite</span>
                 <v-icon>
                     {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                </v-icon>
+            </v-btn>
+            <v-btn
+                slot="slot_2"
+                flat 
+                class="pink--text" 
+                :value="true" 
+                @click.stop="addNewsToReadingList(selectedNews)"
+            >
+                <span>Read Later</span>
+                <v-icon>
+                    fa-book
                 </v-icon>
             </v-btn>
         </NewsView>
@@ -76,7 +89,8 @@
     import {
         getAllFeeds,
         getSpecificFeed,
-        addToFavourites
+        addToFavourites,
+        addToReadingList
     } from './../api/api';
     import EmptyFeed from './sub-components/EmptyFeed.vue';
     import NewsCard from './sub-components/NewsCard.vue';
@@ -202,6 +216,20 @@
                                     this.selectedNews.favourite = true;
                                 }
 
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
+                    });
+            },
+            addNewsToReadingList(item) {
+                addToReadingList(item)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
                                 this.$emit('displayMessage', 'success', data.message);
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);

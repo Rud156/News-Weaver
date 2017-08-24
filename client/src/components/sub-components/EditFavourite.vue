@@ -50,22 +50,24 @@
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn
-                        flat
-                        class="green darken-2 white--text"
-                        @click.stop="saveEditedNews(copyEditNews, index)"
-                    >
-                        <v-icon class="white--text">fa-floppy-o</v-icon>
-                        <span style="padding: 0 7px">Save Edits</span>
-                    </v-btn>
-                    <v-btn
-                        flat
-                        class="red darken-2 white--text"
-                        @click.stop="closeEditView"
-                    >
-                        <v-icon class="white--text">fa-ban</v-icon>
-                        <span style="padding: 0 7px">Cancel</span>
-                    </v-btn>
+                    <div class="one-half">
+                        <v-btn
+                            flat
+                            class="green darken-2 white--text"
+                            @click.stop="saveEditedNews(copyEditNews, index)"
+                        >
+                            <v-icon class="white--text">fa-floppy-o</v-icon>
+                        </v-btn>
+                    </div>
+                    <div class="one-half">
+                        <v-btn
+                            flat
+                            class="red darken-2 white--text"
+                            @click.stop="closeEditView"
+                        >
+                            <v-icon class="white--text">fa-ban</v-icon>
+                        </v-btn>
+                    </div>
                 </v-card-actions>
             </v-card>
         </v-dialog>
