@@ -3,6 +3,7 @@ var router = express.Router();
 
 var Model = require('./../models/model');
 var crypto = require('crypto');
+var moment = require('moment');
 
 var utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
@@ -33,6 +34,8 @@ router.get('/reading_list', function(req, res) {
                 array.push(user.favourites);
                 array[1] = Model.ReadingList.find({
                     username: username
+                }).sort({
+                    date: -1
                 }).exec();
                 return Promise.all(array);
             }
@@ -63,7 +66,7 @@ router.post('/reading_list', function(req, res) {
     var image = req.body.image;
     var URL = req.body.URL;
     var summary = req.body.summary;
-    var date = req.body.date;
+    var date = moment(req.body.date).utc().toDate();
     var hash;
 
     if (!username || !title || !description || !image || !URL || !summary ||

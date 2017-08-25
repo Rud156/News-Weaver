@@ -16,12 +16,12 @@
             </v-card-media>
             <v-card-title class="flex-content">
                 <div>
-                    <span style="color: #5a5e66">{{ item.summary | truncate | removeHTML }}</span>
+                    <span style="color: #5a5e66">{{ item.summary | removeHTML | truncate }}</span>
                 </div>
             </v-card-title>
             <v-card-actions class="flex-footer">
                 <v-spacer></v-spacer>
-                <div class="subheading">{{ item.date | ago | titleCase }}</div>
+                <div class="subheading" style="margin: 0 14px">{{ item.date | ago | titleCase }}</div>
             </v-card-actions>
             <v-card-actions class="flex-footer">
                 <div class="one-fourth">

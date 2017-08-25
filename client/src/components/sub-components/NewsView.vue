@@ -13,7 +13,7 @@
                         <v-icon>fa-times</v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-card-title>
+                <v-card-title style="overflow-x: hidden">
                     <v-container v-if="item.title !== undefined">
                         <div class="display-1">
                             {{ item.title }}
@@ -24,9 +24,8 @@
                             class="image-view"
                         />
                         <div 
-                            class="title" 
-                            v-html="item.description" 
-                            style="margin-top: 35px; margin-bottom: 40px;"
+                            class="title html-description-content" 
+                            v-html="filterIFrames(item.description)"
                         >
                         </div>
                     </v-container>
@@ -80,6 +79,10 @@
             closeNewsView() {
                 this.displayModal = false;
                 this.closeModal();
+            },
+            filterIFrames(htmlString) {
+                var regex = /<iframe.*?\/iframe>/g;
+                return htmlString.replace(regex, '');
             }
         }
     }

@@ -38,6 +38,13 @@
                 </div>
             </NewsCard>
         </v-layout>
+        <v-progress-circular 
+            indeterminate 
+            class="green--text"
+            v-if="loading"
+            style="margin-top: 21px"
+        >
+        </v-progress-circular>
         <NewsView
             :showModal="showNewsModal"
             :item="selectedNews"
@@ -87,7 +94,8 @@
                 readingList: [],
                 selectedNews: {},
                 selectedNewsIndex: -1,
-                showNewsModal: false
+                showNewsModal: false,
+                loading: false
             };
         },
         components: {
@@ -105,11 +113,11 @@
         },
         methods: {
             fetchReadingList() {
+                this.loading = true;
                 getReadingList()
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                console.log(data.news);
                                 this.readingList.push(...data.news);
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
@@ -117,6 +125,7 @@
                         } else {
                             this.$emit('displayMessage', 'error', data.error);
                         }
+                        this.loading = false;
                     });
             },
             deleteNewsFromReadingList(item) {

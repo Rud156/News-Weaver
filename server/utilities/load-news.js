@@ -6,7 +6,7 @@ var moment = require('moment');
 
 var Model = require('./../models/model');
 
-var minutes = 5;
+const minutes = 5;
 const interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;

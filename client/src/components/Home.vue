@@ -28,7 +28,7 @@
         </div>
         <v-layout>
             <v-flex xs12 sm4 offset-sm4>
-                <v-card class="elevation-12">
+                <v-card class="elevation-12" style="margin: 0 14px">
                     <v-card-media 
                         src="/static/360.jpg" 
                         alt="Header"

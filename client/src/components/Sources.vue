@@ -82,6 +82,12 @@
             >
             </FeedSource>
         </div>
+        <v-progress-circular 
+            indeterminate 
+            class="green--text"
+            v-if="loading"
+        >
+        </v-progress-circular>
         <v-btn
             class="green"
             fab
@@ -130,7 +136,8 @@
                     url: (value) => {
                         return this.regex.test(value) || 'Invalid URL';
                     }
-                }
+                },
+                loading: false
             };
         },
         mounted() {
@@ -143,6 +150,7 @@
                 'addFeedSource'
             ]),
             getAllSources() {
+                this.loading = true;
                 getAllFeedSources()
                     .then(data => {
                         if (data.error === undefined) {
@@ -154,6 +162,7 @@
                         } else {
                             this.$emit('displayMessage', 'error', data.error);
                         }
+                        this.loading = false;
                     });
             },
             getNewFeedSource() {
