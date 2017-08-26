@@ -43,9 +43,9 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="showSourceDialog" scrollable>
+        <v-dialog v-model="showSourceDialog">
             <v-card v-if="newSource">
-                <v-card-text>
+                <v-card-title>
                     <v-layout row align-center>
                         <v-flex xs3 class="text-xs-center">
                             <img :src="newSource.favicon" :alt="newSource.title" style="height: 25px" />
@@ -58,13 +58,11 @@
                             </v-container>
                         </v-flex>
                     </v-layout>
-                    <v-layout row>
-                        <v-flex xs12>
-                            <div class="title grey--text" style="padding: 0 7px">
-                                {{ newSource.description }}
-                            </div>
-                        </v-flex>
-                    </v-layout>
+                </v-card-title>
+                <v-card-text>
+                    <div class="title grey--text" style="padding: 0 7px">
+                        {{ newSource.description }}
+                    </div>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
