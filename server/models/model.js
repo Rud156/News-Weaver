@@ -136,7 +136,7 @@ var ReadingList = mongoose.Schema({
     image: String,
     URL: String,
     summary: String,
-    date: String,
+    date: Date,
     read: Boolean
 });
 
