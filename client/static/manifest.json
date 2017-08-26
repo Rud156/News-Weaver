@@ -2,34 +2,36 @@
     "name": "News-Weaver",
     "short_name": "News-Weaver",
     "display": "standalone",
+    "orientation": "portrait",
+    "lang": "en-US",
+    "start_url": "/?utm_source=homescreen",
+    "version": "0.0.1",
     "background_color": "#fff",
+    "theme_color": "#fff",
     "description": "A simple application for keeping up with news",
     "icons": [{
-        "src": "NewsWeaver.png",
-        "sizes": "48x48",
+        "src": "/static/NewsWeaver.png",
+        "sizes": "128x128",
         "type": "image/png"
     }, {
-        "src": "NewsWeaver.png",
-        "sizes": "72x72",
+        "src": "/static/NewsWeaver.png",
+        "sizes": "152x152",
         "type": "image/png"
     }, {
-        "src": "NewsWeaver.png",
-        "sizes": "96x96",
-        "type": "image/png"
-    }, {
-        "src": "NewsWeaver.png",
+        "src": "/static/NewsWeaver.png",
         "sizes": "144x144",
         "type": "image/png"
     }, {
-        "src": "NewsWeaver.png",
-        "sizes": "168x168",
-        "type": "image/png"
-    }, {
-        "src": "NewsWeaver.png",
+        "src": "/static/NewsWeaver.png",
         "sizes": "192x192",
         "type": "image/png"
-    }],
-    "related_applications": [{
-        "platform": "web"
+    }, {
+        "src": "/static/NewsWeaver.png",
+        "sizes": "256x256",
+        "type": "image/png"
+    }, {
+        "src": "/static/NewsWeaver.png",
+        "sizes": "512x512",
+        "type": "image/png"
     }]
 }

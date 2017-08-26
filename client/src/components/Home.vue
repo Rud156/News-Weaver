@@ -20,6 +20,7 @@
                     href="https://www.github.com/Rud156/News-Weaver" 
                     target="_blank" 
                     class="red--text slide-line"
+                    rel="noopener"
                 >
                     WEAVER
                 </a>
