@@ -10,8 +10,8 @@ var cors = require('cors');
 var config = require('./models/config');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-mongoose.connect(config.database);
-// mongoose.connect('mongodb://rud156:1234@ds032887.mlab.com:32887/news-weaver');
+// mongoose.connect(config.database);
+mongoose.connect('mongodb://rud156:1234@ds032887.mlab.com:32887/news-weaver');
 var db = mongoose.connection;
 db.on('error', function (err) {
     console.log(err);

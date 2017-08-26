@@ -11,7 +11,7 @@ var utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
 
 
-router.get('/get_feed', function (req, res) {
+router.get('/get_feed', function(req, res) {
     let errorOccurred = false;
     let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
     var feedURL = req.query.url;
@@ -24,10 +24,10 @@ router.get('/get_feed', function (req, res) {
     }
 
     requestModule({
-        url: feedURL,
-        maxRedirects: 3
-    })
-        .on('error', function (error) {
+            url: feedURL,
+            maxRedirects: 3
+        })
+        .on('error', function(error) {
             errorOccurred = true;
             console.log('Request Error');
             console.log(error);
@@ -36,7 +36,7 @@ router.get('/get_feed', function (req, res) {
                 message: `Unable to fetch the requested URL. ${error.message}`
             });
         })
-        .on('response', function (response) {
+        .on('response', function(response) {
             if (errorOccurred)
                 return;
 
@@ -49,7 +49,7 @@ router.get('/get_feed', function (req, res) {
 
     var feedResult = [];
     feedParser
-        .on('error', function (error) {
+        .on('error', function(error) {
             if (errorOccurred)
                 return;
             console.log('Feed Parser Error');
@@ -62,13 +62,13 @@ router.get('/get_feed', function (req, res) {
             errorOccurred = true;
 
         })
-        .on('readable', function () {
+        .on('readable', function() {
             var stream = this;
             var item;
             while ((item = stream.read()) !== null)
                 feedResult.push(item);
         })
-        .on('end', function () {
+        .on('end', function() {
             if (errorOccurred)
                 return;
 
@@ -99,7 +99,7 @@ router.get('/get_feed', function (req, res) {
         });
 });
 
-router.get('/feed_news', function (req, res) {
+router.get('/feed_news', function(req, res) {
     var username = req.decoded._doc.username;
     var hash = req.query.hash;
     var index = req.query.index;
@@ -124,9 +124,9 @@ router.get('/feed_news', function (req, res) {
     username = username.toLowerCase();
 
     Model.User.findOne({
-        username: username
-    }).exec()
-        .then(function (user) {
+            username: username
+        }).exec()
+        .then(function(user) {
             if (!user) {
                 res.json({
                     success: false,
@@ -146,7 +146,7 @@ router.get('/feed_news', function (req, res) {
                 return Promise.all(array);
             }
         })
-        .then(function (data) {
+        .then(function(data) {
             if (!data[1]) {
                 res.json({
                     success: false,
@@ -165,7 +165,7 @@ router.get('/feed_news', function (req, res) {
                 return Promise.all(array);
             }
         })
-        .then(function (data) {
+        .then(function(data) {
             data[1] = data[1].slice(index * 15, index * 15 + 15);
             res.json({
                 success: true,
@@ -174,7 +174,7 @@ router.get('/feed_news', function (req, res) {
                 favourites: data[0]
             });
         })
-        .catch(function (err) {
+        .catch(function(err) {
             if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
@@ -185,7 +185,7 @@ router.get('/feed_news', function (req, res) {
         });
 });
 
-router.get('/feed_source', function (req, res) {
+router.get('/feed_source', function(req, res) {
     var username = req.decoded._doc.username;
     var hash = req.query.hash;
 
@@ -198,12 +198,12 @@ router.get('/feed_source', function (req, res) {
     username = username.toLowerCase();
 
     Model.FeedSchema.findOne({
-        hash: hash,
-        user: {
-            $in: [username]
-        }
-    }).exec()
-        .then(function (feed) {
+            hash: hash,
+            user: {
+                $in: [username]
+            }
+        }).exec()
+        .then(function(feed) {
             if (!feed) {
                 res.json({
                     success: false,
@@ -216,7 +216,7 @@ router.get('/feed_source', function (req, res) {
                     feed: feed
                 });
         })
-        .catch(function (err) {
+        .catch(function(err) {
             if (err) {
                 console.log(err);
                 res.status(500).json({
@@ -227,7 +227,7 @@ router.get('/feed_source', function (req, res) {
         });
 });
 
-router.post('/save_feed', function (req, res) {
+router.post('/save_feed', function(req, res) {
     var username = req.decoded._doc.username;
     var title = req.body.title;
     var description = req.body.description;
@@ -246,15 +246,15 @@ router.post('/save_feed', function (req, res) {
 
     username = username.toLowerCase();
     var siteHash = crypto.createHash('sha256').
-        update(feedURL + title + description + favicon).digest('hex');
+    update(feedURL + title + description + favicon).digest('hex');
 
     Model.User.findOne({
-        username: username,
-        feeds: {
-            $in: [siteHash]
-        }
-    }).exec()
-        .then(function (user) {
+            username: username,
+            feeds: {
+                $in: [siteHash]
+            }
+        }).exec()
+        .then(function(user) {
             if (user) {
                 res.json({
                     success: false,
@@ -265,12 +265,12 @@ router.post('/save_feed', function (req, res) {
                 return Model.User.findOneAndUpdate({
                     username: username
                 }, {
-                        $addToSet: {
-                            feeds: siteHash
-                        }
-                    }).exec();
+                    $addToSet: {
+                        feeds: siteHash
+                    }
+                }).exec();
         })
-        .then(function (user) {
+        .then(function(user) {
             if (user)
                 return Model.FeedSchema.findOne({
                     hash: siteHash
@@ -283,7 +283,7 @@ router.post('/save_feed', function (req, res) {
                 return Promise.reject('Error');
             }
         })
-        .then(function (feed) {
+        .then(function(feed) {
             if (!feed) {
                 return Model.FeedSchema({
                     hash: siteHash,
@@ -298,13 +298,13 @@ router.post('/save_feed', function (req, res) {
                 return Model.FeedSchema.findOneAndUpdate({
                     hash: siteHash
                 }, {
-                        $addToSet: {
-                            users: username
-                        }
-                    }).exec();
+                    $addToSet: {
+                        users: username
+                    }
+                }).exec();
             }
         })
-        .then(function (feed) {
+        .then(function(feed) {
             console.log(feed);
             res.json({
                 success: true,
@@ -312,7 +312,7 @@ router.post('/save_feed', function (req, res) {
                 feed: feed
             });
         })
-        .catch(function (err) {
+        .catch(function(err) {
             if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({
@@ -323,7 +323,7 @@ router.post('/save_feed', function (req, res) {
         });
 });
 
-router.delete('/delete_feed', function (req, res) {
+router.delete('/delete_feed', function(req, res) {
     var hash = req.query.hash;
     var username = req.decoded._doc.username;
 
@@ -336,13 +336,13 @@ router.delete('/delete_feed', function (req, res) {
     username = username.toLowerCase();
 
     Model.User.findOneAndUpdate({
-        username: username
-    }, {
+            username: username
+        }, {
             $pull: {
                 feeds: hash
             }
         }).exec()
-        .then(function (user) {
+        .then(function(user) {
             if (user)
                 return Model.FeedSchema.findOne({
                     hash
@@ -355,7 +355,7 @@ router.delete('/delete_feed', function (req, res) {
                 return Promise.reject('Error');
             }
         })
-        .then(function (feed) {
+        .then(function(feed) {
             if (!feed) {
                 res.json({
                     success: false,
@@ -372,19 +372,19 @@ router.delete('/delete_feed', function (req, res) {
                     return Model.FeedSchema.findOneAndUpdate({
                         hash: hash
                     }, {
-                            $pull: {
-                                users: username
-                            }
-                        }).exec();
+                        $pull: {
+                            users: username
+                        }
+                    }).exec();
                 }
             }
         })
-        .then(function () {
+        .then(function() {
             return Model.FeedSchema.findOne({
                 hash: hash
             }).exec();
         })
-        .then(function (feed) {
+        .then(function(feed) {
             if (!feed)
                 return Model.FeedNews.remove({
                     feedHash: hash
@@ -397,13 +397,13 @@ router.delete('/delete_feed', function (req, res) {
                 return Promise.reject('Error');
             }
         })
-        .then(function () {
+        .then(function() {
             res.json({
                 success: true,
                 message: 'Feed successfully removed'
             });
         })
-        .catch(function (err) {
+        .catch(function(err) {
             if (err !== 'Error' && err) {
                 console.log(err);
                 res.status(500).json({

@@ -146,7 +146,7 @@ function runAll() {
                                             let $ = cheerio.load(data.feed[i].description);
                                             image = $('img').attr('src');
                                             if (!image)
-                                                image = 'http://localhost:3000/images/place-holder.png';
+                                                image = 'https://news-weaver.herokuapp.com/images/place-holder.png';
                                             else {
                                                 let startIndex = description.indexOf('img') - 1;
                                                 let endIndex = startIndex + 1;
