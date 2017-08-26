@@ -3,6 +3,7 @@
 > A simple web based RSS Aggregator
 #### A work in progress
 #### Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
+### NOTE: Due to the way hashes are implemented some articles may be repeated more than once, though very rarely. I'm working on a fix.
 ## NOTE: Due to restrictions imposed by [Heroku](https://www.heroku.com), the first time you login, it make take sometime as the server goes to sleep if not used for more than `30 mins` and thus needs to restart. This is something completely beyond my control.
 
 ![Homepage](./client/static/Homepage.png)
