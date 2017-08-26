@@ -59,9 +59,15 @@ figure {
     transition: all 0.7s;
 }
 
+.container {
+    width: 100%;
+}
+
 .html-description-content {
     margin: 40px auto;
     max-width: 90%;
+    word-wrap: break-word;
+    text-align: center;
 }
 
 .html-description-content img {

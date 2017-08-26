@@ -13,7 +13,7 @@
                         <v-icon>fa-times</v-icon>
                     </v-btn>
                 </v-card-actions>
-                <v-card-title style="overflow-x: hidden">
+                <v-card-title>
                     <v-container v-if="item.title !== undefined">
                         <div class="display-1">
                             {{ item.title }}
