@@ -1,7 +1,7 @@
 <template>
     <div>
         <EmptyFeed
-            v-if="readingList.length <= 0"
+            v-if="readingList.length <= 0 && !loading"
             heading="No results found"
             description="I'm sorry but it looks like you have not added anything to read later. Add a few then check back."
         >

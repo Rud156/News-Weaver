@@ -1,7 +1,7 @@
 <template>
     <div>
         <EmptyFeed
-            v-if="favourites.length <= 0"
+            v-if="favourites.length <= 0 && !loading"
             heading="No results found"
             description="I'm sorry but it looks like you have no favourites to show. Add a few and check back later."
         >
@@ -79,7 +79,7 @@
         >
         </EditFavourite>
         <v-btn
-            class="blue darken-2 white--text"
+            class="blue darken-2 white--text button-margin"
             :loading="loading"
             :disabled="loading"
             @click.stop="fetchFavourites"

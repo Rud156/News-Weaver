@@ -1,7 +1,7 @@
 <template>
     <div>
         <EmptyFeed
-            v-if="allNews.length <= 0"
+            v-if="allNews.length <= 0 && !loading"
             heading="No results found"
             description="I'm sorry but nothing turned up when I searched. This might be a problem with the way the data is fetched once you add a new source. Check back in 5 mins."
         >
@@ -69,7 +69,7 @@
             </v-btn>
         </NewsView>
         <v-btn
-            class="blue darken-2 white--text"
+            class="blue darken-2 white--text button-margin"
             :loading="loading"
             :disabled="loading"
             @click.stop="loadFeeds"

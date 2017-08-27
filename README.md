@@ -32,9 +32,8 @@ MongoDB needs to be installed and running
     npm install
     npm start
 ```
-If Nodemon is installed globally
+Serve with hot reload
 ``` npm run dev ```
-serve with hot reload.
 
 ##### Open another terminal:
 Serve with hot reload

@@ -1,5 +1,12 @@
 <template>
     <div>
+        <EmptyFeed
+            v-if="sources.length <= 0 && !loading"
+            heading="No results found"
+            description="I'm sorry but it looks like that you have not added any feed source as of now. Click the big green button to add a source and get started."
+        >
+        </EmptyFeed>
+
         <v-dialog v-model="showConfirmationDialog" persistent>
             <v-card>
                 <v-card-title>
@@ -111,10 +118,12 @@
         deleteFeedSource
     } from './../api/api';
     import FeedSource from './sub-components/FeedSource.vue';
+    import EmptyFeed from './sub-components/EmptyFeed.vue';
 
     export default {
         components: {
-            FeedSource
+            FeedSource,
+            EmptyFeed
         },
         data() {
             return {
