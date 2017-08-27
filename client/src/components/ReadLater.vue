@@ -7,15 +7,15 @@
         >
         </EmptyFeed>
         <v-layout row wrap>
-            <NewsCard 
-                v-for="(item, index) in readingList" 
+            <NewsCard
+                v-for="(item, index) in readingList"
                 :item="item"
                 :viewNews="viewNews"
                 :key="item.hash"
                 :index="index"
             >
                 <div class="one-fourth" slot="slot_1">
-                    <v-btn 
+                    <v-btn
                         class="orange--text"
                         flat
                         icon
@@ -38,8 +38,8 @@
                 </div>
             </NewsCard>
         </v-layout>
-        <v-progress-circular 
-            indeterminate 
+        <v-progress-circular
+            indeterminate
             class="green--text"
             v-if="loading"
             style="margin-top: 21px"
@@ -52,8 +52,8 @@
         >
             <v-btn
                 slot="slot_1"
-                flat 
-                class="orange--text" 
+                flat
+                class="orange--text"
                 :value="true"
                 @click.stop="markNewsAsRead(selectedNews, selectedNewsIndex)"
             >
@@ -64,8 +64,8 @@
             </v-btn>
             <v-btn
                 slot="slot_2"
-                flat 
-                class="pink--text" 
+                flat
+                class="pink--text"
                 :value="true"
                 @click.stop="deleteNewsFromReadingList(selectedNews)"
             >
@@ -106,10 +106,12 @@
         watch: {
             '$route' () {
                 this.fetchReadingList();
+                this.readingList = [];
             }
         },
         mounted() {
             this.fetchReadingList();
+            this.readingList = [];
         },
         methods: {
             fetchReadingList() {

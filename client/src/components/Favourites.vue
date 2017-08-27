@@ -1,7 +1,7 @@
 <template>
     <div>
         <EmptyFeed
-            v-if="favourites.length <= 0 && !loading"
+            v-if="favourites.length <= 0 && !displayOneTimeLoader"
             heading="No results found"
             description="I'm sorry but it looks like you have no favourites to show. Add a few and check back later."
         >
@@ -15,7 +15,7 @@
                 :viewNews="viewNews"
             >
                 <div class="one-fourth" slot="slot_1">
-                    <v-btn 
+                    <v-btn
                         class="orange--text"
                         flat
                         icon
@@ -27,14 +27,14 @@
                     </v-btn>
                 </div>
                 <div class="one-fourth" slot="slot_2">
-                    <v-btn 
+                    <v-btn
                         class="pink--text"
                         flat
                         icon
                         @click.stop="editNews(item, index)"
                     >
                         <v-icon class="pink--text">
-                         fa-pencil
+                            fa-pencil
                         </v-icon>
                     </v-btn>
                 </div>
@@ -45,7 +45,7 @@
             :closeModal="closeNewsModal"
             :item="selectedNews"
         >
-            <v-btn 
+            <v-btn
                 class="orange--text"
                 flat
                 :value="true"
@@ -57,7 +57,7 @@
                     fa-trash-o
                 </v-icon>
             </v-btn>
-            <v-btn 
+            <v-btn
                 class="pink--text"
                 flat
                 :value="true"
@@ -79,6 +79,7 @@
         >
         </EditFavourite>
         <v-btn
+            v-if="!displayOneTimeLoader"
             class="blue darken-2 white--text button-margin"
             :loading="loading"
             :disabled="loading"
@@ -87,6 +88,13 @@
         >
             Load More News
         </v-btn>
+        <v-progress-circular
+            indeterminate
+            class="green--text"
+            v-if="displayOneTimeLoader"
+            style="margin-top: 21px"
+        >
+        </v-progress-circular>
     </div>
 </template>
 
@@ -116,7 +124,8 @@
                 editableNewsIndex: -1,
                 loading: false,
                 selectedNews: {},
-                selectedNewsIndex: -1
+                selectedNewsIndex: -1,
+                displayOneTimeLoader: false
             };
         },
         components: {
@@ -129,11 +138,15 @@
             '$route' () {
                 this.resetFeedIndexCount();
                 this.fetchFavourites();
+                this.favourites = [];
+                this.displayOneTimeLoader = true;
             }
         },
         mounted() {
             this.resetFeedIndexCount();
             this.fetchFavourites();
+            this.favourites = [];
+            this.displayOneTimeLoader = true;
         },
         methods: {
             ...mapGetters([
@@ -150,7 +163,8 @@
                         if (data.error === undefined) {
                             if (data.success) {
                                 this.favourites.push(...data.favourites);
-                                this.incrementFeedIndex();
+                                if (data.favourites.length > 0)
+                                    this.incrementFeedIndex();
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
                             }
@@ -159,6 +173,7 @@
                         }
 
                         this.loading = false;
+                        this.displayOneTimeLoader = false;
                     });
             },
             viewNews(item, index) {

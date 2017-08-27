@@ -25,9 +25,9 @@
         <v-dialog v-model="showURLDialog">
             <v-card>
                 <v-card-text style="padding-bottom: 0">
-                    <v-text-field 
-                        label="Enter URL: " 
-                        required 
+                    <v-text-field
+                        label="Enter URL: "
+                        required
                         type="email"
                         v-model="sourceUrl"
                         :rules="[rules.url]"
@@ -36,9 +36,9 @@
                 </v-card-text>
                 <v-card-actions style="padding-top: 0">
                     <v-spacer></v-spacer>
-                    <v-btn 
-                        class="green--text" 
-                        flat 
+                    <v-btn
+                        class="green--text"
+                        flat
                         @click.stop="getNewFeedSource"
                         :loading="showURLLoading"
                         :disabled="showURLLoading"
@@ -87,8 +87,8 @@
             >
             </FeedSource>
         </div>
-        <v-progress-circular 
-            indeterminate 
+        <v-progress-circular
+            indeterminate
             class="green--text"
             v-if="loading"
         >
@@ -147,8 +147,15 @@
                 loading: false
             };
         },
+        watch: {
+            '$route' () {
+                this.getAllSources();
+                this.sources = [];
+            }
+        },
         mounted() {
             this.getAllSources();
+            this.sources = [];
         },
         methods: {
             ...mapMutations([

@@ -1,21 +1,21 @@
 <template>
     <div>
         <EmptyFeed
-            v-if="allNews.length <= 0 && !loading"
+            v-if="allNews.length <= 0 && !displayOneTimeLoader"
             heading="No results found"
             description="I'm sorry but nothing turned up when I searched. This might be a problem with the way the data is fetched once you add a new source. Check back in 5 mins."
         >
         </EmptyFeed>
         <v-layout row wrap>
-            <NewsCard 
-                v-for="(item, index) in allNews" 
+            <NewsCard
+                v-for="(item, index) in allNews"
                 :item="item"
                 :viewNews="viewNews"
                 :key="item.hash"
                 :index="index"
             >
                 <div class="one-fourth" slot="slot_1">
-                    <v-btn 
+                    <v-btn
                         class="orange--text"
                         flat
                         icon
@@ -45,9 +45,8 @@
         >
             <v-btn
                 slot="slot_1"
-                flat 
-                class="orange--text" 
-                :value="true" 
+                flat class="orange--text"
+                :value="true"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
                 <span>Favourite</span>
@@ -57,9 +56,9 @@
             </v-btn>
             <v-btn
                 slot="slot_2"
-                flat 
-                class="pink--text" 
-                :value="true" 
+                flat
+                class="pink--text"
+                :value="true"
                 @click.stop="addNewsToReadingList(selectedNews)"
             >
                 <span>Read Later</span>
@@ -69,6 +68,7 @@
             </v-btn>
         </NewsView>
         <v-btn
+            v-if="!displayOneTimeLoader"
             class="blue darken-2 white--text button-margin"
             :loading="loading"
             :disabled="loading"
@@ -77,6 +77,13 @@
         >
             Load More News
         </v-btn>
+        <v-progress-circular
+            indeterminate
+            class="green--text"
+            v-if="displayOneTimeLoader"
+            style="margin-top: 21px"
+        >
+        </v-progress-circular>
     </div>
 </template>
 
@@ -108,7 +115,8 @@
                 showNewsModal: false,
                 selectedNews: {},
                 selectedNewsIndex: -1,
-                loading: false
+                loading: false,
+                displayOneTimeLoader: false
             };
         },
         components: {
@@ -121,12 +129,14 @@
                 this.resetFeedIndexCount();
                 this.loadFeeds();
                 this.allNews = [];
+                this.displayOneTimeLoader = true;
             }
         },
         mounted() {
             this.resetFeedIndexCount();
             this.loadFeeds();
             this.allNews = [];
+            this.displayOneTimeLoader = true;
         },
         methods: {
             ...mapGetters([
@@ -156,7 +166,8 @@
                                         });
                                         this.allNews.push(...allNews);
 
-                                        this.incrementFeedIndex();
+                                        if (allNews.length > 0)
+                                            this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
                                     }
@@ -165,6 +176,7 @@
                                 }
 
                                 this.loading = false;
+                                this.displayOneTimeLoader = false;
                             });
                         break;
 
@@ -203,6 +215,7 @@
                                 }
 
                                 this.loading = false;
+                                this.displayOneTimeLoader = false;
                             });
                         break;
                 }
