@@ -37,9 +37,9 @@
                             </v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
-                    <v-list-tile 
-                        v-for="item in navigations" 
-                        :key="item.name" 
+                    <v-list-tile
+                        v-for="item in navigations"
+                        :key="item.name"
                         :to="'/dashboard/' + item.nav"
                     >
                         <v-list-tile-action>
@@ -54,9 +54,9 @@
                     <v-divider></v-divider>
                     <v-subheader class="mt-3 black--text text--darken-1">SUBSCRIPTIONS</v-subheader>
                     <v-list>
-                        <v-list-tile 
-                            v-for="item in getFeedSources()" 
-                            :key="item.hash"  
+                        <v-list-tile
+                            v-for="item in getFeedSources()"
+                            :key="item.hash"
                             :to="'/dashboard/all/' + item.hash"
                             avatar
                         >
@@ -194,7 +194,16 @@
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                this.setFeedSources(data.feeds);
+                                let sources = data.feeds;
+                                sources = sources.sort((first, second) => {
+                                    if (first.title < second.title)
+                                        return -1;
+                                    else if (first.title === second.title)
+                                        return 0;
+                                    else
+                                        return 1;
+                                });
+                                this.setFeedSources(sources);
                             } else {
                                 this.displayMessage('warning', data.message);
                             }

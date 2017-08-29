@@ -11,6 +11,11 @@ const interval = minutes * 60 * 1000;
 var dataReceivedCount = 0;
 var maxDataToReceive;
 const maxNewsPerFeed = 470;
+const OPTIONS = {
+    upsert: true,
+    new: true,
+    setDefaultsOnInsert: true
+};
 
 function getDataBases() {
     return Model.FeedSchema.find({}).exec()
@@ -173,8 +178,7 @@ function runAll() {
 
 
                                             let hash = crypto.
-                                            createHash('sha256').
-                                            update(title + description + URL).digest('hex');
+                                            createHash('sha256').update(title + URL).digest('hex');
 
                                             if (!(hash in resultDictionary))
                                                 resultDictionary[hash] = {
@@ -195,7 +199,10 @@ function runAll() {
                                         let promiseArray = [];
                                         for (let i = 0; i < finalValues.length; i++) {
                                             promiseArray.
-                                            push(new Model.FeedNews(finalValues[i]).save());
+                                            push(Model.FeedNews.findOneAndUpdate({
+                                                    hash: finalValues[i].hash
+                                                }, finalValues[i],
+                                                OPTIONS).exec());
                                         }
                                         return Promise.all(promiseArray);
                                     } catch (error) {

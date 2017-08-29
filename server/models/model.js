@@ -37,7 +37,7 @@ var FeedSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
+        default: ''
     },
     URL: {
         type: String,

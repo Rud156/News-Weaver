@@ -235,7 +235,8 @@ router.post('/save_feed', function(req, res) {
     var feedURL = req.body.feedURL;
     var siteURL = req.body.siteURL;
 
-    if (!username || !title || !description || !favicon || !feedURL || !siteURL ||
+    if (!username || !title || description === undefined || description === null ||
+        !favicon || !feedURL || !siteURL ||
         typeof username !== 'string' || typeof title !== 'string' ||
         typeof description !== 'string' || typeof favicon !== 'string' ||
         typeof feedURL !== 'string' || typeof siteURL !== 'string')

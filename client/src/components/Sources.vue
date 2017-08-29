@@ -169,7 +169,17 @@
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                this.sources = data.feeds;
+                                let sources = data.feeds;
+                                sources = sources.sort((first, second) => {
+                                    if (first.title < second.title)
+                                        return -1;
+                                    else if (first.title === second.title)
+                                        return 0;
+                                    else
+                                        return 1;
+                                });
+
+                                this.sources = sources;
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
                             }
@@ -208,8 +218,21 @@
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                this.sources.push(data.feed);
+
+                                let currentFeeds = [...this.sources];
+                                currentFeeds.push(data.feed);
+                                currentFeeds = currentFeeds.sort((first, second) => {
+                                    if (first.title < second.title)
+                                        return -1;
+                                    else if (first.title === second.title)
+                                        return 0;
+                                    else
+                                        return 1;
+                                });
+
+                                this.sources = currentFeeds;
                                 this.addFeedSource(data.feed);
+
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
                             }
