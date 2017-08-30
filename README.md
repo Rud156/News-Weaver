@@ -149,6 +149,8 @@ Serve with hot reload
     hash: Hash of the favourite to delete
 ```
 
+## Contributing:
+> Feel free to create issues and pull requests for any features and errors.
 
 ## License:
 ### MIT License
