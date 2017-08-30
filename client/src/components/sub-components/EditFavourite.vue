@@ -1,9 +1,10 @@
 <template>
     <v-layout row justify-center style="position: relative;">
-        <v-dialog 
+        <v-dialog
             v-model="displayModal"
             transition="scale-transition"
             persistent
+            width="550px"
         >
             <v-card>
                 <v-card-actions>
@@ -49,25 +50,24 @@
                         </v-layout>
                     </v-container>
                 </v-card-text>
-                <v-card-actions>
-                    <div class="one-half">
-                        <v-btn
-                            flat
-                            class="green darken-2 white--text"
-                            @click.stop="saveEditedNews(copyEditNews, index)"
-                        >
-                            <v-icon class="white--text">fa-floppy-o</v-icon>
-                        </v-btn>
-                    </div>
-                    <div class="one-half">
-                        <v-btn
-                            flat
-                            class="red darken-2 white--text"
-                            @click.stop="closeEditView"
-                        >
-                            <v-icon class="white--text">fa-ban</v-icon>
-                        </v-btn>
-                    </div>
+                <v-card-actions style="overflow-x: hidden">
+                    <v-spacer></v-spacer>
+                    <v-btn
+                        flat
+                        class="green darken-2 white--text"
+                        @click.stop="saveEditedNews(copyEditNews, index)"
+                    >
+                        <span style="padding: 0 7px">Save</span>
+                        <v-icon class="white--text">fa-floppy-o</v-icon>
+                    </v-btn>
+                    <v-btn
+                        flat
+                        class="red darken-2 white--text"
+                        @click.stop="closeEditView"
+                    >
+                        <span style="padding: 0 7px">Close</span>
+                        <v-icon class="white--text">fa-ban</v-icon>
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

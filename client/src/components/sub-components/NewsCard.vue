@@ -15,13 +15,13 @@
                 </v-container>
             </v-card-media>
             <v-card-title class="flex-content">
-                <div>
+                <div class="truncated-text-display">
                     <span style="color: #5a5e66">{{ item.summary | removeHTML | truncate }}</span>
                 </div>
             </v-card-title>
             <v-card-actions class="flex-footer">
                 <v-spacer></v-spacer>
-                <div class="subheading" style="margin: 0 14px">{{ item.date | ago | titleCase }}</div>
+                <div class="body-2" style="margin: 0 14px">{{ item.date | ago | titleCase }}</div>
             </v-card-actions>
             <v-card-actions class="flex-footer">
                 <div class="one-fourth">
@@ -36,7 +36,7 @@
                 </div>
                 <slot name="slot_1"></slot>
                 <div class="one-fourth">
-                    <v-btn 
+                    <v-btn
                         class="red--text"
                         flat
                         icon

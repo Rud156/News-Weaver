@@ -67,6 +67,10 @@ figure {
     margin: 21px 0 !important;
 }
 
+.truncated-text-display {
+    word-wrap: break-word;
+}
+
 .html-description-content {
     margin: 40px auto;
     max-width: 90%;
