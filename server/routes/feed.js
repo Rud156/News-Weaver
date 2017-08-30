@@ -76,7 +76,7 @@ router.get('/get_feed', function(req, res) {
                 var storyLink = url.parse(feedResult[0].link);
                 var siteURL = storyLink.protocol + '//' + storyLink.hostname;
                 var siteTitle = feedResult[0].meta.title;
-                var siteDescription = feedResult[0].meta.description;
+                var siteDescription = feedResult[0].meta.description | siteTitle;
                 var favicon = 'https://www.google.com/s2/favicons?domain=' + siteURL;
 
                 res.json({

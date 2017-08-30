@@ -162,8 +162,6 @@ function fetchFeedSource(feedURL) {
 
 function saveFeedSource(feedObject) {
     let token = store.getters.getToken;
-    if (!feedObject.description)
-        feedObject.description = '';
     return axios.post(`${store.getters.getBaseURL}/user/save_feed?token=${token}`, feedObject)
         .then((response) => {
             return response.data;
