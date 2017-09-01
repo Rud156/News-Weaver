@@ -131,6 +131,10 @@ var ReadingList = mongoose.Schema({
         required: true,
         lowercase: true
     },
+    newsHash: {
+        type: String,
+        required: true
+    },
     title: String,
     description: String,
     image: String,

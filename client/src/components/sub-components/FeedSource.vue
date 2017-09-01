@@ -34,13 +34,13 @@
             </div>
             <div class="one-third">
                 <v-btn
-                    class="orange--text"
+                    class="deep-orange--text"
                     flat
                     icon
                     target="_blank"
                     :href="siteURL"
                 >
-                    <v-icon class="orange--text">fa-external-link</v-icon>
+                    <v-icon class="deep-orange--text">fa-external-link</v-icon>
                 </v-btn>
             </div>
             <div class="one-third">

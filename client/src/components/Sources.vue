@@ -3,7 +3,7 @@
         <EmptyFeed
             v-if="sources.length <= 0 && !loading"
             heading="No results found"
-            description="I'm sorry but it looks like that you have not added any feed source as of now. Click the big green button to add a source and get started."
+            description="I'm sorry but it looks like that you have not added any feed sources as of now. Click the big green button to add a source and get started."
         >
         </EmptyFeed>
 

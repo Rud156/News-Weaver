@@ -67,6 +67,7 @@ router.post('/reading_list', function(req, res) {
     var URL = req.body.URL;
     var summary = req.body.summary;
     var date = moment(req.body.date).utc().toDate();
+    var newsHash = req.body.hash;
     var hash;
 
     if (!username || !title || !description || !image || !URL || !summary ||
@@ -79,6 +80,7 @@ router.post('/reading_list', function(req, res) {
         });
 
     username = username.toLowerCase();
+
     hash = crypto.createHash('sha256').update(title + username).digest('hex');
     Model.ReadingList.findOne({
             hash: hash
@@ -93,6 +95,7 @@ router.post('/reading_list', function(req, res) {
             } else {
                 return Model.ReadingList({
                     hash: hash,
+                    newsHash: newsHash,
                     username: username,
                     title: title,
                     description: description,

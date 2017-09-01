@@ -192,7 +192,6 @@ router.post('/save_favourite', function(req, res) {
         });
 
     username = username.toLowerCase();
-
     try {
         hash = crypto.createHash('sha256').update(feedNews.title + username).digest('hex');
         newsHash = feedNews.hash;

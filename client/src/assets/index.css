@@ -38,6 +38,10 @@ figure {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
 }
 
+.one-fifth {
+    width: 17%;
+}
+
 .one-fourth {
     width: 25%;
 }

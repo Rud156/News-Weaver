@@ -13,20 +13,21 @@
                 :key="item.hash"
                 :index="index"
                 :viewNews="viewNews"
+                :className="'one-fourth'"
             >
-                <div class="one-fourth" slot="slot_1">
+                <div class="one-fourth" slot="slot_2">
                     <v-btn
-                        class="orange--text"
+                        class="red--text"
                         flat
                         icon
                         @click.stop="deleteNewsFromFavourite(item.hash, item.newsHash)"
                     >
-                        <v-icon class="orange--text">
+                        <v-icon class="red--text">
                             fa-trash-o
                         </v-icon>
                     </v-btn>
                 </div>
-                <div class="one-fourth" slot="slot_2">
+                <div class="one-fourth" slot="slot_1">
                     <v-btn
                         class="pink--text"
                         flat
@@ -46,14 +47,13 @@
             :item="selectedNews"
         >
             <v-btn
-                class="orange--text"
+                class="red--text"
                 flat
                 :value="true"
-                slot="slot_1"
+                slot="slot_2"
                 @click.stop="deleteNewsFromFavourite(selectedNews.hash, selectedNews.newsHash)"
             >
-                <span>Delete</span>
-                <v-icon class="orange--text">
+                <v-icon class="red--text">
                     fa-trash-o
                 </v-icon>
             </v-btn>
@@ -61,10 +61,9 @@
                 class="pink--text"
                 flat
                 :value="true"
-                slot="slot_2"
+                slot="slot_1"
                 @click.stop="editNews(selectedNews, selectedNewsIndex)"
             >
-                <span>Edit</span>
                 <v-icon class="pink--text">
                     fa-pencil
                 </v-icon>

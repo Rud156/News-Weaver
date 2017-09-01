@@ -70,7 +70,7 @@ function getSpecificFeed(indexCount, hash) {
         });
 }
 
-function addToFavourites(news) {
+function addToFavourites(news, hash) {
     let URL = news.URL;
     let category = news.category;
     let date = news.date;
@@ -78,7 +78,6 @@ function addToFavourites(news) {
     let image = news.image;
     let summary = news.summary;
     let title = news.title;
-    let hash = news.hash;
 
     let favouriteNews = {
         URL: URL,
@@ -200,6 +199,7 @@ function addToReadingList(newsObject) {
     let image = newsObject.image;
     let URL = newsObject.URL;
     let summary = newsObject.summary;
+    let hash = newsObject.hash;
     var date = new Date();
     date = date.toISOString();
 
@@ -209,7 +209,8 @@ function addToReadingList(newsObject) {
             image: image,
             URL: URL,
             summary: summary,
-            date: date
+            date: date,
+            hash: hash
         })
         .then((response) => {
             return response.data;

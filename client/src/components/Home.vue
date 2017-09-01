@@ -15,10 +15,10 @@
         </v-snackbar>
         <div style="padding-bottom: 7vh">
             <div class="display-1" style="padding: 7px">
-                NEWS 
-                <a 
-                    href="https://www.github.com/Rud156/News-Weaver" 
-                    target="_blank" 
+                NEWS
+                <a
+                    href="https://www.github.com/Rud156/News-Weaver"
+                    target="_blank"
                     class="red--text slide-line"
                     rel="noopener"
                 >
@@ -30,8 +30,8 @@
         <v-layout>
             <v-flex xs12 sm4 offset-sm4>
                 <v-card class="elevation-12" style="margin: 0 14px">
-                    <v-card-media 
-                        src="/static/360.jpg" 
+                    <v-card-media
+                        src="/static/360.jpg"
                         alt="Header"
                         height="200px"
                         class="white--text"
@@ -83,31 +83,35 @@
                             </v-text-field>
                         </v-flex>
                         <v-flex xs12 v-if="showLogin">
-                            <v-btn 
-                                class="red darken-3 white--text" 
+                            <v-btn
+                                class="red darken-3 white--text"
                                 style="float: right"
                                 @click="handleUserLogin"
+                                :loading="loading"
+                                :disabled="loading"
                             >
                                 <v-icon>fa-paper-plane</v-icon>
                                 <span style="padding: 0 7px">Sign In</span>
                             </v-btn>
-                            <span 
-                                class="subheading prompt-main-text" 
+                            <span
+                                class="subheading prompt-main-text"
                                 @click="setRenderState"
                             >
                                 Not yet registered?
                             </span>
                         </v-flex>
                         <v-flex xs12 v-else>
-                            <v-btn 
-                                class="red darken-3 white--text" 
+                            <v-btn
+                                class="red darken-3 white--text"
                                 style="float: right"
                                 @click="handleUserRegistration"
+                                :loading="loading"
+                                :disabled="loading"
                             >
                                 <v-icon>fa-paper-plane</v-icon>
                                 <span style="padding: 0 7px">Sign Up</span>
                             </v-btn>
-                            <span 
+                            <span
                                 class="subheading prompt-main-text"
                                 @click="setRenderState"
                             >
@@ -145,7 +149,8 @@
                 },
                 snackBarMessage: '',
                 displaySnackBar: false,
-                snackBarType: 'info'
+                snackBarType: 'info',
+                loading: false
             };
         },
         mounted() {
@@ -181,6 +186,8 @@
                     this.displayMessage('error', 'Password must be between 8 and 25 characters long');
                     return;
                 }
+
+                this.loading = true;
                 loginUser({
                         username: username,
                         password: password
@@ -201,6 +208,7 @@
                         } else {
                             this.displayMessage('error', data.error);
                         }
+                        this.loading = false;
                     });
 
             },
@@ -223,6 +231,7 @@
                     return;
                 }
 
+                this.loading = true;
                 registerUser({
                         username: username,
                         password: password,
@@ -238,6 +247,8 @@
                         } else {
                             this.displayMessage('error', data.error);
                         }
+
+                        this.loading = false;
                     });
             }
         }

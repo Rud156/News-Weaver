@@ -24,7 +24,7 @@
                 <div class="body-2" style="margin: 0 14px">{{ item.date | ago | titleCase }}</div>
             </v-card-actions>
             <v-card-actions class="flex-footer">
-                <div class="one-fourth">
+                <div :class="className">
                     <v-btn
                         class="blue--text"
                         flat
@@ -35,18 +35,19 @@
                     </v-btn>
                 </div>
                 <slot name="slot_1"></slot>
-                <div class="one-fourth">
+                <div :class="className">
                     <v-btn
-                        class="red--text"
+                        class="deep-orange--text"
                         flat
                         icon
                         target="_blank"
                         :href="item.URL"
                     >
-                        <v-icon class="red--text">fa-external-link</v-icon>
+                        <v-icon class="deep-orange--text">fa-external-link</v-icon>
                     </v-btn>
                 </div>
                 <slot name="slot_2"></slot>
+                <slot name="slot_3"></slot>
             </v-card-actions>
         </v-card>
     </v-flex>
@@ -66,6 +67,10 @@
             },
             index: {
                 type: Number,
+                required: true
+            },
+            className: {
+                type: String,
                 required: true
             }
         }

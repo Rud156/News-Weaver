@@ -13,27 +13,28 @@
                 :viewNews="viewNews"
                 :key="item.hash"
                 :index="index"
+                :className="'one-fourth'"
             >
                 <div class="one-fourth" slot="slot_1">
                     <v-btn
-                        class="orange--text"
+                        class="pink--text"
                         flat
                         icon
                         @click.stop="saveNewsAsFavourite(item, index)"
                     >
-                        <v-icon class="orange--text">
+                        <v-icon class="pink--text">
                             {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
                         </v-icon>
                     </v-btn>
                 </div>
                 <div class="one-fourth" slot="slot_2">
                     <v-btn
-                        class="pink--text"
+                        class="orange--text"
                         flat
                         icon
                         @click.stop="addNewsToReadingList(item)"
                     >
-                        <v-icon class="pink--text">fa-book</v-icon>
+                        <v-icon class="orange--text">fa-book</v-icon>
                     </v-btn>
                 </div>
             </NewsCard>
@@ -45,11 +46,10 @@
         >
             <v-btn
                 slot="slot_1"
-                flat class="orange--text"
+                flat class="pink--text"
                 :value="true"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
-                <span>Favourite</span>
                 <v-icon>
                     {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
                 </v-icon>
@@ -57,11 +57,10 @@
             <v-btn
                 slot="slot_2"
                 flat
-                class="pink--text"
+                class="orange--text"
                 :value="true"
                 @click.stop="addNewsToReadingList(selectedNews)"
             >
-                <span>Read Later</span>
                 <v-icon>
                     fa-book
                 </v-icon>
@@ -221,7 +220,7 @@
                 }
             },
             saveNewsAsFavourite(news, index) {
-                addToFavourites(news)
+                addToFavourites(news, news.hash)
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {

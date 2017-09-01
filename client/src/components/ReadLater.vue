@@ -13,8 +13,9 @@
                 :viewNews="viewNews"
                 :key="item.hash"
                 :index="index"
+                :className="'one-fifth'"
             >
-                <div class="one-fourth" slot="slot_1">
+                <div class="one-fifth" slot="slot_1">
                     <v-btn
                         class="orange--text"
                         flat
@@ -26,14 +27,26 @@
                         </v-icon>
                     </v-btn>
                 </div>
-                <div class="one-fourth" slot="slot_2">
+                <div class="one-fifth" slot="slot_2">
                     <v-btn
                         class="pink--text"
                         flat
                         icon
+                        @click.stop="saveNewsAsFavourite(item, index)"
+                    >
+                        <v-icon class="pink--text">
+                            {{ item.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                        </v-icon>
+                    </v-btn>
+                </div>
+                <div class="one-fifth" slot="slot_3">
+                    <v-btn
+                        class="red--text"
+                        flat
+                        icon
                         @click.stop="deleteNewsFromReadingList(item)"
                     >
-                        <v-icon class="pink--text">fa-trash-o</v-icon>
+                        <v-icon class="red--text">fa-trash-o</v-icon>
                     </v-btn>
                 </div>
             </NewsCard>
@@ -57,7 +70,6 @@
                 :value="true"
                 @click.stop="markNewsAsRead(selectedNews, selectedNewsIndex)"
             >
-                <span>Mark As read</span>
                 <v-icon>
                     {{ selectedNews.read ? 'fa-check-square' : 'fa-check-square-o' }}
                 </v-icon>
@@ -67,9 +79,19 @@
                 flat
                 class="pink--text"
                 :value="true"
+                @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
+            >
+                <v-icon>
+                    {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
+                </v-icon>
+            </v-btn>
+            <v-btn
+                slot="slot_3"
+                flat
+                class="red--text"
+                :value="true"
                 @click.stop="deleteNewsFromReadingList(selectedNews)"
             >
-                <span>Delete</span>
                 <v-icon>
                     fa-trash-o
                 </v-icon>
@@ -82,7 +104,8 @@
     import {
         getReadingList,
         markAsRead,
-        removeFromReadingList
+        removeFromReadingList,
+        addToFavourites
     } from './../api/api';
     import EmptyFeed from './sub-components/EmptyFeed.vue';
     import NewsCard from './sub-components/NewsCard.vue';
@@ -120,7 +143,15 @@
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                this.readingList.push(...data.news);
+                                let favourites = new Set(data.favourites);
+
+                                let readingList = data.news.map(element => {
+                                    return {
+                                        ...element,
+                                        favourite: favourites.has(element.newsHash)
+                                    };
+                                });
+                                this.readingList.push(...readingList);
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
                             }
@@ -128,6 +159,26 @@
                             this.$emit('displayMessage', 'error', data.error);
                         }
                         this.loading = false;
+                    });
+            },
+            saveNewsAsFavourite(news, index) {
+                addToFavourites(news, news.newsHash)
+                    .then(data => {
+                        if (data.error === undefined) {
+                            if (data.success) {
+                                this.readingList[index].favourite = true;
+
+                                if (this.selectedNews.favourite !== undefined) {
+                                    this.selectedNews.favourite = true;
+                                }
+
+                                this.$emit('displayMessage', 'success', data.message);
+                            } else {
+                                this.$emit('displayMessage', 'warning', data.message);
+                            }
+                        } else {
+                            this.$emit('displayMessage', 'error', data.error);
+                        }
                     });
             },
             deleteNewsFromReadingList(item) {

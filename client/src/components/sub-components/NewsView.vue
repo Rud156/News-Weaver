@@ -2,8 +2,8 @@
     <v-layout row justify-center>
         <v-dialog
             v-model="displayModal"
-            fullscreen 
-            transition="dialog-bottom-transition" 
+            fullscreen
+            transition="dialog-bottom-transition"
             :overlay=false
         >
             <v-card>
@@ -18,13 +18,13 @@
                         <div class="display-1">
                             {{ item.title }}
                         </div>
-                        <img 
-                            :src="item.image" 
-                            :alt="item.title" 
+                        <img
+                            :src="item.image"
+                            :alt="item.title"
                             class="image-view"
                         />
-                        <div 
-                            class="title html-description-content" 
+                        <div
+                            class="title html-description-content"
                             v-html="filterIFrames(item.description)"
                         >
                         </div>
@@ -34,16 +34,16 @@
                     <slot name="slot_1"></slot>
                     <v-btn
                         flat
-                        class="red--text"
+                        class="deep-orange--text"
                         :value="true"
                         target="_blank"
                         :href="item.URL"
                     >
-                        <span>Open Link</span>
                         <v-icon>fa-external-link</v-icon>
                     </v-btn>
                     <slot name="slot_2"></slot>
-                </v-bottom-nav>         
+                    <slot name="slot_3"></slot>
+                </v-bottom-nav>
             </v-card>
         </v-dialog>
     </v-layout>

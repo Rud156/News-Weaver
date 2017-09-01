@@ -94,8 +94,10 @@
                 <v-container>
                     <v-layout>
                     <v-flex xs12>
-                        <router-view @displayMessage="displayMessage">
-                        </router-view>
+                        <transition name="slide-x-reverse-transition">
+                            <router-view @displayMessage="displayMessage">
+                            </router-view>
+                        </transition>
                     </v-flex>
                     </v-layout>
                 </v-container>
@@ -142,15 +144,9 @@
                 displaySnackBar: false
             };
         },
-        created() {
-            window.document.addEventListener('scroll', this.handleScroll);
-        },
         mounted() {
             window.document.title = `${this.formatUsername()}'s Dashboard`;
             this.fetchFeedSources();
-        },
-        destroyed() {
-            window.document.addEventListener('scroll', this.handleScroll);
         },
         methods: {
             ...mapMutations([
@@ -175,14 +171,6 @@
                         });
                         break;
                 }
-            },
-            handleScroll() {
-                let currentScroll = window.document.body.scrollTop ||
-                    window.document.documentElement.scrollTop;
-                if (currentScroll > 500)
-                    this.displayCaret = true;
-                else
-                    this.displayCaret = false;
             },
             displayMessage(messageType, message) {
                 this.snackBarType = messageType;
