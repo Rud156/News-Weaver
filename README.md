@@ -4,6 +4,7 @@
 #### A work in progress
 #### Inspired by: [https://github.com/GetStream/Winds](https://github.com/GetStream/Winds)
 ## NOTE: Due to restrictions imposed by [Heroku](https://www.heroku.com), the first time you login, it make take sometime as the server goes to sleep if not used for more than `30 mins` and thus needs to restart. This is something completely beyond my control.
+#### Demo Link: [https://news-weaver.firebaseapp.com](https://news-weaver.firebaseapp.com)
 
 ![Homepage](./client/static/Homepage.png)
 
