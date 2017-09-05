@@ -16,7 +16,7 @@
                 <v-card-title>
                     <v-container v-if="item.title !== undefined">
                         <div class="display-1">
-                            {{ item.title }}
+                            {{ item.title | decodeHTML}}
                         </div>
                         <img
                             :src="item.image"

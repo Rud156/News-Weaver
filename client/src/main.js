@@ -30,6 +30,9 @@ Vue.filter('titleCase', data => {
 Vue.filter('capitalCase', data => {
     return data.charAt(0).toUpperCase() + data.slice(1);
 });
+Vue.filter('decodeHTML', data => {
+    return he.decode(data);
+});
 
 Vue.config.productionTip = false;
 

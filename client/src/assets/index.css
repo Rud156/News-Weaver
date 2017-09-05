@@ -84,6 +84,7 @@ figure {
 
 .html-description-content img {
     max-width: 90% !important;
+    height: auto;
 }
 
 .image-view {
