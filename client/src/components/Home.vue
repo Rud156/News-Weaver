@@ -150,7 +150,8 @@
                 snackBarMessage: '',
                 displaySnackBar: false,
                 snackBarType: 'info',
-                loading: false
+                loading: false,
+                usernameRegex: /^[a-zA-Z0-9]+$/
             };
         },
         mounted() {
@@ -184,6 +185,10 @@
                 }
                 if (password.length < 8 || password.length > 25) {
                     this.displayMessage('error', 'Password must be between 8 and 25 characters long');
+                    return;
+                }
+                if (!this.usernameRegex.test(username)) {
+                    this.displayMessage('warning', 'Usernames can contain only a-z, A-Z, 0-9');
                     return;
                 }
 
@@ -228,6 +233,10 @@
                 }
                 if (password !== rePassword) {
                     this.displayMessage('error', 'Passwords do not match');
+                    return;
+                }
+                if (!this.usernameRegex.test(username)) {
+                    this.displayMessage('warning', 'Usernames can contain only a-z, A-Z, 0-9');
                     return;
                 }
 

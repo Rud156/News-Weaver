@@ -9,8 +9,10 @@ var utility = require('./../utilities/utilities');
 router.post('/login', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
+    var usernameRegex = utility.usernameRegex;
 
-    if (!username || !password || typeof username !== 'string' || typeof password !== 'string')
+    if (!username || !password || typeof username !== 'string' || typeof password !== 'string' ||
+        !usernameRegex.test(username))
         return res.json({
             success: false,
             message: 'Incorrect credentials format'
@@ -68,9 +70,11 @@ router.post('/register', function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var rePassword = req.body.rePassword;
+    var usernameRegex = utility.usernameRegex;
 
     if (!username || !password || typeof(username) !== 'string' ||
-        typeof(password) !== 'string' || !rePassword || typeof rePassword !== 'string')
+        typeof(password) !== 'string' || !rePassword || typeof rePassword !== 'string' ||
+        !usernameRegex.test(username))
         return res.json({
             success: false,
             message: 'Incorrect credentials format'

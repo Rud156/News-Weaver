@@ -13,7 +13,7 @@ router.use(utility.checkAuthentication);
 
 router.get('/get_feed', function(req, res) {
     let errorOccurred = false;
-    let regex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+    let regex = utility.urlRegex;
     var feedURL = req.query.url;
     var feedParser = new FeedParser();
     if (feedURL.trim() === '' || !regex.test(feedURL)) {

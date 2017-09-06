@@ -73,7 +73,14 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn class="green--text" flat @click.stop="saveNewFeedSource">Add Source</v-btn>
+                    <v-btn
+                        class="green--text"
+                        flat
+                        @click.stop="saveNewFeedSource"
+                    >
+                        <v-icon class="green--text">fa-plus</v-icon>
+                        <span style="padding: 0 7px">Add Source</span>
+                    </v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
