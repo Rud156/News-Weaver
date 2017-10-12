@@ -40,12 +40,14 @@ function checkAuthentication(req, res, next) {
 }
 
 const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
-const usernameRegex = /^[a-zA-Z0-9]+$/;
+const usernameRegex = /^[a-zA-Z0-9]{5,20}$/;
+const passwordRegex = /^[a-zA-Z0-9 +\-\/*]{5,20}$/;
 
 module.exports = {
     checkAuthentication: checkAuthentication,
     encrypt: encrypt,
     decrypt: decrypt,
     urlRegex: urlRegex,
-    usernameRegex: usernameRegex
+    usernameRegex: usernameRegex,
+    passwordRegex: passwordRegex
 };
