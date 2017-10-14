@@ -3,7 +3,7 @@ figure {
 }
 
 .flex-display {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
 }
 
@@ -13,6 +13,7 @@ figure {
 
 .flex-footer {
     flex-shrink: 0;
+    margin-bottom: 3px;
 }
 
 .main-background {
@@ -113,4 +114,8 @@ figure {
 
 .slide-line:hover:after {
     width: 100%;
+}
+
+.btn--active > .btn__content {
+    color: #1976d2;
 }

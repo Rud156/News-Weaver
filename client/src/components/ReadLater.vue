@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="readingList.length <= 0 && !loading"
             heading="No results found"
@@ -67,7 +67,7 @@
                 slot="slot_1"
                 flat
                 class="orange--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="markNewsAsRead(selectedNews, selectedNewsIndex)"
             >
                 <v-icon>
@@ -78,7 +78,7 @@
                 slot="slot_2"
                 flat
                 class="pink--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
                 <v-icon>
@@ -89,7 +89,7 @@
                 slot="slot_3"
                 flat
                 class="red--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="deleteNewsFromReadingList(selectedNews)"
             >
                 <v-icon>
@@ -97,7 +97,7 @@
                 </v-icon>
             </v-btn>
         </NewsView>
-    </div>
+    </v-container>
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template>
-    <v-flex xs12 sm6 md4 lg3 xl3 style="margin: 7px 0">
-        <v-card raised :height="'413px'" class="flex-display">
+    <v-flex xs12 sm6 md4 lg3 d-flex style="margin: 7px 0">
+        <v-card raised class="flex-display">
             <v-card-media
                 class="white--text image-zoom"
                 height="200px"
@@ -42,6 +42,7 @@
                         icon
                         target="_blank"
                         :href="item.URL"
+                        rel="noopener"
                     >
                         <v-icon class="deep-orange--text">fa-external-link</v-icon>
                     </v-btn>

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="allNews.length <= 0 && !displayOneTimeLoader"
             heading="No results found"
@@ -46,22 +46,21 @@
         >
             <v-btn
                 slot="slot_1"
-                flat class="pink--text"
-                :value="true"
+                flat
+                class="btn--active"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
-                <v-icon>
+                <v-icon class="pink--text">
                     {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
                 </v-icon>
             </v-btn>
             <v-btn
                 slot="slot_2"
                 flat
-                class="orange--text"
-                :value="true"
+                class="btn--active"
                 @click.stop="addNewsToReadingList(selectedNews)"
             >
-                <v-icon>
+                <v-icon class="orange--text">
                     fa-book
                 </v-icon>
             </v-btn>
@@ -83,7 +82,7 @@
             style="margin-top: 21px"
         >
         </v-progress-circular>
-    </div>
+    </v-container>
 </template>
 
 <script>

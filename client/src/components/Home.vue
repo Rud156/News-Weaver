@@ -25,7 +25,7 @@
             <div class="title">One stop shop for all your news</div>
         </div>
         <v-layout>
-            <v-flex xs12 sm6 offset-sm3>
+            <v-flex xs10 offset-xs1 sm4 offset-sm4>
                 <v-card class="elevation-12" style="margin: 0 14px">
                     <v-card-media
                         src="/static/360.jpg"

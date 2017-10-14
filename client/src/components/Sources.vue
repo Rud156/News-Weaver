@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="sources.length <= 0 && !loading"
             heading="No results found"
@@ -110,7 +110,7 @@
         >
             <v-icon class="white--text">fa-plus</v-icon>
         </v-btn>
-    </div>
+    </v-container>
 </template>
 
 <script>

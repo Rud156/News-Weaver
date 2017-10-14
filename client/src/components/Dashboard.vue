@@ -4,10 +4,7 @@
             :timeout="3000"
             :top="true"
             :right="true"
-            :success="snackBarType === 'success'"
-            :info="snackBarType === 'info'"
-            :warning="snackBarType === 'warning'"
-            :error="snackBarType === 'error'"
+            :color="snackBarType"
             v-model="displaySnackBar"
         >
             {{ snackBarMessage }}
@@ -82,7 +79,7 @@
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-items>
-                    <v-btn flat @click="handleSelect('dashboard')">
+                    <v-btn flat :input-value="true" @click="handleSelect('dashboard')">
                         Dashboard
                     </v-btn>
                     <v-btn flat @click="handleSelect('logout')">
@@ -90,7 +87,7 @@
                     </v-btn>
                 </v-toolbar-items>
             </v-toolbar>
-            <main>
+            <main style="margin-top: 56px">
                 <v-container>
                     <v-layout>
                     <v-flex xs12>

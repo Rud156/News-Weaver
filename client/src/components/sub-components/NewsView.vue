@@ -30,16 +30,15 @@
                         </div>
                     </v-container>
                 </v-card-title>
-                <v-bottom-nav value="true" class="white">
+                <v-bottom-nav value="true" class="white" :input-value="true" active>
                     <slot name="slot_1"></slot>
                     <v-btn
                         flat
-                        class="deep-orange--text"
-                        :value="true"
                         target="_blank"
                         :href="item.URL"
+                        :input-value="true"
                     >
-                        <v-icon>fa-external-link</v-icon>
+                        <v-icon class="deep-orange--text">fa-external-link</v-icon>
                     </v-btn>
                     <slot name="slot_2"></slot>
                     <slot name="slot_3"></slot>
