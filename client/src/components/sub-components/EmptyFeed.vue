@@ -1,5 +1,5 @@
 <template>
-    <v-card :raised="true">
+    <v-card flat light>
         <v-card-title primary-title>
           <div style="width: 100%">
             <h3 class="headline">{{ heading }}</h3>

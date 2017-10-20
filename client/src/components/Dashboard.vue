@@ -89,7 +89,7 @@
             </v-toolbar>
             <main style="margin-top: 56px">
                 <v-container>
-                    <v-layout>
+                    <v-layout row wrap>
                     <v-flex xs12>
                         <transition name="slide-x-reverse-transition">
                             <router-view @displayMessage="displayMessage">

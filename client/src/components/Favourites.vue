@@ -79,13 +79,14 @@
         </EditFavourite>
         <v-btn
             v-if="!displayOneTimeLoader"
-            class="blue darken-2 white--text button-margin"
+            color="blue"
             :loading="loading"
             :disabled="loading"
             @click.stop="fetchFavourites"
-            flat
         >
-            Load More News
+            <span class="white--text button-margin">
+                Load More News
+            </span>
         </v-btn>
         <v-progress-circular
             indeterminate
