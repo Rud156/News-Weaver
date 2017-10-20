@@ -106,6 +106,10 @@
         props: {
             id: {
                 type: String
+            },
+            displayAllNews: {
+                type: Boolean,
+                required: true
             }
         },
         data() {
@@ -149,8 +153,8 @@
                 this.loading = true;
 
                 let currentIndex = this.getFeedIndexCount();
-                switch (this.id) {
-                    case 'all_news':
+                switch (this.displayAllNews) {
+                    case true:
                         getAllFeeds(currentIndex)
                             .then(data => {
                                 if (data.error === undefined) {

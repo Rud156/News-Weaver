@@ -22,10 +22,23 @@ export default new Router({
             name: 'dashboard',
             component: Dashboard,
             children: [{
+                    path: 'all',
+                    name: 'all_news',
+                    component: All,
+                    props: {
+                        displayAllNews: true
+                    }
+                },
+                {
                     path: 'all/:id',
                     name: 'all',
                     component: All,
-                    props: true
+                    props: (route) => {
+                        return {
+                            id: route.params.id,
+                            displayAllNews: false
+                        };
+                    }
                 },
                 {
                     path: 'sources',
@@ -44,7 +57,7 @@ export default new Router({
                 },
                 {
                     path: '*',
-                    redirect: '/dashboard/all/all_news'
+                    redirect: '/dashboard/all'
                 }
             ]
         },

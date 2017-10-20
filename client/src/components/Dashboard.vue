@@ -23,7 +23,7 @@
             >
                 <v-list dense>
                     <v-list-tile
-                        :to="'/dashboard/all/all_news'"
+                        :to="'/dashboard/all'"
                     >
                         <v-list-tile-action>
                             <v-icon>fa-newspaper-o</v-icon>
@@ -164,7 +164,7 @@
                         break;
                     default:
                         this.$router.push({
-                            path: '/dashboard/all/all_news'
+                            path: '/dashboard/all'
                         });
                         break;
                 }
