@@ -8,6 +8,7 @@ var utility = require('./../utilities/utilities');
 
 /* jshint ignore:start */
 router.post('/login', async(req, res) => {
+    /* jshint ignore:end */
     var username = req.body.username;
     var password = req.body.password;
     var usernameRegex = utility.usernameRegex;
@@ -59,9 +60,11 @@ router.post('/login', async(req, res) => {
             });
         }
     }
+    /* jshint ignore:start */
 });
 
 router.post('/register', async(req, res) => {
+    /* jshint ignore:end */
     var username = req.body.username;
     var password = req.body.password;
     var rePassword = req.body.rePassword;
@@ -112,6 +115,7 @@ router.post('/register', async(req, res) => {
             });
         }
     }
+    /* jshint ignore:start */
 });
 /* jshint ignore:end */
 
