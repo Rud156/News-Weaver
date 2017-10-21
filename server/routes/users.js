@@ -6,7 +6,8 @@ var config = require('./../models/config');
 var Model = require('./../models/model');
 var utility = require('./../utilities/utilities');
 
-router.post('/login', function(req, res) {
+/* jshint ignore:start */
+router.post('/login', async(req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     var usernameRegex = utility.usernameRegex;
@@ -19,54 +20,48 @@ router.post('/login', function(req, res) {
         });
     else {
         username = username.toLowerCase();
-        Model.User.findOne({
+        try {
+            let user = await Model.User.findOne({
                 username: username
-            }).exec()
-            .then(function(user) {
-                if (!user)
-                    res.json({
+            }).exec();
+            if (!user) {
+                return res.json({
+                    success: false,
+                    message: 'User authentication failed'
+                });
+            } else {
+                let isMatch = Model.validatePassword(password, user.password);
+                if (!isMatch)
+                    return res.json({
                         success: false,
                         message: 'User authentication failed'
                     });
-                else {
-                    return Model.validatePassword(password, user.password)
-                        .then(function(isMatch) {
-                            if (!isMatch)
-                                res.json({
-                                    success: false,
-                                    message: 'User authentication failed'
-                                });
-                            else {
-                                var token = jwt.sign({
-                                        _doc: {
-                                            username: user.username
-                                        }
-                                    },
-                                    config.secret, {
-                                        expiresIn: '7d'
-                                    });
-                                let secureToken = utility.encrypt(token, config.secret);
-                                res.json({
-                                    success: true,
-                                    token: secureToken
-                                });
-                            }
-                        });
-                }
-            })
-            .catch(function(err) {
-                if (err !== 'Error' && err) {
-                    console.log(err);
-                    res.status(500).json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime.'
+
+                let token = jwt.sign({
+                        _doc: {
+                            username: user.username
+                        }
+                    },
+                    config.secret, {
+                        expiresIn: '7d'
                     });
-                }
+                let secureToken = utility.encrypt(token, config.secret);
+                return res.json({
+                    success: true,
+                    token: secureToken
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                success: false,
+                message: 'Something happened at our end. Check back after sometime.'
             });
+        }
     }
 });
 
-router.post('/register', function(req, res) {
+router.post('/register', async(req, res) => {
     var username = req.body.username;
     var password = req.body.password;
     var rePassword = req.body.rePassword;
@@ -86,45 +81,38 @@ router.post('/register', function(req, res) {
         });
     else {
         username = username.toLowerCase();
-        Model.User.findOne({
+
+        try {
+            let user = await Model.User.findOne({
                 username: username
-            }).exec()
-            .then(function(user) {
-                if (user) {
-                    res.json({
-                        success: false,
-                        message: 'User is already registered. Please select another username.'
-                    });
-                    return Promise.reject('Error');
-                } else {
-                    return Model.createHash(password);
-                }
-            })
-            .then(function(hash) {
-                return Model.User({
-                    username: username,
-                    password: hash
+            }).exec();
+            if (user) {
+                return res.json({
+                    success: false,
+                    message: 'User is already registered. Please select another username.'
                 });
-            })
-            .then(function(averageJoe) {
-                return averageJoe.save();
-            })
-            .then(function() {
-                res.json({
-                    success: true,
-                    message: 'User registration successful'
-                });
-            })
-            .catch(function(err) {
-                if (err !== 'Error' && err) {
-                    console.log(err);
-                    res.status(500).json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime.'
-                    });
-                }
+            }
+
+            let hash = await Model.createHash(password);
+            let averageJoe = await Model.User({
+                username: username,
+                password: password
             });
+            await averageJoe.save();
+            res.json({
+                success: true,
+                message: 'User registration successful'
+            });
+
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                success: false,
+                message: 'Something happened at our end. Check back after sometime.'
+            });
+        }
     }
 });
+/* jshint ignore:end */
 
 module.exports = router;

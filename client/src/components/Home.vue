@@ -228,7 +228,7 @@
                                     token: data.token
                                 });
                                 this.$router.push({
-                                    path: 'dashboard/all/all_news'
+                                    path: 'dashboard/all'
                                 });
                             } else {
                                 this.displayMessage('error', data.message);
@@ -261,7 +261,7 @@
                             if (data.success) {
                                 this.displayMessage('success', data.message);
                             } else {
-                                this.displayMessage('info', data.message);
+                                this.displayMessage('error', data.message);
                             }
                         } else {
                             this.displayMessage('error', data.error);
