@@ -180,28 +180,30 @@ router.get('/favourites', function(req, res) {
 });
 
 router.post('/save_favourite', function(req, res) {
-    var feedNews = req.body.feedNews;
     var username = req.decoded._doc.username;
-    var newsHash;
+    var title = req.body.title;
+    var description = req.body.description;
+    var image = req.body.image;
+    var URL = req.body.URL;
+    var summary = req.body.summary;
+    var date = moment(req.body.date).utc().toDate();
+    var newsHash = req.body.hash;
+    var category = req.body.category;
     var hash;
 
-    if (!username || typeof username !== 'string' || !feedNews || typeof feedNews !== 'object')
+    if (!username || typeof username !== 'string' || !title ||
+        !description || !image || !URL || !summary ||
+        typeof username !== 'string' || typeof title !== 'string' ||
+        typeof description !== 'string' || typeof image !== 'string' ||
+        typeof URL !== 'string' || typeof summary !== 'string')
         return res.json({
             success: false,
             message: 'Invalid fields entered'
         });
 
     username = username.toLowerCase();
-    try {
-        hash = crypto.createHash('sha256').update(feedNews.title + username).digest('hex');
-        newsHash = feedNews.hash;
-    } catch (error) {
-        console.log(error);
-        return res.json({
-            success: false,
-            message: 'Invalid news format'
-        });
-    }
+    hash = crypto.createHash('sha256').update(title + username).digest('hex');
+
 
     Model.User.findOne({
             username: username
@@ -232,7 +234,7 @@ router.post('/save_favourite', function(req, res) {
             if (favourite) {
                 res.json({
                     success: false,
-                    message: 'News already added to favourites'
+                    message: 'Looks like you already added this news to your favourites'
                 });
                 return Promise.reject('Error');
             } else
@@ -244,13 +246,13 @@ router.post('/save_favourite', function(req, res) {
                     hash: hash,
                     newsHash: newsHash,
                     username: username,
-                    title: feedNews.title,
-                    description: feedNews.description,
-                    image: feedNews.image,
-                    URL: feedNews.URL,
-                    summary: feedNews.summary,
-                    category: feedNews.category,
-                    date: moment(feedNews.date).utc().toDate()
+                    title: title,
+                    description: description,
+                    image: image,
+                    URL: URL,
+                    summary: summary,
+                    category: category,
+                    date: date
                 }).save();
             } catch (error) {
                 console.log(error);

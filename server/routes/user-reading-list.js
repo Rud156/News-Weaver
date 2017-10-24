@@ -89,7 +89,7 @@ router.post('/reading_list', function(req, res) {
             if (news) {
                 res.json({
                     success: false,
-                    message: 'News already exists in your list'
+                    message: 'Looks like you already added this news to your reading list.'
                 });
                 Promise.reject('Error');
             } else {
@@ -110,7 +110,7 @@ router.post('/reading_list', function(req, res) {
         .then(function(news) {
             res.json({
                 success: true,
-                message: 'News successfully added to reading list',
+                message: 'News successfully added to reading list.',
                 news: news
             });
         })

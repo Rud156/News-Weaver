@@ -150,7 +150,7 @@ router.get('/feed_news', function(req, res) {
             if (!data[1]) {
                 res.json({
                     success: false,
-                    message: 'You don\'t seem to have the feed in your list. Try something else'
+                    message: 'You don\'t seem to have the feed in your list. Try something else.'
                 });
                 return Promise.reject('Error');
             } else {

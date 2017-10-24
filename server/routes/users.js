@@ -28,14 +28,14 @@ router.post('/login', async(req, res) => {
             if (!user) {
                 return res.json({
                     success: false,
-                    message: 'User authentication failed'
+                    message: 'Sorry but it looks like such a user does not exist.'
                 });
             } else {
                 let isMatch = Model.validatePassword(password, user.password);
                 if (!isMatch)
                     return res.json({
                         success: false,
-                        message: 'User authentication failed'
+                        message: 'Woah. Your password does not match the one you provided.'
                     });
 
                 let token = jwt.sign({
@@ -75,7 +75,7 @@ router.post('/register', async(req, res) => {
         !usernameRegex.test(username))
         return res.json({
             success: false,
-            message: 'Incorrect credentials format'
+            message: 'Sorry looks like you entered something incorrect. Give it one more shot.'
         });
     if (password !== rePassword)
         return res.json({
@@ -92,7 +92,7 @@ router.post('/register', async(req, res) => {
             if (user) {
                 return res.json({
                     success: false,
-                    message: 'User is already registered. Please select another username.'
+                    message: 'Awesome name but unfortunately its taken. Please select another one.'
                 });
             }
 
@@ -104,7 +104,7 @@ router.post('/register', async(req, res) => {
             await averageJoe.save();
             res.json({
                 success: true,
-                message: 'User registration successful'
+                message: 'YAY! You signed up.'
             });
 
         } catch (error) {

@@ -3,6 +3,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 var crypto = require('crypto');
 var moment = require('moment');
+const htmlEntites = require('html-entities');
 
 var Model = require('./../models/model');
 

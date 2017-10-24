@@ -12,14 +12,14 @@ var config = require('./models/config');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database, {
-        useMongoClient: true
-    })
-    .then(() => {
-        console.log('Database connected successfully');
-    })
-    .catch((error) => {
-        console.error(error);
-    });
+    useMongoClient: true
+})
+.then(() => {
+    console.log('MongoDB Successfully Connected');
+})
+.catch((error) => {
+    console.error(error);
+});
 
 loadDatabase();
 
