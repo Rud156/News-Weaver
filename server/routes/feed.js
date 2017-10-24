@@ -5,13 +5,16 @@ const requestModule = require('request');
 const url = require('url');
 const crypto = require('crypto');
 const FeedParser = require('feedparser');
+const Entities = require('html-entities')
+    .AllHtmlEntities;
+const entities = new Entities();
 
 const Model = require('./../models/model');
 const utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
 
 
-router.get('/get_feed', function (req, res) {
+router.get('/get_feed', (req, res) => {
     let errorOccurred = false;
     let regex = utility.urlRegex;
     let feedURL = req.query.url;
@@ -99,7 +102,7 @@ router.get('/get_feed', function (req, res) {
         });
 });
 
-router.get('/feed_news', function (req, res) {
+router.get('/feed_news', async(req, res) => {
     let username = req.decoded._doc.username;
     let hash = req.query.hash;
     let index = req.query.index;
@@ -122,75 +125,75 @@ router.get('/feed_news', function (req, res) {
     }
 
     username = username.toLowerCase();
+    try {
+        let user = await Model.User.findOne({
+                username: username
+            })
+            .exec();
 
-    Model.User.findOne({
-            username: username
-        })
-        .exec()
-        .then(function (user) {
-            if (!user) {
-                res.json({
-                    success: false,
-                    message: 'Invalid token user requested'
-                });
-                return Promise.reject('Error');
-            } else {
-                let array = [];
-                array.push(user.favourites);
-                array[1] = Model.FeedSchema.findOne({
-                        hash: hash,
-                        users: {
-                            $in: [username]
-                        }
-                    })
-                    .exec();
-
-                return Promise.all(array);
-            }
-        })
-        .then(function (data) {
-            if (!data[1]) {
-                res.json({
-                    success: false,
-                    message: 'You don\'t seem to have the feed in your list. Try something else.'
-                });
-                return Promise.reject('Error');
-            } else {
-                let array = [];
-                array.push(data[0]);
-                array[1] = Model.FeedNews.find({
-                        feedHash: hash
-                    })
-                    .sort({
-                        date: -1
-                    })
-                    .exec();
-
-                return Promise.all(array);
-            }
-        })
-        .then(function (data) {
-            data[1] = data[1].slice(index * 15, index * 15 + 15);
-            res.json({
-                success: true,
-                message: 'Feed successfully retrieved',
-                news: data[1],
-                favourites: data[0]
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'Invalid token user requested'
             });
-        })
-        .catch(function (err) {
-            if (err !== 'Error' && err) {
-                console.log(err);
-                res.status(500)
-                    .json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime'
-                    });
-            }
+        }
+        let feedSource = await Model.FeedSchema.findOne({
+                hash: hash,
+                users: {
+                    $in: [username]
+                }
+            })
+            .exec();
+
+        if (!feedSource) {
+            return res.json({
+                success: false,
+                message: 'You don\'t seem to have the feed in your list. Try something else.'
+            });
+
+        }
+
+        let feedNews = await Model.FeedNews.find({
+                feedHash: hash
+            })
+            .sort({
+                date: -1
+            })
+            .exec();
+
+        feedNews = feedNews.slice(index * 15, index * 15 + 15);
+        feedNews = feedNews.map(element => {
+            return {
+                hash: element.hash,
+                feedHash: element.feedHash,
+                title: entities.decode(element.title),
+                description: entities.decode(element.description),
+                image: entities.decode(element.image),
+                summary: entities.decode(element.summary),
+                URL: element.URL,
+                category: element.category,
+                date: element.date
+            };
         });
+        res.json({
+            success: true,
+            message: 'Feed successfully retrieved',
+            news: feedNews,
+            favourites: user.favourites
+        });
+    } catch (err) {
+        if (err !== 'Error' && err) {
+            console.log(err);
+            res.status(500)
+                .json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+        }
+    }
 });
 
-router.get('/feed_source', function (req, res) {
+router.get('/feed_source', async(req, res) => {
     let username = req.decoded._doc.username;
     let hash = req.query.hash;
 
@@ -201,40 +204,40 @@ router.get('/feed_source', function (req, res) {
         });
 
     username = username.toLowerCase();
+    try {
+        let feed = await Model.FeedSchema.findOne({
+                hash: hash,
+                user: {
+                    $in: [username]
+                }
+            })
+            .exec();
 
-    Model.FeedSchema.findOne({
-            hash: hash,
-            user: {
-                $in: [username]
-            }
-        })
-        .exec()
-        .then(function (feed) {
-            if (!feed) {
-                res.json({
-                    success: false,
-                    message: 'You don\'t seem to have the feed in your list. Try something else'
-                });
-            } else
-                res.json({
-                    success: true,
-                    message: 'Feed details',
-                    feed: feed
-                });
-        })
-        .catch(function (err) {
-            if (err) {
-                console.log(err);
-                res.status(500)
-                    .json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime'
-                    });
-            }
+        if (!feed) {
+            return res.json({
+                success: false,
+                message: 'You don\'t seem to have the feed in your list. Try something else'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Feed details',
+            feed: feed
         });
+    } catch (err) {
+        if (err) {
+            console.log(err);
+            res.status(500)
+                .json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime'
+                });
+        }
+    }
 });
 
-router.post('/save_feed', function (req, res) {
+router.post('/save_feed', async(req, res) => {
     let username = req.decoded._doc.username;
     let title = req.body.title;
     let description = req.body.description;
@@ -258,88 +261,82 @@ router.post('/save_feed', function (req, res) {
     update(feedURL + title + description + favicon)
         .digest('hex');
 
-    Model.User.findOne({
-            username: username,
-            feeds: {
-                $in: [siteHash]
-            }
-        })
-        .exec()
-        .then(function (user) {
-            if (user) {
-                res.json({
-                    success: false,
-                    message: 'Feed already exists in your source'
-                });
-                return Promise.reject('Error');
-            } else
-                return Model.User.findOneAndUpdate({
-                        username: username
-                    }, {
-                        $addToSet: {
-                            feeds: siteHash
-                        }
-                    })
-                    .exec();
-        })
-        .then(function (user) {
-            if (user)
-                return Model.FeedSchema.findOne({
-                        hash: siteHash
-                    })
-                    .exec();
-            else {
-                res.json({
-                    success: false,
-                    message: 'Invalid token user requested'
-                });
-                return Promise.reject('Error');
-            }
-        })
-        .then(function (feed) {
-            if (!feed) {
-                return Model.FeedSchema({
-                        hash: siteHash,
-                        title: title,
-                        description: description,
-                        favicon: favicon,
-                        URL: siteURL,
-                        feedURL: feedURL,
-                        users: [username]
-                    })
-                    .save();
-            } else {
-                return Model.FeedSchema.findOneAndUpdate({
-                        hash: siteHash
-                    }, {
-                        $addToSet: {
-                            users: username
-                        }
-                    })
-                    .exec();
-            }
-        })
-        .then(function (feed) {
-            console.log(feed);
-            res.json({
-                success: true,
-                message: 'Feed source added successfully',
-                feed: feed
+    try {
+        let user = await Model.User.findOne({
+                username: username,
+                feeds: {
+                    $in: [siteHash]
+                }
+            })
+            .exec();
+
+        if (user) {
+            return res.json({
+                success: false,
+                message: 'Feed already exists in your source'
             });
-        })
-        .catch(function (err) {
-            if (err !== 'Error' && err) {
-                console.log(err);
-                res.status(500)
-                    .json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime.'
-                    });
-            }
+        }
+
+        user = await Model.User.findOneAndUpdate({
+                username: username
+            }, {
+                $addToSet: {
+                    feeds: siteHash
+                }
+            })
+            .exec();
+
+        if (!user)
+            return res.json({
+                success: false,
+                message: 'Invalid token user requested'
+            });
+        let feed = await Model.FeedSchema.findOne({
+                hash: siteHash
+            })
+            .exec();
+
+        if (!feed) {
+            feed = await Model.FeedSchema({
+                    hash: siteHash,
+                    title: title,
+                    description: description,
+                    favicon: favicon,
+                    URL: siteURL,
+                    feedURL: feedURL,
+                    users: [username]
+                })
+                .save();
+        }
+        feed = await Model.FeedSchema.findOneAndUpdate({
+                hash: siteHash
+            }, {
+                $addToSet: {
+                    users: username
+                }
+            })
+            .exec();
+
+        console.log(feed);
+        res.json({
+            success: true,
+            message: 'Feed source added successfully',
+            feed: feed
         });
+
+    } catch (err) {
+        if (err !== 'Error' && err) {
+            console.log(err);
+            res.status(500)
+                .json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime.'
+                });
+        }
+    }
 });
 
-router.delete('/delete_feed', function (req, res) {
+router.delete('/delete_feed', async(req, res) => {
     let hash = req.query.hash;
     let username = req.decoded._doc.username;
 
@@ -350,93 +347,82 @@ router.delete('/delete_feed', function (req, res) {
         });
 
     username = username.toLowerCase();
-
-    Model.User.findOneAndUpdate({
-            username: username
-        }, {
-            $pull: {
-                feeds: hash
-            }
-        })
-        .exec()
-        .then(function (user) {
-            if (user)
-                return Model.FeedSchema.findOne({
-                        hash
-                    })
-                    .exec();
-            else {
-                res.json({
-                    success: false,
-                    message: 'Invalid token user requested'
-                });
-                return Promise.reject('Error');
-            }
-        })
-        .then(function (feed) {
-            if (!feed) {
-                res.json({
-                    success: false,
-                    message: 'Feed does not exist'
-                });
-                return Promise.reject('Error');
-            } else {
-                let users = feed.users.length;
-                if (users === 1) {
-                    return Model.FeedSchema.findOneAndRemove({
-                            hash: hash
-                        })
-                        .exec();
-                } else {
-                    return Model.FeedSchema.findOneAndUpdate({
-                            hash: hash
-                        }, {
-                            $pull: {
-                                users: username
-                            }
-                        })
-                        .exec();
+    try {
+        let user = await Model.User.findOneAndUpdate({
+                username: username
+            }, {
+                $pull: {
+                    feeds: hash
                 }
-            }
-        })
-        .then(function () {
-            return Model.FeedSchema.findOne({
+            })
+            .exec();
+
+        if (!user)
+            return res.json({
+                success: false,
+                message: 'Invalid token user requested'
+            });
+        let feed = await Model.FeedSchema.findOne({
+                hash
+            })
+            .exec();
+
+        if (!feed) {
+            return res.json({
+                success: false,
+                message: 'Feed does not exist'
+            });
+        }
+        let users = feed.users.length;
+
+        if (users === 1) {
+            await Model.FeedSchema.findOneAndRemove({
                     hash: hash
                 })
                 .exec();
-        })
-        .then(function (feed) {
-            if (!feed)
-                return Model.FeedNews.remove({
-                        feedHash: hash
-                    })
-                    .exec();
-            else {
-                res.json({
-                    success: true,
-                    message: 'Feed source successfully removed'
-                });
-                return Promise.reject('Error');
-            }
-        })
-        .then(function () {
-            res.json({
+        } else {
+            await Model.FeedSchema.findOneAndUpdate({
+                    hash: hash
+                }, {
+                    $pull: {
+                        users: username
+                    }
+                })
+                .exec();
+        }
+
+        feed = await Model.FeedSchema.findOne({
+                hash: hash
+            })
+            .exec();
+
+        if (!feed)
+            await Model.FeedNews.remove({
+                feedHash: hash
+            })
+            .exec();
+        else {
+            return res.json({
                 success: true,
-                message: 'Feed successfully removed'
+                message: 'Feed source successfully removed'
             });
-        })
-        .catch(function (err) {
-            if (err !== 'Error' && err) {
-                console.log(err);
-                res.status(500)
-                    .json({
-                        success: false,
-                        message: 'Something happened at our end. Check back after sometime.'
-                    });
-            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Feed successfully removed'
         });
 
+    } catch (err) {
+        if (err !== 'Error' && err) {
+            console.log(err);
+            res.status(500)
+                .json({
+                    success: false,
+                    message: 'Something happened at our end. Check back after sometime.'
+                });
+        }
+    }
 });
-
 
 module.exports = router;
