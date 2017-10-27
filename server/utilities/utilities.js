@@ -44,8 +44,12 @@ function checkAuthentication(req, res, next) {
 function stripUser(userObject) {
     let modifiedUser = {};
     for (let key in userObject) {
-        if (key !== 'password')
+        console.log(key);
+        console.log(typeof key);
+        if (key != 'password')
             modifiedUser[key] = userObject[key];
+        else
+            console.log(key);
     }
     return modifiedUser;
 }

@@ -100,7 +100,7 @@ router.post('/register', async(req, res) => {
                 username: username,
                 password: hash
             });
-            await averageJoe.save();
+            user = await averageJoe.save();
             res.json({
                 success: true,
                 message: 'YAY! You signed up.',
