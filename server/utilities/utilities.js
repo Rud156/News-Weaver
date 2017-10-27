@@ -1,23 +1,23 @@
-var config = require('./../models/config');
-var jwt = require('jsonwebtoken');
-var crypto = require('crypto');
+const config = require('./../models/config');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 function encrypt(dataToEncrypt, key) {
-    var cipher = crypto.createCipher('aes-256-ctr', key);
-    var encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
+    let cipher = crypto.createCipher('aes-256-ctr', key);
+    let encryptedData = cipher.update(dataToEncrypt, 'utf8', 'hex');
     encryptedData += cipher.final('hex');
     return encryptedData;
 }
 
 function decrypt(dataToDecrypt, key) {
-    var deCipher = crypto.createDecipher('aes-256-ctr', key);
-    var decryptedData = deCipher.update(dataToDecrypt, 'hex', 'utf8');
+    let deCipher = crypto.createDecipher('aes-256-ctr', key);
+    let decryptedData = deCipher.update(dataToDecrypt, 'hex', 'utf8');
     decryptedData += deCipher.final('utf8');
     return decryptedData;
 }
 
 function checkAuthentication(req, res, next) {
-    var secureToken = req.body.token || req.query.token || req.headers['x-access-token'];
+    let secureToken = req.body.token || req.query.token || req.headers['x-access-token'];
     if (secureToken) {
         let token = decrypt(secureToken, config.secret);
         jwt.verify(token, config.secret, function (err, decodedToken) {
