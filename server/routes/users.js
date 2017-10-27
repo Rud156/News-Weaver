@@ -47,7 +47,8 @@ router.post('/login', async(req, res) => {
                 let secureToken = utility.encrypt(token, config.secret);
                 return res.json({
                     success: true,
-                    token: secureToken
+                    token: secureToken,
+                    user: utility.stripUser(user)
                 });
             }
         } catch (error) {
@@ -102,7 +103,8 @@ router.post('/register', async(req, res) => {
             await averageJoe.save();
             res.json({
                 success: true,
-                message: 'YAY! You signed up.'
+                message: 'YAY! You signed up.',
+                user: utility.stripUser(user)
             });
 
         } catch (error) {

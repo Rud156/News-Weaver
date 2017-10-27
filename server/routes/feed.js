@@ -90,7 +90,7 @@ router.get('/get_feed', (req, res) => {
                         title: siteTitle,
                         description: siteDescription,
                         favicon: favicon
-                    }
+                    },
                 });
             } catch (error) {
                 console.log(error);
@@ -179,7 +179,7 @@ router.get('/feed_news', async(req, res) => {
             success: true,
             message: 'Feed successfully retrieved',
             news: feedNews,
-            favourites: user.favourites
+            user: utility.stripUser(user)
         });
     } catch (err) {
         if (err !== 'Error' && err) {
@@ -321,7 +321,8 @@ router.post('/save_feed', async(req, res) => {
         res.json({
             success: true,
             message: 'Feed source added successfully',
-            feed: feed
+            feed: feed,
+            user: utility.stripUser(user)
         });
 
     } catch (err) {
@@ -404,13 +405,15 @@ router.delete('/delete_feed', async(req, res) => {
         else {
             return res.json({
                 success: true,
-                message: 'Feed source successfully removed'
+                message: 'Feed source successfully removed',
+                user: utility.stripUser(user)
             });
         }
 
         res.json({
             success: true,
-            message: 'Feed successfully removed'
+            message: 'Feed successfully removed',
+            user: utility.stripUser(user)
         });
 
     } catch (err) {

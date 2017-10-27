@@ -20,28 +20,39 @@ function checkAuthentication(req, res, next) {
     var secureToken = req.body.token || req.query.token || req.headers['x-access-token'];
     if (secureToken) {
         let token = decrypt(secureToken, config.secret);
-        jwt.verify(token, config.secret, function(err, decodedToken) {
+        jwt.verify(token, config.secret, function (err, decodedToken) {
             if (err)
-                return res.status(403).json({
-                    success: false,
-                    message: 'Invalid token provided. Please login to continue'
-                });
+                return res.status(403)
+                    .json({
+                        success: false,
+                        message: 'Invalid token provided. Please login to continue'
+                    });
             else {
                 req.decoded = decodedToken;
                 next();
             }
         });
     } else {
-        return res.status(403).json({
-            success: false,
-            message: 'No token provided'
-        });
+        return res.status(403)
+            .json({
+                success: false,
+                message: 'No token provided'
+            });
     }
 }
 
-const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+function stripUser(userObject) {
+    let modifiedUser = {};
+    for (let key in userObject) {
+        if (key !== 'password')
+            modifiedUser[key] = userObject[key];
+    }
+    return modifiedUser;
+}
+
+const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
 const usernameRegex = /^[a-zA-Z0-9]{5,20}$/;
-const passwordRegex = /^[a-zA-Z0-9 +\-\/*]{5,20}$/;
+const passwordRegex = /^[a-zA-Z0-9 +\-/*]{5,20}$/;
 
 module.exports = {
     checkAuthentication: checkAuthentication,
@@ -49,5 +60,6 @@ module.exports = {
     decrypt: decrypt,
     urlRegex: urlRegex,
     usernameRegex: usernameRegex,
-    passwordRegex: passwordRegex
+    passwordRegex: passwordRegex,
+    stripUser: stripUser
 };
