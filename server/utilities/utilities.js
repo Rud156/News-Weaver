@@ -42,16 +42,11 @@ function checkAuthentication(req, res, next) {
 }
 
 function stripUser(userObject) {
-    let modifiedUser = {};
-    for (let key in userObject) {
-        console.log(key);
-        console.log(typeof key);
-        if (key != 'password')
-            modifiedUser[key] = userObject[key];
-        else
-            console.log(key);
-    }
-    return modifiedUser;
+    return {
+        username: userObject.username,
+        feeds: userObject.feeds,
+        favourites: userObject.favourites
+    };
 }
 
 const urlRegex = /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/;
