@@ -84,7 +84,7 @@
             :disabled="loading"
             @click.stop="fetchFavourites"
         >
-            <span class="white--text button-margin">
+            <span class="white--text">
                 Load More News
             </span>
         </v-btn>

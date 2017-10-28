@@ -72,7 +72,7 @@
             :disabled="loading"
             @click.stop="loadFeeds"
         >
-            <span class="white--text button-margin">
+            <span class="white--text">
                 Load More News
             </span>
         </v-btn>
