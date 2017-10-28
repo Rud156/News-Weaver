@@ -60,7 +60,7 @@ router.get('/reading_list', async(req, res) => {
         res.json({
             success: true,
             message: 'All Deferred Reading News',
-            news: readingList,
+            readingList: readingList,
             user: utility.stripUser(user)
         });
     } catch (error) {
@@ -198,14 +198,21 @@ router.delete('/reading_list', async(req, res) => {
         });
 
     try {
-        await Model.ReadingList.findOneAndRemove({
+        let news = await Model.ReadingList.findOneAndRemove({
                 hash: hash
             })
             .exec();
 
+        if (!news)
+            return res.json({
+                success: false,
+                message: 'News does not exist in your reading list.'
+            });
+
         res.json({
             success: true,
-            message: 'News removed from reading list'
+            message: 'News removed from reading list',
+            news: news
         });
     } catch (error) {
         if (error !== 'Error' && error) {

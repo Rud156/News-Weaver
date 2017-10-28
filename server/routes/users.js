@@ -91,7 +91,7 @@ router.post('/register', async(req, res) => {
             if (user) {
                 return res.json({
                     success: false,
-                    message: 'Awesome name but unfortunately its taken. Please select another one.'
+                    message: 'Awesome name but unfortunately its already taken. Please select another one.'
                 });
             }
 

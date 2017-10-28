@@ -84,7 +84,7 @@ router.get('/get_feed', (req, res) => {
 
                 res.json({
                     success: true,
-                    feedDetails: {
+                    feed: {
                         feedURL: feedURL,
                         siteURL: siteURL,
                         title: siteTitle,
@@ -223,7 +223,7 @@ router.get('/feed_source', async(req, res) => {
         res.json({
             success: true,
             message: 'Feed details',
-            feed: feed
+            feed: utility.stripFeed(feed)
         });
     } catch (err) {
         if (err) {
@@ -321,7 +321,7 @@ router.post('/save_feed', async(req, res) => {
         res.json({
             success: true,
             message: 'Feed source added successfully',
-            feed: feed,
+            feed: utility.stripFeed(feed),
             user: utility.stripUser(user)
         });
 

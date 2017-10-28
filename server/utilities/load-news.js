@@ -9,7 +9,7 @@ const entities = new Entities();
 
 const Model = require('./../models/model');
 
-const minutes = 5;
+const minutes = 1;
 const interval = minutes * 60 * 1000;
 let dataReceivedCount = 0;
 let maxDataToReceive;
