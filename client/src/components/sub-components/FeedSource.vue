@@ -7,7 +7,7 @@
                 </v-flex>
                 <v-flex xs9>
                     <v-container>
-                        <div class="headline">
+                        <div class="headline" style="word-wrap: break-word">
                             {{ title }}
                         </div>
                     </v-container>

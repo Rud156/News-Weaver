@@ -16,7 +16,7 @@
             </v-card-media>
             <v-card-title class="flex-content">
                 <div class="truncated-text-display">
-                    <span style="color: #5a5e66">{{ item.summary | removeHTML | truncate }}</span>
+                    <span style="color: #5a5e66">{{ item.description | removeHTML | truncate }}</span>
                 </div>
             </v-card-title>
             <v-card-actions class="flex-footer">

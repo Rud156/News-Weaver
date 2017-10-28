@@ -4,7 +4,7 @@
             v-model="displayModal"
             transition="scale-transition"
             persistent
-            width="550px"
+            max-width="550px"
         >
             <v-card>
                 <v-card-actions>

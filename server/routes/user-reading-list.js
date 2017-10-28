@@ -125,7 +125,8 @@ router.post('/reading_list', async(req, res) => {
                 URL: URL,
                 summary: entities.encode(summary),
                 date: date,
-                read: false
+                read: false,
+                username: username
             })
             .save();
 

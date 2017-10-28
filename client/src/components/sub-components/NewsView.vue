@@ -30,19 +30,6 @@
                         </div>
                     </v-container>
                 </v-card-title>
-                <!-- <v-bottom-nav value="true" class="white" :input-value="true" active>
-                    <slot name="slot_1"></slot>
-                    <v-btn
-                        flat
-                        target="_blank"
-                        :href="item.URL"
-                        :input-value="true"
-                    >
-                        <v-icon class="deep-orange--text">fa-external-link</v-icon>
-                    </v-btn>
-                    <slot name="slot_2"></slot>
-                    <slot name="slot_3"></slot>
-                </v-bottom-nav> -->
                 <div class="white bottom-nav bottom-nav--active">
                     <slot name="slot_1"></slot>
                     <v-btn

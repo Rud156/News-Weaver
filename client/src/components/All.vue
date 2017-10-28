@@ -159,7 +159,7 @@
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        let favourites = new Set(data.favourites);
+                                        let favourites = new Set(data.user.favourites);
 
                                         let allNews = data.news.map(element => {
                                             return {
@@ -188,7 +188,7 @@
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        let favourites = new Set(data.favourites);
+                                        let favourites = new Set(data.user.favourites);
 
                                         if (currentIndex === 0) {
                                             let allNews = data.news.map(element => {

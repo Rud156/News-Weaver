@@ -6,6 +6,7 @@
             :right="true"
             :color="snackBarType"
             v-model="displaySnackBar"
+            style="z-index: 9999 !important"
         >
             {{ snackBarMessage }}
             <v-btn flat class="white--text" @click="displaySnackBar = false">Close</v-btn>
@@ -78,14 +79,12 @@
                     </span>
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-toolbar-items>
                     <v-btn flat :input-value="true" @click="handleSelect('dashboard')">
                         Dashboard
                     </v-btn>
                     <v-btn flat @click="handleSelect('logout')">
                         Logout
                     </v-btn>
-                </v-toolbar-items>
             </v-toolbar>
             <main style="margin-top: 56px">
                 <v-container>
@@ -173,6 +172,7 @@
                 this.snackBarType = messageType;
                 this.displaySnackBar = true;
                 this.snackBarMessage = message;
+                console.log(message);
             },
             fetchFeedSources() {
                 getAllFeedSources()
@@ -199,4 +199,5 @@
             }
         }
     };
+
 </script>

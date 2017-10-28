@@ -79,20 +79,16 @@ function addToFavourites(news, hash) {
     let summary = news.summary;
     let title = news.title;
 
-    let favouriteNews = {
-        URL: URL,
-        title: title,
-        description: description,
-        image: image,
-        category: category,
-        summary: summary,
-        date: date,
-        hash: hash
-    };
-
     let token = store.getters.getToken;
     return axios.post(`${store.getters.getBaseURL}/user/save_favourite?token=${token}`, {
-            feedNews: favouriteNews
+            URL: URL,
+            title: title,
+            description: description,
+            image: image,
+            category: category,
+            summary: summary,
+            date: date,
+            hash: hash
         })
         .then((response) => {
             return response.data;
@@ -128,7 +124,16 @@ function deleteFavourite(hash, newsHash) {
 
 function saveEditedFavourite(favourite) {
     let token = store.getters.getToken;
-    return axios.patch(`${store.getters.getBaseURL}/user/edit_favourite?token=${token}`, favourite)
+    return axios.patch(`${store.getters.getBaseURL}/user/edit_favourite?token=${token}`, {
+            title: favourite.title,
+            description: favourite.description,
+            image: favourite.image,
+            URL: favourite.URL,
+            summary: favourite.summary,
+            date: favourite.date,
+            category: favourite.category,
+            hash: favourite.hash
+        })
         .then((response) => {
             return response.data;
         })
@@ -161,7 +166,13 @@ function fetchFeedSource(feedURL) {
 
 function saveFeedSource(feedObject) {
     let token = store.getters.getToken;
-    return axios.post(`${store.getters.getBaseURL}/user/save_feed?token=${token}`, feedObject)
+    return axios.post(`${store.getters.getBaseURL}/user/save_feed?token=${token}`, {
+            title: feedObject.title,
+            description: feedObject.description,
+            favicon: feedObject.favicon,
+            feedURL: feedObject.feedURL,
+            siteURL: feedObject.siteURL
+        })
         .then((response) => {
             return response.data;
         })
@@ -200,8 +211,7 @@ function addToReadingList(newsObject) {
     let URL = newsObject.URL;
     let summary = newsObject.summary;
     let hash = newsObject.hash;
-    var date = new Date();
-    date = date.toISOString();
+    var date = newsObject.date;
 
     return axios.post(`${store.getters.getBaseURL}/user/reading_list?token=${token}`, {
             title: title,

@@ -222,8 +222,10 @@ router.post('/save_favourite', async(req, res) => {
     let newsHash = req.body.hash;
     let category = req.body.category;
     let hash;
-
-    if (!username || typeof username !== 'string' || !title ||
+    console.log(!title, !image, !URL, !summary, typeof username,
+        typeof title, typeof description, typeof image,
+        typeof URL, typeof summary);
+    if (!username || !title ||
         !description || !image || !URL || !summary ||
         typeof username !== 'string' || typeof title !== 'string' ||
         typeof description !== 'string' || typeof image !== 'string' ||
