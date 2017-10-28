@@ -239,6 +239,7 @@ const runAll = async() => {
         }
     } catch (error) {
         console.log(error);
+        setTimeout(runAll, interval);
     }
 };
 
