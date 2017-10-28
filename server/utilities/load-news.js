@@ -11,8 +11,6 @@ const Model = require('./../models/model');
 
 const minutes = 1;
 const interval = minutes * 60 * 1000;
-let dataReceivedCount = 0;
-let maxDataToReceive;
 const maxNewsPerFeed = 470;
 const OPTIONS = {
     upsert: true,
@@ -20,7 +18,12 @@ const OPTIONS = {
     setDefaultsOnInsert: true
 };
 
+let dataReceivedCount = 0;
+let maxDataToReceive;
+let timerSet = false;
+
 const getDataBases = async() => {
+    timerSet = false;
     try {
         let feeds = await Model.FeedSchema.find({})
             .exec();
@@ -107,26 +110,25 @@ const runAll = async() => {
         if (feeds.length !== 0) {
             for (let j = 0; j < feeds.length; j++) {
                 getFeedResults(feeds[j].feedURL, feeds[j].hash, feeds[j].category, async(data) => {
-
-                    console.log('Feed length: ', data.feed.length);
-                    let feedHash = data.hash;
-                    let slicedNews;
-
-                    let news = await Model.FeedNews.find({
-                            feedHash: feedHash
-                        })
-                        .sort({
-                            date: -1
-                        })
-                        .exec();
-
-                    slicedNews = news.slice(0, maxNewsPerFeed);
-                    await Model.FeedNews.remove({
-                            feedHash: feedHash
-                        })
-                        .exec();
-
                     try {
+                        console.log('Feed length: ', data.feed.length);
+                        let feedHash = data.hash;
+                        let slicedNews;
+
+                        let news = await Model.FeedNews.find({
+                                feedHash: feedHash
+                            })
+                            .sort({
+                                date: -1
+                            })
+                            .exec();
+
+                        slicedNews = news.slice(0, maxNewsPerFeed);
+                        await Model.FeedNews.remove({
+                                feedHash: feedHash
+                            })
+                            .exec();
+
                         let mappedArray = slicedNews.map(function (element) {
                             return {
                                 hash: element.hash,
@@ -218,41 +220,58 @@ const runAll = async() => {
                         }
                         await Promise.all(promiseArray);
 
-                        dataReceivedCount++;
                         console.log('Current Set Of News Saved');
                         console.log('Data received: ', dataReceivedCount);
                         console.log('Max Data:', maxDataToReceive);
+
+                        dataReceivedCount++;
                         if (dataReceivedCount === maxDataToReceive) {
                             dataReceivedCount = 0;
                             console.log('Timer set');
-                            setTimeout(runAll, interval);
+
+                            if (!timerSet) {
+                                timerSet = true;
+                                setTimeout(runAll, interval);
+                            }
                         }
+
                     } catch (error) {
-                        console.log('Error occurred in try part');
                         console.log(error);
-                        dataReceivedCount++;
                         console.log('Current Set Of News Saved');
                         console.log('Data received: ', dataReceivedCount);
                         console.log('Max Data:', maxDataToReceive);
+
+                        dataReceivedCount++;
                         if (dataReceivedCount === maxDataToReceive) {
                             dataReceivedCount = 0;
                             console.log('Timer set');
-                            setTimeout(runAll, interval);
+
+                            if (!timerSet) {
+                                timerSet = true;
+                                setTimeout(runAll, interval);
+                            }
                         }
                     }
-
                 });
             }
         } else if (feeds.length === 0) {
             console.log('Timer set');
+
             dataReceivedCount = 0;
-            setTimeout(runAll, interval);
+            if (!timerSet) {
+                timerSet = true;
+                setTimeout(runAll, interval);
+            }
         }
     } catch (error) {
         console.log(error);
         console.log('Timer set');
+
         dataReceivedCount = 0;
-        setTimeout(runAll, interval);
+        if (!timerSet) {
+            timerSet = true;
+            setTimeout(runAll, interval);
+        }
     }
 };
 

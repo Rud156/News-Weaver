@@ -190,26 +190,16 @@
                                     if (data.success) {
                                         let favourites = new Set(data.user.favourites);
 
-                                        if (currentIndex === 0) {
-                                            let allNews = data.news.map(element => {
-                                                return {
-                                                    ...element,
-                                                    favourite: favourites.has(element.hash)
-                                                };
-                                            });
-                                            this.allNews = allNews;
+                                        let allNews = data.news.map(element => {
+                                            return {
+                                                ...element,
+                                                favourite: favourites.has(element.hash)
+                                            };
+                                        });
+                                        this.allNews.push(...allNews);
 
-                                        } else {
-                                            let newNews = data.news.map(element => {
-                                                return {
-                                                    ...element,
-                                                    favourite: favourites.has(element.hash)
-                                                };
-                                            });
-                                            this.allNews.push(...newNews);
-                                        }
-
-                                        this.incrementFeedIndex();
+                                        if (allNews.length > 0)
+                                            this.incrementFeedIndex();
                                     } else {
                                         this.$emit('displayMessage', 'warning', data.message);
                                     }
@@ -269,4 +259,5 @@
             }
         }
     };
+
 </script>
