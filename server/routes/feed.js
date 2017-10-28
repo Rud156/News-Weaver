@@ -43,6 +43,8 @@ router.get('/get_feed', (req, res) => {
             if (errorOccurred)
                 return;
 
+            console.log(response.statusCode);
+
             if (response.statusCode !== 200)
                 this.emit('error', new Error('Bad status code'));
             else {

@@ -207,7 +207,7 @@
                         if (data.error === undefined) {
                             if (data.success) {
                                 this.sourceUrl = '';
-                                this.newSource = data.feedDetails;
+                                this.newSource = data.feed;
                                 this.showSourceDialog = true;
                             } else {
                                 this.$emit('displayMessage', 'warning', data.message);
