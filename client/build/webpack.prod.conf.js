@@ -97,7 +97,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         new SWPrecacheWebpackPlugin({
             cacheId: 'news-weaver',
             filename: 'service-worker.js',
-            staticFileGlobs: ['dist/**/*.{js,html,css,png,json,jpg}', 'dist/*.js'],
+            staticFileGlobs: ['dist/**/*.{js,html,css,png,json,jpg}'],
             minify: true,
             stripPrefix: 'dist/',
             runtimeCaching: [{
