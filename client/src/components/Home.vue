@@ -4,11 +4,8 @@
             :timeout="3000"
             :top="true"
             :right="true"
-            :success="snackBarType === 'success'"
-            :info="snackBarType === 'info'"
-            :warning="snackBarType === 'warning'"
-            :error="snackBarType === 'error'"
             v-model="displaySnackBar"
+            :color="snackBarType"
         >
         {{ snackBarMessage }}
         <v-btn flat class="white--text" @click="displaySnackBar = false">Close</v-btn>
@@ -28,7 +25,7 @@
             <div class="title">One stop shop for all your news</div>
         </div>
         <v-layout>
-            <v-flex xs12 sm4 offset-sm4>
+            <v-flex xs10 offset-xs1 sm6 offset-sm3 md4 offset-md4>
                 <v-card class="elevation-12" style="margin: 0 14px">
                     <v-card-media
                         src="/static/360.jpg"
@@ -51,6 +48,8 @@
                                 name="username"
                                 label="Enter Username: "
                                 v-model="user.username"
+                                :counter="20"
+                                :rules="[rules.required, rules.username]"
                                 required
                             >
                             </v-text-field>
@@ -61,10 +60,11 @@
                                 label="Enter Password: "
                                 v-model="user.password"
                                 type="password"
-                                hint="At least 8 characters"
-                                min="8"
-                                counter
+                                hint="At least 5 characters"
+                                min="5"
+                                :counter="20"
                                 required
+                                :rules="[rules.required, rules.password]"
                             >
                             </v-text-field>
                         </v-flex>
@@ -75,10 +75,11 @@
                                 label="Re Enter Password: "
                                 v-model="user.rePassword"
                                 type="password"
-                                hint="At least 8 characters"
-                                min="8"
-                                counter
+                                hint="At least 5 characters"
+                                min="5"
+                                :counter="20"
                                 required
+                                :rules="[rules.required, rules.password]"
                             >
                             </v-text-field>
                         </v-flex>
@@ -135,6 +136,11 @@
         registerUser
     } from './../api/api';
 
+    import {
+        usernameRegex,
+        passwordRegex
+    } from './../utils/utility';
+
     export default {
         data() {
             return {
@@ -151,7 +157,16 @@
                 displaySnackBar: false,
                 snackBarType: 'info',
                 loading: false,
-                usernameRegex: /^[a-zA-Z0-9]+$/
+
+                rules: {
+                    required: (value) => !!value || 'Required.',
+                    username: (value) => {
+                        return usernameRegex.test(value) || 'Invalid Username';
+                    },
+                    password: (value) => {
+                        return passwordRegex.test(value) || 'Invalid Password';
+                    }
+                }
             };
         },
         mounted() {
@@ -170,6 +185,22 @@
                     this.styleObject.paddingBottom = '42px';
                 }
             },
+            validateAllFields() {
+                if (this.showLogin) {
+                    if (!usernameRegex.test(this.user.username) ||
+                        !passwordRegex.test(this.user.password))
+                        return false;
+                    else
+                        return true;
+                } else {
+                    if (!usernameRegex.test(this.user.username) ||
+                        !passwordRegex.test(this.user.password) ||
+                        !passwordRegex.test(this.user.rePassword))
+                        return false;
+                    else
+                        return true;
+                }
+            },
             displayMessage(messageType, message) {
                 this.snackBarType = messageType;
                 this.displaySnackBar = true;
@@ -179,16 +210,8 @@
                 let username = this.user.username;
                 let password = this.user.password;
 
-                if (username.trim() === '' || password.trim() === '') {
-                    this.displayMessage('warning', 'Fields cannot ne blank');
-                    return;
-                }
-                if (password.length < 8 || password.length > 25) {
-                    this.displayMessage('error', 'Password must be between 8 and 25 characters long');
-                    return;
-                }
-                if (!this.usernameRegex.test(username)) {
-                    this.displayMessage('warning', 'Usernames can contain only a-z, A-Z, 0-9');
+                if (!this.validateAllFields()) {
+                    this.displayMessage('warning', 'Invalid Fields Format Entered');
                     return;
                 }
 
@@ -205,7 +228,7 @@
                                     token: data.token
                                 });
                                 this.$router.push({
-                                    path: 'dashboard/all/all_news'
+                                    path: 'dashboard/all'
                                 });
                             } else {
                                 this.displayMessage('error', data.message);
@@ -222,21 +245,8 @@
                 let password = this.user.password;
                 let rePassword = this.user.rePassword;
 
-                if (username.trim() === '' || password.trim() === '' || rePassword.trim() === '') {
-                    this.displayMessage('warning', 'Fields cannot be blank');
-                    return;
-                }
-                if (password.length < 8 || password.length > 25 ||
-                    rePassword.length < 8 || rePassword.length > 25) {
-                    this.displayMessage('error', 'Password must be between 8 and 25 characters long');
-                    return;
-                }
-                if (password !== rePassword) {
-                    this.displayMessage('error', 'Passwords do not match');
-                    return;
-                }
-                if (!this.usernameRegex.test(username)) {
-                    this.displayMessage('warning', 'Usernames can contain only a-z, A-Z, 0-9');
+                if (!this.validateAllFields()) {
+                    this.displayMessage('warning', 'Invalid Fields Format Entered');
                     return;
                 }
 
@@ -251,7 +261,7 @@
                             if (data.success) {
                                 this.displayMessage('success', data.message);
                             } else {
-                                this.displayMessage('info', data.message);
+                                this.displayMessage('error', data.message);
                             }
                         } else {
                             this.displayMessage('error', data.error);

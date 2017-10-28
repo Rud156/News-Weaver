@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="allNews.length <= 0 && !displayOneTimeLoader"
             heading="No results found"
@@ -46,35 +46,35 @@
         >
             <v-btn
                 slot="slot_1"
-                flat class="pink--text"
-                :value="true"
+                flat
+                class="btn--active"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
-                <v-icon>
+                <v-icon class="pink--text">
                     {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
                 </v-icon>
             </v-btn>
             <v-btn
                 slot="slot_2"
                 flat
-                class="orange--text"
-                :value="true"
+                class="btn--active"
                 @click.stop="addNewsToReadingList(selectedNews)"
             >
-                <v-icon>
+                <v-icon class="orange--text">
                     fa-book
                 </v-icon>
             </v-btn>
         </NewsView>
         <v-btn
             v-if="!displayOneTimeLoader"
-            class="blue darken-2 white--text button-margin"
+            color="blue"
             :loading="loading"
             :disabled="loading"
             @click.stop="loadFeeds"
-            flat
         >
-            Load More News
+            <span class="white--text button-margin">
+                Load More News
+            </span>
         </v-btn>
         <v-progress-circular
             indeterminate
@@ -83,7 +83,7 @@
             style="margin-top: 21px"
         >
         </v-progress-circular>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -106,6 +106,10 @@
         props: {
             id: {
                 type: String
+            },
+            displayAllNews: {
+                type: Boolean,
+                required: true
             }
         },
         data() {
@@ -149,13 +153,13 @@
                 this.loading = true;
 
                 let currentIndex = this.getFeedIndexCount();
-                switch (this.id) {
-                    case 'all_news':
+                switch (this.displayAllNews) {
+                    case true:
                         getAllFeeds(currentIndex)
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        let favourites = new Set(data.favourites);
+                                        let favourites = new Set(data.user.favourites);
 
                                         let allNews = data.news.map(element => {
                                             return {
@@ -184,7 +188,7 @@
                             .then(data => {
                                 if (data.error === undefined) {
                                     if (data.success) {
-                                        let favourites = new Set(data.favourites);
+                                        let favourites = new Set(data.user.favourites);
 
                                         if (currentIndex === 0) {
                                             let allNews = data.news.map(element => {

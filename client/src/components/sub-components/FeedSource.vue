@@ -1,25 +1,25 @@
 <template>
     <v-card class="masonry-item" raised>
         <v-card-text>
-        <v-layout row align-center>
-            <v-flex xs3 class="text-xs-center">
-                <img :src="favicon" :alt="title" style="height: 25px" />
-            </v-flex>
-            <v-flex xs9>
-                <v-container>
-                    <div class="headline">
-                        {{ title }}
+            <v-layout row align-center>
+                <v-flex xs3 class="text-xs-center">
+                    <img :src="favicon" :alt="title" style="height: 25px" />
+                </v-flex>
+                <v-flex xs9>
+                    <v-container>
+                        <div class="headline" style="word-wrap: break-word">
+                            {{ title }}
+                        </div>
+                    </v-container>
+                </v-flex>
+            </v-layout>
+            <v-layout row>
+                <v-flex xs12>
+                    <div class="title grey--text" style="padding: 0 7px">
+                        {{ description }}
                     </div>
-                </v-container>
-            </v-flex>
-        </v-layout>
-        <v-layout row>
-            <v-flex xs12>
-                <div class="title grey--text" style="padding: 0 7px">
-                    {{ description }}
-                </div>
-            </v-flex>
-        </v-layout>
+                </v-flex>
+            </v-layout>
         </v-card-text>
         <v-card-actions>
             <div class="one-third">

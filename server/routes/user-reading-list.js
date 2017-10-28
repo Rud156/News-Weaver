@@ -1,15 +1,18 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var Model = require('./../models/model');
-var crypto = require('crypto');
-var moment = require('moment');
+const Model = require('./../models/model');
+const crypto = require('crypto');
+const moment = require('moment');
+const Entities = require('html-entities')
+    .AllHtmlEntities;
+const entities = new Entities();
 
-var utility = require('./../utilities/utilities');
+const utility = require('./../utilities/utilities');
 router.use(utility.checkAuthentication);
 
-router.get('/reading_list', function(req, res) {
-    var username = req.decoded._doc.username;
+router.get('/reading_list', async(req, res) => {
+    let username = req.decoded._doc.username;
 
     if (!username || typeof username !== 'string')
         return res.json({
@@ -19,56 +22,71 @@ router.get('/reading_list', function(req, res) {
 
     username = username.toLowerCase();
 
-    Model.User.findOne({
-            username: username
-        }).exec()
-        .then(function(user) {
-            if (!user) {
-                res.json({
-                    success: false,
-                    message: 'Invalid token user requested'
-                });
-                return Promise.reject('Error');
-            } else {
-                var array = [];
-                array.push(user.favourites);
-                array[1] = Model.ReadingList.find({
-                    username: username
-                }).sort({
-                    date: -1
-                }).exec();
-                return Promise.all(array);
-            }
-        })
-        .then(function(data) {
-            res.json({
-                success: true,
-                message: 'All Deferred Reading News',
-                news: data[1],
-                favourites: data[0]
+    try {
+        let user = await Model.User.findOne({
+                username: username
+            })
+            .exec();
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'Invalid token user requested'
             });
-        })
-        .catch(function(error) {
-            if (error !== 'Error' && error) {
-                console.log(error);
-                res.status(500).json({
+        }
+
+        let readingList = await Model.ReadingList.find({
+                username: username
+            })
+            .sort({
+                date: -1
+            })
+            .exec();
+        readingList = readingList.map(element => {
+            return {
+                hash: element.hash,
+                username: element.username,
+                newsHash: element.newsHash,
+                title: entities.decode(element.title),
+                description: entities.decode(element.description),
+                image: entities.decode(element.image),
+                summary: entities.decode(element.summary),
+                URL: element.URL,
+                date: element.date,
+                read: element.read
+            };
+        });
+
+        res.json({
+            success: true,
+            message: 'All Deferred Reading News',
+            readingList: readingList,
+            user: utility.stripUser(user)
+        });
+    } catch (error) {
+        if (error !== 'Error' && error) {
+            console.log(error);
+            res.status(500)
+                .json({
                     success: false,
                     message: 'Something happened at our end. Check back after sometime'
                 });
-            }
-        });
+        }
+    }
 });
 
-router.post('/reading_list', function(req, res) {
-    var username = req.decoded._doc.username;
-    var title = req.body.title;
-    var description = req.body.description;
-    var image = req.body.image;
-    var URL = req.body.URL;
-    var summary = req.body.summary;
-    var date = moment(req.body.date).utc().toDate();
-    var newsHash = req.body.hash;
-    var hash;
+router.post('/reading_list', async(req, res) => {
+    let username = req.decoded._doc.username;
+    let title = req.body.title;
+    let description = req.body.description;
+    let image = req.body.image;
+    let URL = req.body.URL;
+    let summary = req.body.summary;
+    let date = moment(req.body.date)
+        .utc()
+        .toDate();
+    let newsHash = req.body.hash;
+    let hash;
 
     if (!username || !title || !description || !image || !URL || !summary ||
         typeof username !== 'string' || typeof title !== 'string' ||
@@ -81,52 +99,56 @@ router.post('/reading_list', function(req, res) {
 
     username = username.toLowerCase();
 
-    hash = crypto.createHash('sha256').update(title + username).digest('hex');
-    Model.ReadingList.findOne({
-            hash: hash
-        }).exec()
-        .then(function(news) {
-            if (news) {
-                res.json({
-                    success: false,
-                    message: 'News already exists in your list'
-                });
-                Promise.reject('Error');
-            } else {
-                return Model.ReadingList({
-                    hash: hash,
-                    newsHash: newsHash,
-                    username: username,
-                    title: title,
-                    description: description,
-                    image: image,
-                    URL: URL,
-                    summary: summary,
-                    date: date,
-                    read: false
-                }).save();
-            }
-        })
-        .then(function(news) {
-            res.json({
-                success: true,
-                message: 'News successfully added to reading list',
-                news: news
+    hash = crypto.createHash('sha256')
+        .update(entities.encode(title) + username)
+        .digest('hex');
+
+    try {
+        let news = await Model.ReadingList.findOne({
+                hash: hash
+            })
+            .exec();
+
+        if (news) {
+            return res.json({
+                success: false,
+                message: 'Looks like you already added this news to your reading list.'
             });
-        })
-        .catch(function(error) {
-            if (error !== 'Error' && error) {
-                console.log(error);
-                res.status(500).json({
+        }
+
+        await Model.ReadingList({
+                hash: hash,
+                newsHash: newsHash,
+                title: entities.encode(title),
+                description: entities.encode(description),
+                image: entities.encode(image),
+                URL: URL,
+                summary: entities.encode(summary),
+                date: date,
+                read: false,
+                username: username
+            })
+            .save();
+
+        res.json({
+            success: true,
+            message: 'News successfully added to reading list.',
+            news: news
+        });
+    } catch (error) {
+        if (error !== 'Error' && error) {
+            console.log(error);
+            res.status(500)
+                .json({
                     success: false,
                     message: 'Something happened at our end. Check back after sometime'
                 });
-            }
-        });
+        }
+    }
 });
 
-router.patch('/reading_list', function(req, res) {
-    var hash = req.query.hash;
+router.patch('/reading_list', async(req, res) => {
+    let hash = req.query.hash;
 
     if (!hash || typeof hash !== 'string')
         return res.json({
@@ -134,41 +156,41 @@ router.patch('/reading_list', function(req, res) {
             message: 'Invalid credentials submitted'
         });
 
-    Model.ReadingList.findOne({
-            hash: hash
-        }).exec()
-        .then(function(news) {
-            if (!news) {
-                res.json({
-                    success: false,
-                    message: 'Invalid news requested'
-                });
-                return Promise.reject('Error');
-            } else {
-                news.read = true;
-                return news.save();
-            }
-        })
-        .then(function(news) {
-            res.json({
-                success: true,
-                message: 'Marked as read',
-                news: news
+    try {
+        let news = await Model.ReadingList.findOne({
+                hash: hash
+            })
+            .exec();
+
+        if (!news) {
+            return res.json({
+                success: false,
+                message: 'Invalid news requested'
             });
-        })
-        .catch(function(error) {
-            if (error !== 'Error' && error) {
-                console.log(error);
-                res.status(500).json({
+        }
+
+        news.read = true;
+        await news.save();
+        res.json({
+            success: true,
+            message: 'Marked as read',
+            news: news
+        });
+
+    } catch (error) {
+        if (error !== 'Error' && error) {
+            console.log(error);
+            res.status(500)
+                .json({
                     success: false,
                     message: 'Something happened at our end. Check back after sometime'
                 });
-            }
-        });
+        }
+    }
 });
 
-router.delete('/reading_list', function(req, res) {
-    var hash = req.query.hash;
+router.delete('/reading_list', async(req, res) => {
+    let hash = req.query.hash;
 
     if (!hash || typeof hash !== 'string')
         return res.json({
@@ -176,24 +198,33 @@ router.delete('/reading_list', function(req, res) {
             message: 'Invalid credentials submitted'
         });
 
-    Model.ReadingList.findOneAndRemove({
-            hash: hash
-        }).exec()
-        .then(function() {
-            res.json({
-                success: true,
-                message: 'News removed from reading list'
+    try {
+        let news = await Model.ReadingList.findOneAndRemove({
+                hash: hash
+            })
+            .exec();
+
+        if (!news)
+            return res.json({
+                success: false,
+                message: 'News does not exist in your reading list.'
             });
-        })
-        .catch(function(error) {
-            if (error !== 'Error' && error) {
-                console.log(error);
-                res.status(500).json({
+
+        res.json({
+            success: true,
+            message: 'News removed from reading list',
+            news: news
+        });
+    } catch (error) {
+        if (error !== 'Error' && error) {
+            console.log(error);
+            res.status(500)
+                .json({
                     success: false,
                     message: 'Something happened at our end. Check back after sometime'
                 });
-            }
-        });
+        }
+    }
 });
 
 module.exports = router;

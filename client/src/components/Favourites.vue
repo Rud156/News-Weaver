@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="favourites.length <= 0 && !displayOneTimeLoader"
             heading="No results found"
@@ -49,7 +49,7 @@
             <v-btn
                 class="red--text"
                 flat
-                :value="true"
+                :input-value="true"
                 slot="slot_2"
                 @click.stop="deleteNewsFromFavourite(selectedNews.hash, selectedNews.newsHash)"
             >
@@ -60,7 +60,7 @@
             <v-btn
                 class="pink--text"
                 flat
-                :value="true"
+                :input-value="true"
                 slot="slot_1"
                 @click.stop="editNews(selectedNews, selectedNewsIndex)"
             >
@@ -79,13 +79,14 @@
         </EditFavourite>
         <v-btn
             v-if="!displayOneTimeLoader"
-            class="blue darken-2 white--text button-margin"
+            color="blue"
             :loading="loading"
             :disabled="loading"
             @click.stop="fetchFavourites"
-            flat
         >
-            Load More News
+            <span class="white--text button-margin">
+                Load More News
+            </span>
         </v-btn>
         <v-progress-circular
             indeterminate
@@ -94,7 +95,7 @@
             style="margin-top: 21px"
         >
         </v-progress-circular>
-    </div>
+    </v-container>
 </template>
 
 <script>

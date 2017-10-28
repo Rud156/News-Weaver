@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <v-container grid-list-md text-xs-center>
         <EmptyFeed
             v-if="readingList.length <= 0 && !loading"
             heading="No results found"
@@ -67,10 +67,10 @@
                 slot="slot_1"
                 flat
                 class="orange--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="markNewsAsRead(selectedNews, selectedNewsIndex)"
             >
-                <v-icon>
+                <v-icon class="orange--text">
                     {{ selectedNews.read ? 'fa-check-square' : 'fa-check-square-o' }}
                 </v-icon>
             </v-btn>
@@ -78,10 +78,10 @@
                 slot="slot_2"
                 flat
                 class="pink--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="saveNewsAsFavourite(selectedNews, selectedNewsIndex)"
             >
-                <v-icon>
+                <v-icon class="pink--text">
                     {{ selectedNews.favourite ? 'fa-heart' : 'fa-heart-o' }}
                 </v-icon>
             </v-btn>
@@ -89,15 +89,15 @@
                 slot="slot_3"
                 flat
                 class="red--text"
-                :value="true"
+                :input-value="true"
                 @click.stop="deleteNewsFromReadingList(selectedNews)"
             >
-                <v-icon>
+                <v-icon class="red--text">
                     fa-trash-o
                 </v-icon>
             </v-btn>
         </NewsView>
-    </div>
+    </v-container>
 </template>
 
 <script>
@@ -143,9 +143,9 @@
                     .then(data => {
                         if (data.error === undefined) {
                             if (data.success) {
-                                let favourites = new Set(data.favourites);
+                                let favourites = new Set(data.user.favourites);
 
-                                let readingList = data.news.map(element => {
+                                let readingList = data.readingList.map(element => {
                                     return {
                                         ...element,
                                         favourite: favourites.has(element.newsHash)
@@ -162,6 +162,7 @@
                     });
             },
             saveNewsAsFavourite(news, index) {
+                console.log(news);
                 addToFavourites(news, news.newsHash)
                     .then(data => {
                         if (data.error === undefined) {

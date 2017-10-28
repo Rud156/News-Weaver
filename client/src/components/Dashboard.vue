@@ -4,11 +4,9 @@
             :timeout="3000"
             :top="true"
             :right="true"
-            :success="snackBarType === 'success'"
-            :info="snackBarType === 'info'"
-            :warning="snackBarType === 'warning'"
-            :error="snackBarType === 'error'"
+            :color="snackBarType"
             v-model="displaySnackBar"
+            style="z-index: 9999 !important"
         >
             {{ snackBarMessage }}
             <v-btn flat class="white--text" @click="displaySnackBar = false">Close</v-btn>
@@ -26,7 +24,7 @@
             >
                 <v-list dense>
                     <v-list-tile
-                        :to="'/dashboard/all/all_news'"
+                        :to="'/dashboard/all'"
                     >
                         <v-list-tile-action>
                             <v-icon>fa-newspaper-o</v-icon>
@@ -81,18 +79,16 @@
                     </span>
                 </v-toolbar-title>
                 <v-spacer></v-spacer>
-                <v-toolbar-items>
-                    <v-btn flat @click="handleSelect('dashboard')">
+                    <v-btn flat :input-value="true" @click="handleSelect('dashboard')">
                         Dashboard
                     </v-btn>
                     <v-btn flat @click="handleSelect('logout')">
                         Logout
                     </v-btn>
-                </v-toolbar-items>
             </v-toolbar>
-            <main>
+            <main style="margin-top: 56px">
                 <v-container>
-                    <v-layout>
+                    <v-layout row wrap>
                     <v-flex xs12>
                         <transition name="slide-x-reverse-transition">
                             <router-view @displayMessage="displayMessage">
@@ -167,7 +163,7 @@
                         break;
                     default:
                         this.$router.push({
-                            path: '/dashboard/all/all_news'
+                            path: '/dashboard/all'
                         });
                         break;
                 }
@@ -176,6 +172,7 @@
                 this.snackBarType = messageType;
                 this.displaySnackBar = true;
                 this.snackBarMessage = message;
+                console.log(message);
             },
             fetchFeedSources() {
                 getAllFeedSources()
@@ -202,4 +199,5 @@
             }
         }
     };
+
 </script>
