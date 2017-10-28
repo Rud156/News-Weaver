@@ -20,6 +20,21 @@
     <noscript>
         You need to enable JavaScript for the application to work
     </noscript>
+    <script src=/service-worker.js></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(function (registration) {
+                        console.log('Service Worker registration was successful within scope: ', registration.scope);
+                    })
+                    .catch(function (error) {
+                        console.log('Service Worker registration failed: ', error);
+                    });
+            });
+        }
+
+    </script>
 </body>
 
 </html>

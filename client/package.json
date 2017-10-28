@@ -10,14 +10,17 @@
     "build": "node build/build.js",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "test": "npm run unit",
-    "deploy": "npm run build && firebase deploy"
+    "deploy": "npm run build && firebase deploy",
+    "serve": "serve dist/"
   },
   "dependencies": {
     "axios": "^0.16.2",
     "he": "^1.1.1",
     "html-entities": "^1.2.1",
     "moment": "^2.18.1",
+    "serve": "^6.3.1",
     "smoothscroll-polyfill": "^0.3.6",
+    "sw-precache-webpack-plugin": "^0.11.4",
     "vue": "^2.4.4",
     "vue-router": "^2.7.0",
     "vuetify": "^0.16.5",

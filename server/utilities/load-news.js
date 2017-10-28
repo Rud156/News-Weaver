@@ -224,21 +224,34 @@ const runAll = async() => {
                         console.log('Max Data:', maxDataToReceive);
                         if (dataReceivedCount === maxDataToReceive) {
                             dataReceivedCount = 0;
+                            console.log('Timer set');
                             setTimeout(runAll, interval);
                         }
-                        dataReceivedCount++;
                     } catch (error) {
                         console.log('Error occurred in try part');
                         console.log(error);
+                        dataReceivedCount++;
+                        console.log('Current Set Of News Saved');
+                        console.log('Data received: ', dataReceivedCount);
+                        console.log('Max Data:', maxDataToReceive);
+                        if (dataReceivedCount === maxDataToReceive) {
+                            dataReceivedCount = 0;
+                            console.log('Timer set');
+                            setTimeout(runAll, interval);
+                        }
                     }
 
                 });
             }
         } else if (feeds.length === 0) {
+            console.log('Timer set');
+            dataReceivedCount = 0;
             setTimeout(runAll, interval);
         }
     } catch (error) {
         console.log(error);
+        console.log('Timer set');
+        dataReceivedCount = 0;
         setTimeout(runAll, interval);
     }
 };
