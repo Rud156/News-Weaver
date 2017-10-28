@@ -99,7 +99,28 @@ var webpackConfig = merge(baseWebpackConfig, {
             filename: 'service-worker.js',
             staticFileGlobs: ['dist/**/*.{js,html,css,png,json,jpg}'],
             minify: true,
-            stripPrefix: 'dist/'
+            stripPrefix: 'dist/',
+            runtimeCaching: [{
+                    urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+                    handler: 'cacheFirst'
+                },
+                {
+                    urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\//,
+                    handler: 'cacheFirst'
+                },
+                {
+                    urlPattern: /^https:\/\/cdn\.polyfill\.io\//,
+                    handler: 'cacheFirst'
+                },
+                {
+                    urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+                    handler: 'cacheFirst'
+                },
+                {
+                    urlPattern: /^https:\/\/news-weaver\.firebaseapp\.com\/?/,
+                    handler: 'cacheFirst'
+                }
+            ]
         })
     ]
 })
