@@ -101,30 +101,9 @@ var webpackConfig = merge(baseWebpackConfig, {
             minify: true,
             stripPrefix: 'dist/',
             runtimeCaching: [{
-                    urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
-                    handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/cdnjs\.cloudflare\.com\//,
-                    handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/cdn\.polyfill\.io\//,
-                    handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
-                    handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/news-weaver\.firebaseapp\.com\/?/,
-                    handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/news-weaver\.herokuapp\.com\/?/,
-                    handler: 'cacheFirst'
-                }
-            ]
+                urlPattern: /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+                handler: 'cacheFirst'
+            }]
         })
     ]
 })
