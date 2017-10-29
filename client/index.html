@@ -5,12 +5,21 @@
     <meta charset="utf-8">
     <meta http-equiv=X-UA-Compatible content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name=theme-color content=#FFFFFF>
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <meta name=apple-mobile-web-app-title content=test>
     <link rel="manifest" href="/static/manifest.json">
     <link href="https://fonts.googleapis.com/css?family=Questrial|Signika" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="shortcut icon" type="image/x-icon" href="/static/NewsWeaver.png" />
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-    <title>News Weaver</title>
+    <% for (var chunk of webpack.chunks) {
+        for (var file of chunk.files) {
+          if (file.match(/\.(js|css)$/)) { %>
+        <link rel="<%= chunk.initial?'preload':'prefetch' %>" href="<%= htmlWebpackPlugin.files.publicPath + file %>" as="<%= file.match(/\.css$/)?'style':'script' %>">
+        <% }}} %>
+            <title>News Weaver</title>
 </head>
 
 <body>
@@ -19,7 +28,8 @@
     <noscript>
         You need to enable JavaScript for the application to work
     </noscript>
-    <script>
+    <%= htmlWebpackPlugin.options.serviceWorkerLoader %>
+    <!-- <script>
         ! function () {
             "use strict";
             const o = Boolean("localhost" === window.location.hostname || "[::1]" === window.location.hostname || window.location
@@ -48,7 +58,7 @@
             })
         }();
 
-    </script>
+    </script> -->
 </body>
 
 </html>
