@@ -115,10 +115,6 @@ var webpackConfig = merge(baseWebpackConfig, {
                 {
                     urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
                     handler: 'cacheFirst'
-                },
-                {
-                    urlPattern: /^https:\/\/news-weaver\.firebaseapp\.com\/?/,
-                    handler: 'cacheFirst'
                 }
             ]
         })

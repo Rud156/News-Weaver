@@ -9,6 +9,7 @@ import './assets/index.css';
 import './assets/loader.css';
 import './assets/masonry.css';
 require('smoothscroll-polyfill').polyfill();
+require('babel-polyfill');
 
 import moment from 'moment';
 import he from 'he';
