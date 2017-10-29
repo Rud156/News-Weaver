@@ -29,7 +29,7 @@ router.post('/login', async(req, res) => {
                     message: 'Sorry but it looks like such a user does not exist.'
                 });
             } else {
-                let isMatch = Model.validatePassword(password, user.password);
+                let isMatch = await Model.validatePassword(password, user.password);
                 if (!isMatch)
                     return res.json({
                         success: false,
