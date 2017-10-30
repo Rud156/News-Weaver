@@ -12,14 +12,14 @@ var config = require('./models/config');
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database, {
-    useMongoClient: true
-})
-.then(() => {
-    console.log('MongoDB Successfully Connected');
-})
-.catch((error) => {
-    console.error(error);
-});
+        useMongoClient: true
+    })
+    .then(() => {
+        console.log('MongoDB Successfully Connected');
+    })
+    .catch((error) => {
+        console.error(error);
+    });
 
 loadDatabase();
 
@@ -52,14 +52,14 @@ app.use('/user', userFeedDetails);
 app.use('/user', userReadingList);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
 // error handler
-app.use(function(err, req, res) {
+app.use(function (err, req, res) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};

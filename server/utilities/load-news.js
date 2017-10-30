@@ -9,7 +9,7 @@ const entities = new Entities();
 
 const Model = require('./../models/model');
 
-const minutes = 1;
+const minutes = 5;
 const interval = minutes * 60 * 1000;
 const maxNewsPerFeed = 470;
 const OPTIONS = {
